@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    {{--
+        Bestand: resources/views/layouts/app.blade.php
+        Doel: Globale layout voor de technieker sectie. Bevat de navigatie,
+        hoofdstructuur en Tailwind-config. 
+    --}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aquafin - @yield('title', 'Dashboard')</title>
@@ -27,7 +32,7 @@
         ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #017CBF; }
         
-        /* La fameuse grille en arrière-plan pour le côté ultra-pro/tech */
+        /* Achtergrondraster voor een professionele/technische look */
         .bg-grid {
             background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
             background-size: 32px 32px;

@@ -7,8 +7,8 @@ use App\Models\Installatie;
 use App\Models\Melding;
 use App\Models\Notitie;
 use App\Models\User;
-use App\Models\Onderdeel;  // NIEUW: Geïmporteerd voor materiaalbestellingen
-use App\Models\Bestelling; // NIEUW: Geïmporteerd voor materiaalbestellingen
+use App\Models\Onderdeel;  
+use App\Models\Bestelling; 
 use Carbon\Carbon;
 
 class InstallatieController extends Controller
