@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Materiaal;
+use App\Models\Levering;
+use App\Models\Retour;
 use Illuminate\Http\Request;
 
 class MateriaalController extends Controller
@@ -23,7 +25,6 @@ class MateriaalController extends Controller
     // Sla het nieuwe artikel op of verhoog de voorraad
     public function store(Request $request)
     {
-        // Validatie - alle velden zijn verplicht
         $request->validate([
             'artikelnummer' => 'required',
             'omschrijving'  => 'required',
@@ -38,15 +39,12 @@ class MateriaalController extends Controller
             'beschikbaar.min'        => 'Beschikbaar moet minimaal 1 zijn.',
         ]);
 
-        // Kijk of het artikel al bestaat
         $materiaal = Materiaal::where('artikelnummer', $request->artikelnummer)->first();
 
         if ($materiaal) {
-            // Artikel bestaat al, verhoog de voorraad
             $materiaal->beschikbaar += $request->beschikbaar;
             $materiaal->save();
         } else {
-            // Artikel bestaat niet, maak een nieuw aan
             Materiaal::create([
                 'artikelnummer' => $request->artikelnummer,
                 'omschrijving'  => $request->omschrijving,
@@ -56,5 +54,73 @@ class MateriaalController extends Controller
         }
 
         return redirect('/materiaal');
+    }
+
+    // Toon het formulier voor een nieuwe levering
+    public function leveringCreate()
+    {
+        $materialen = Materiaal::all();
+        return view('materiaal.levering', compact('materialen'));
+    }
+
+    // Sla de nieuwe levering op en verhoog de voorraad
+    public function leveringStore(Request $request)
+    {
+        $request->validate([
+            'materiaal_id' => 'required',
+            'aantal'       => 'required|integer|min:1',
+        ], [
+            'materiaal_id.required' => 'Kies een artikel.',
+            'aantal.required'       => 'Aantal is verplicht.',
+            'aantal.integer'        => 'Aantal moet een getal zijn.',
+            'aantal.min'            => 'Aantal moet minimaal 1 zijn.',
+        ]);
+
+        // Sla levering op
+        Levering::create([
+            'materiaal_id' => $request->materiaal_id,
+            'aantal'       => $request->aantal,
+        ]);
+
+        // Verhoog de voorraad
+        $materiaal = Materiaal::find($request->materiaal_id);
+        $materiaal->beschikbaar += $request->aantal;
+        $materiaal->save();
+
+        return redirect('/materiaal')->with('succes', 'Levering geregistreerd!');
+    }
+
+    // Toon het formulier voor een retour
+    public function retourCreate()
+    {
+        $materialen = Materiaal::all();
+        return view('materiaal.retour', compact('materialen'));
+    }
+
+    // Sla de retour op en verhoog de voorraad
+    public function retourStore(Request $request)
+    {
+        $request->validate([
+            'materiaal_id' => 'required',
+            'aantal'       => 'required|integer|min:1',
+        ], [
+            'materiaal_id.required' => 'Kies een artikel.',
+            'aantal.required'       => 'Aantal is verplicht.',
+            'aantal.integer'        => 'Aantal moet een getal zijn.',
+            'aantal.min'            => 'Aantal moet minimaal 1 zijn.',
+        ]);
+
+        // Sla retour op
+        Retour::create([
+            'materiaal_id' => $request->materiaal_id,
+            'aantal'       => $request->aantal,
+        ]);
+
+        // Verhoog de voorraad
+        $materiaal = Materiaal::find($request->materiaal_id);
+        $materiaal->beschikbaar -= $request->aantal;
+        $materiaal->save();
+
+        return redirect('/materiaal')->with('succes', 'Retour geregistreerd!');
     }
 }
