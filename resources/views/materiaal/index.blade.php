@@ -69,6 +69,11 @@
             border-radius: 4px;
         }
 
+        .succes {
+            color: green;
+            margin-bottom: 10px;
+        }
+
         .popup-achtergrond {
             display: none;
             position: fixed;
@@ -108,9 +113,15 @@
 <body>
 
     <h1>Voorraad overzicht</h1>
-<a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a>
-<a href="/levering" class="btn-nieuw">+ Nieuwe levering</a>
-<a href="/retour" class="btn-nieuw">+ Retour registreren</a>
+
+    @if(session('succes'))
+        <p class="succes">{{ session('succes') }}</p>
+    @endif
+
+    <a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a>
+    <a href="/levering" class="btn-nieuw">+ Nieuwe levering</a>
+    <a href="/retour" class="btn-nieuw">+ Retour registreren</a>
+
     <br><br>
 
     <table>
