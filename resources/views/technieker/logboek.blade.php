@@ -1,10 +1,17 @@
 @extends('layouts.app')
 
+{{--
+    Bestand: resources/views/technieker/logboek.blade.php
+    Doel: Logboekpagina voor de technieker. Toont installatiegegevens,
+    formulier om nieuwe notities toe te voegen en de historiek van notities.
+--}}
+
 @section('title', 'Logboek - ' . $installatie->naam)
 
 @section('content')
 <div class="max-w-4xl mx-auto">
         
+    {{-- Terug-knop naar het technieker dashboard --}}
     <div class="mb-8">
         <a href="{{ route('technieker.meldingen') }}" class="group flex items-center text-sm font-medium text-gray-500 hover:text-aquaBlue transition-colors w-fit">
             <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -12,6 +19,7 @@
         </a>
     </div>
 
+    {{-- Overzicht kaart: installatie naam, locatie en laatste onderhoud --}}
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8 relative overflow-hidden">
         <div class="absolute top-0 left-0 w-2 h-full bg-aquaBlue"></div>
         <div class="flex items-start justify-between">
@@ -34,6 +42,7 @@
         </div>
     </div>
 
+    {{-- Feedback berichten: succes of fouten vanuit de controller --}}
     @if(session('success'))
         <div class="flex items-center bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg mb-8 shadow-sm">
             <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -47,12 +56,14 @@
         </div>
     @endif
 
+    {{-- Formulier sectie: nieuwe notitie toevoegen voor deze installatie --}}
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
         <h2 class="text-xl font-bold text-gray-900 mb-5 flex items-center">
             <svg class="w-5 h-5 mr-2 text-aquaBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
             Nieuwe notitie toevoegen
         </h2>
         
+        {{-- Verstuur naar route die notities opslaat gekoppeld aan installatie id --}}
         <form action="{{ route('notitie.store', $installatie->id) }}" method="POST">
             @csrf
             <div class="relative">
@@ -68,14 +79,17 @@
         </form>
     </div>
 
+    {{-- Historiek sectie: toont alle notities gerelateerd aan deze installatie --}}
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
         <h2 class="text-xl font-bold text-gray-900 mb-8 flex items-center">
             <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             Historiek Logboek
         </h2>
         
+        {{-- Indien er notities bestaan, lijst deze op in timeline stijl --}}
         @if($installatie->notities->count() > 0)
             <div class="relative border-l-2 border-gray-100 ml-3 space-y-8 pb-4">
+                {{-- Per notitie: toon technieker, datum en opmerking --}}
                 @foreach($installatie->notities as $notitie)
                     <div class="relative pl-8">
                         <div class="absolute -left-[9px] top-1.5 w-4 h-4 bg-white border-2 border-aquaBlue rounded-full shadow-sm"></div>
@@ -83,6 +97,7 @@
                         <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all duration-300">
                             <div class="flex justify-between items-start mb-3">
                                 <div class="flex items-center space-x-3">
+                                    {{-- Initialen/avatar van technieker (fallback 'U') --}}
                                     <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-aquaBlue font-bold text-xs">
                                         {{ substr($notitie->technieker->name ?? 'U', 0, 1) }}
                                     </div>
@@ -100,6 +115,7 @@
                 @endforeach
             </div>
         @else
+            {{-- Geen notities: toon lege staat met uitnodiging om notitie toe te voegen --}}
             <div class="flex flex-col items-center justify-center h-48 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 mt-4">
                 <svg class="w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 <p class="text-gray-500 font-medium text-sm">Er zijn nog geen notities voor deze installatie.</p>

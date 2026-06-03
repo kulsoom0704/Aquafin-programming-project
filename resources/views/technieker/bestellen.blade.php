@@ -1,11 +1,18 @@
 @extends('layouts.app')
 
+{{--
+    Bestand: resources/views/technieker/bestellen.blade.php
+    Doel: Pagina voor materiaalbestellingen — bevat formulier voor nieuwe aanvragen
+    en overzicht van bestaande bestellingen. 
+--}}
+
 @section('title', 'Materiaal Bestellen')
 
 @section('content')
 <div class="max-w-6xl mx-auto">
         
     
+    {{-- Terug-knop en paginakop --}}
     <div class="flex flex-col mb-8">
         <a href="{{ route('technieker.meldingen') }}" class="group flex items-center text-sm font-medium text-gray-500 hover:text-aquaBlue transition-colors mb-2 w-fit">
             <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -16,6 +23,7 @@
     </div>
 
     
+    {{-- Feedbackmeldingen (succes of fouten) --}}
     @if(session('success'))
         <div class="flex items-center bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg mb-6 shadow-sm">
             <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -30,9 +38,11 @@
         </div>
     @endif
 
+    {{-- Layout: formulier (links) en overzicht bestellingen (rechts) --}}
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         
+        {{-- Linker kolom: nieuw aanvraagformulier --}}
         <div class="lg:col-span-5">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 h-full transition-shadow hover:shadow-md">
                 <div class="flex items-center space-x-3 mb-6">
@@ -42,6 +52,7 @@
                     <h2 class="text-xl font-bold text-gray-900">Nieuwe Aanvraag</h2>
                 </div>
                 
+                {{-- Formulier: aanvraag plaatsen voor geselecteerd onderdeel --}}
                 <form action="{{ route('materiaal.store') }}" method="POST" class="space-y-5">
                     @csrf
                     
@@ -76,6 +87,7 @@
         </div>
 
        
+        {{-- Rechter kolom: overzicht van bestaande bestellingen --}}
         <div class="lg:col-span-7">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 h-full">
                 <div class="flex items-center justify-between mb-6">
@@ -115,7 +127,7 @@
                         @endforeach
                     </div>
                 @else
-                    
+                    {{-- Geen bestellingen aanwezig: lege staat --}}
                     <div class="flex flex-col items-center justify-center h-64 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                         <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                         <p class="text-gray-600 font-medium">Je hebt nog geen materiaal besteld.</p>
