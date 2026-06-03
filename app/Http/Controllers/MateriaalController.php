@@ -23,6 +23,21 @@ class MateriaalController extends Controller
     // Sla het nieuwe artikel op of verhoog de voorraad
     public function store(Request $request)
     {
+        // Validatie - alle velden zijn verplicht
+        $request->validate([
+            'artikelnummer' => 'required',
+            'omschrijving'  => 'required',
+            'locatie'       => 'required',
+            'beschikbaar'   => 'required|integer|min:1',
+        ], [
+            'artikelnummer.required' => 'Artikelnummer is verplicht.',
+            'omschrijving.required'  => 'Omschrijving is verplicht.',
+            'locatie.required'       => 'Locatie is verplicht.',
+            'beschikbaar.required'   => 'Beschikbaar is verplicht.',
+            'beschikbaar.integer'    => 'Beschikbaar moet een getal zijn.',
+            'beschikbaar.min'        => 'Beschikbaar moet minimaal 1 zijn.',
+        ]);
+
         // Kijk of het artikel al bestaat
         $materiaal = Materiaal::where('artikelnummer', $request->artikelnummer)->first();
 

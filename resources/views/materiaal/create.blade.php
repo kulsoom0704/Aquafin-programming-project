@@ -11,7 +11,7 @@
 
         input {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             padding: 8px;
             width: 300px;
         }
@@ -23,6 +23,12 @@
             border: none;
             cursor: pointer;
         }
+
+        .fout {
+            color: red;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -33,16 +39,20 @@
         @csrf
 
         <label>Artikelnummer</label>
-        <input type="text" name="artikelnummer">
+        <input type="text" name="artikelnummer" value="{{ old('artikelnummer') }}">
+        @error('artikelnummer') <p class="fout">{{ $message }}</p> @enderror
 
         <label>Omschrijving</label>
-        <input type="text" name="omschrijving">
+        <input type="text" name="omschrijving" value="{{ old('omschrijving') }}">
+        @error('omschrijving') <p class="fout">{{ $message }}</p> @enderror
 
         <label>Locatie</label>
-        <input type="text" name="locatie">
+        <input type="text" name="locatie" value="{{ old('locatie') }}">
+        @error('locatie') <p class="fout">{{ $message }}</p> @enderror
 
         <label>Beschikbaar</label>
-        <input type="number" name="beschikbaar">
+        <input type="number" name="beschikbaar" value="{{ old('beschikbaar') }}">
+        @error('beschikbaar') <p class="fout">{{ $message }}</p> @enderror
 
         <button type="submit">Opslaan</button>
     </form>
