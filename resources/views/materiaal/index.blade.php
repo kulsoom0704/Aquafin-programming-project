@@ -4,24 +4,55 @@
     <meta charset="UTF-8">
     <title>Voorraad overzicht</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            background-color: #f5f5f5;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .btn-nieuw {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 14px;
+            background-color: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
         }
 
         .kritiek {
@@ -30,15 +61,14 @@
         }
 
         .btn-details {
-            padding: 5px 10px;
-            background-color: #008CBA;
+            padding: 5px 12px;
+            background-color: #2980b9;
             color: white;
             border: none;
             cursor: pointer;
             border-radius: 4px;
         }
 
-        /* Popup achtergrond */
         .popup-achtergrond {
             display: none;
             position: fixed;
@@ -47,26 +77,27 @@
             background-color: rgba(0,0,0,0.5);
         }
 
-        /* Popup venster */
         .popup {
             background: white;
             margin: 10% auto;
-            padding: 20px;
+            padding: 25px;
             width: 400px;
             border-radius: 8px;
         }
 
         .popup h2 {
-            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
         }
 
         .popup p {
             margin: 8px 0;
+            font-size: 15px;
         }
 
         .btn-sluiten {
             margin-top: 15px;
-            padding: 5px 10px;
+            padding: 6px 14px;
             background-color: #ccc;
             border: none;
             cursor: pointer;
@@ -77,7 +108,7 @@
 <body>
 
     <h1>Voorraad overzicht</h1>
-    <a href="/materiaal/create">+ Nieuw artikel toevoegen</a>
+    <a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a>
 
     <br><br>
 
