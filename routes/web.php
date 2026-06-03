@@ -16,19 +16,21 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Installaties & Logboek (InstallatieController)
+| Installaties, Logboek & Bestellingen (InstallatieController)
 |--------------------------------------------------------------------------
 */
 
 Route::controller(InstallatieController::class)->group(function () {
     
-    // 1. Dashboard: Overzicht van alle onderhoudsmeldingen
+    
     Route::get('/technieker/meldingen', 'meldingen')->name('technieker.meldingen');
 
-    // 2. Detailpagina: Specifieke installatie en logboek bekijken
     Route::get('/installatie/{id}', 'show')->name('installatie.show');
 
-    // 3. Actie: Nieuwe notitie opslaan in het logboek
     Route::post('/installatie/{id}/notitie', 'storeNotitie')->name('notitie.store');
+
+    Route::get('/materiaal/bestellen', 'showBestelformulier')->name('materiaal.bestellen');
+    
+    Route::post('/materiaal/bestellen', 'storeBestelling')->name('materiaal.store');
 
 });

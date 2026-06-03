@@ -20,6 +20,11 @@
                 </div>
                 <span class="font-medium text-gray-700">Ingelogd als: {{ $huidigeTechnieker }}</span>
             </div>
+            <div class="mb-8">
+            <a href="{{ route('materiaal.bestellen') }}" class="inline-block bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded shadow">
+                + Materiaal Bestellen
+            </a>
+        </div>
             @endif
         </div>
 
