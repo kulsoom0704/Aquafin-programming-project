@@ -20,4 +20,9 @@ class Installatie extends Model
     {
         return $this->hasMany(Melding::class);
     }
+
+    public function notities()
+    {
+        return $this->hasMany(Notitie::class);
+    }
 }

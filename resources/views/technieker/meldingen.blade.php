@@ -35,7 +35,9 @@
                     <div class="bg-white p-6 rounded-lg shadow-md border-l-4 {{ $installatie->dagen_te_laat > 30 ? 'border-red-700' : 'border-orange-500' }}">
                         <div class="flex justify-between items-center">
                             <div>
-                                <h2 class="text-xl font-semibold text-gray-800">{{ $installatie->naam }}</h2>
+                                <a href="{{ route('installatie.show', $installatie->id) }}" class="text-xl font-semibold text-blue-800 hover:text-blue-600 hover:underline">
+                                    {{ $installatie->naam }}
+                                </a>
                                 <p class="text-sm text-gray-600">Locatie: {{ $installatie->locatie ?? 'Onbekend' }}</p>
                             </div>
                             <div class="text-right">

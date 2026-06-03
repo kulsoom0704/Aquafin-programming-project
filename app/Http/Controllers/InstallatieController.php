@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Installatie;
-use App\Models\Melding; 
+use App\Models\Melding;
+use App\Models\Notitie;
 use Carbon\Carbon;
 use App\Models\User;
 
@@ -57,5 +58,32 @@ class InstallatieController extends Controller
                 'error' => 'Er is een technische fout opgetreden bij het ophalen van de installaties.'
             ]);
         }
+    }
+
+    // Fonction pour afficher le profil de la machine et son Logbook
+    public function show($id)
+    {
+        // On cherche la machine avec ses notes (triées de la plus récente à la plus ancienne) et le nom des techniciens
+        $installatie = Installatie::with(['notities' => function($query) {
+            $query->latest(); 
+        }, 'notities.technieker'])->findOrFail($id);
+
+        return view('technieker.logboek', compact('installatie'));
+    }
+
+    public function storeNotitie(Request $request, $id)
+    {
+        $request->validate([
+            'opmerking' => 'required|string|min:3'
+        ]);
+
+        
+        Notitie::create([
+            'installatie_id' => $id,
+            'user_id' => 1,
+            'opmerking' => $request->opmerking
+        ]);
+
+        return redirect()->route('installatie.show', $id)->with('success', 'Notitie succesvol toegevoegd aan het logboek.');
     }
 }
