@@ -33,6 +33,7 @@
 <body>
 
     <h1>Voorraad overzicht</h1>
+    <a href="/materiaal/create">+ Nieuw artikel toevoegen</a>
 
     <table>
         <thead>
