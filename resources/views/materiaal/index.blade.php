@@ -31,6 +31,26 @@
             border-radius: 4px;
         }
 
+        .zoekbalk {
+            margin-bottom: 20px;
+        }
+
+        .zoekbalk input {
+            padding: 8px;
+            width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .zoekbalk button {
+            padding: 8px 14px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -118,11 +138,17 @@
         <p class="succes">{{ session('succes') }}</p>
     @endif
 
-    <a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a>
-    <a href="/levering" class="btn-nieuw">+ Nieuwe levering</a>
-    <a href="/retour" class="btn-nieuw">+ Retour registreren</a>
+<a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a>
+<a href="/levering" class="btn-nieuw">+ Nieuwe levering</a>
+<a href="/retour" class="btn-nieuw">+ Retour registreren</a>
+<a href="/meldingen" class="btn-nieuw"> Meldingen</a>
 
     <br><br>
+
+    <form method="GET" action="/materiaal" class="zoekbalk">
+        <input type="text" name="zoekterm" placeholder="Zoek op artikelnummer, omschrijving of locatie..." value="{{ $zoekterm ?? '' }}">
+        <button type="submit">Zoeken</button>
+    </form>
 
     <table>
         <thead>

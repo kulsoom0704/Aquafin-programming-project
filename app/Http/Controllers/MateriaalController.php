@@ -10,10 +10,20 @@ use Illuminate\Http\Request;
 class MateriaalController extends Controller
 {
     // Toon alle materialen
-    public function index()
+    public function index(Request $request)
     {
-        $materialen = Materiaal::all();
-        return view('materiaal.index', compact('materialen'));
+        $zoekterm = $request->zoekterm;
+
+        if ($zoekterm) {
+            $materialen = Materiaal::where('artikelnummer', 'like', '%' . $zoekterm . '%')
+                ->orWhere('omschrijving', 'like', '%' . $zoekterm . '%')
+                ->orWhere('locatie', 'like', '%' . $zoekterm . '%')
+                ->get();
+        } else {
+            $materialen = Materiaal::all();
+        }
+
+        return view('materiaal.index', compact('materialen', 'zoekterm'));
     }
 
     // Toon het formulier om een nieuw artikel toe te voegen
@@ -76,13 +86,11 @@ class MateriaalController extends Controller
             'aantal.min'            => 'Aantal moet minimaal 1 zijn.',
         ]);
 
-        // Sla levering op
         Levering::create([
             'materiaal_id' => $request->materiaal_id,
             'aantal'       => $request->aantal,
         ]);
 
-        // Verhoog de voorraad
         $materiaal = Materiaal::find($request->materiaal_id);
         $materiaal->beschikbaar += $request->aantal;
         $materiaal->save();
@@ -97,7 +105,7 @@ class MateriaalController extends Controller
         return view('materiaal.retour', compact('materialen'));
     }
 
-    // Sla de retour op en verhoog de voorraad
+    // Sla de retour op en verminder de voorraad
     public function retourStore(Request $request)
     {
         $request->validate([
@@ -110,13 +118,11 @@ class MateriaalController extends Controller
             'aantal.min'            => 'Aantal moet minimaal 1 zijn.',
         ]);
 
-        // Sla retour op
         Retour::create([
             'materiaal_id' => $request->materiaal_id,
             'aantal'       => $request->aantal,
         ]);
 
-        // Verhoog de voorraad
         $materiaal = Materiaal::find($request->materiaal_id);
         $materiaal->beschikbaar -= $request->aantal;
         $materiaal->save();
