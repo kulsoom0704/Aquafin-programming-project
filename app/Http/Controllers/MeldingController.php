@@ -35,4 +35,13 @@ class MeldingController extends Controller
 
         return redirect('/meldingen');
     }
+
+    // Verwijder melding
+    public function verwijderen($id)
+    {
+        $melding = Melding::find($id);
+        $melding->delete();
+
+        return redirect('/meldingen');
+    }
 }

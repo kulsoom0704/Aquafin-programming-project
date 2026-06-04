@@ -22,3 +22,4 @@ Route::post('/retour', [MateriaalController::class, 'retourStore']);
 Route::get('/meldingen', [MeldingController::class, 'index']);
 Route::post('/meldingen/{id}/gelezen', [MeldingController::class, 'gelezen']);
 Route::post('/meldingen/{id}/ongelezen', [MeldingController::class, 'ongelezen']);
+Route::post('/meldingen/{id}/verwijderen', [MeldingController::class, 'verwijderen']);

@@ -88,19 +88,24 @@
                 <p>{{ $melding->bericht }}</p>
                 <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
 
-              @if(!$melding->gelezen)
+            @if(!$melding->gelezen)
     <br>
-    <form method="POST" action="/meldingen/{{ $melding->id }}/gelezen">
+    <form method="POST" action="/meldingen/{{ $melding->id }}/gelezen" style="display:inline;">
         @csrf
         <button type="submit" class="btn-gelezen">Markeer als gelezen</button>
     </form>
 @else
     <br>
-    <form method="POST" action="/meldingen/{{ $melding->id }}/ongelezen">
+    <form method="POST" action="/meldingen/{{ $melding->id }}/ongelezen" style="display:inline;">
         @csrf
         <button type="submit" class="btn-gelezen" style="background-color: #999;">Markeer als ongelezen</button>
     </form>
 @endif
+
+<form method="POST" action="/meldingen/{{ $melding->id }}/verwijderen" style="display:inline;">
+    @csrf
+    <button type="submit" class="btn-gelezen" style="background-color: #e74c3c;">Verwijderen</button>
+</form>
             </div>
         @endforeach
     @endif
