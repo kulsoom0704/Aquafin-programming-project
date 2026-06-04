@@ -128,6 +128,17 @@
             cursor: pointer;
             border-radius: 4px;
         }
+
+        .btn-wijzigen {
+            margin-top: 15px;
+            padding: 6px 14px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
@@ -138,10 +149,10 @@
         <p class="succes">{{ session('succes') }}</p>
     @endif
 
-<a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a>
-<a href="/levering" class="btn-nieuw">+ Nieuwe levering</a>
-<a href="/retour" class="btn-nieuw">+ Retour registreren</a>
-<a href="/meldingen" class="btn-nieuw"> Meldingen</a>
+    <a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a>
+    <a href="/levering" class="btn-nieuw">+ Nieuwe levering</a>
+    <a href="/retour" class="btn-nieuw">+ Retour registreren</a>
+    <a href="/meldingen" class="btn-nieuw">🔔 Meldingen</a>
 
     <br><br>
 
@@ -172,6 +183,7 @@
                 <td>
                     <button class="btn-details"
                         onclick="toonPopup(
+                            '{{ $item->id }}',
                             '{{ $item->artikelnummer }}',
                             '{{ $item->omschrijving }}',
                             '{{ $item->locatie }}',
@@ -189,16 +201,19 @@
     <div class="popup-achtergrond" id="popup-achtergrond">
         <div class="popup">
             <h2>Artikel details</h2>
+            <p style="display:none;"><span id="popup-id"></span></p>
             <p><strong>Artikelnummer:</strong> <span id="popup-artikelnummer"></span></p>
             <p><strong>Omschrijving:</strong> <span id="popup-omschrijving"></span></p>
             <p><strong>Locatie:</strong> <span id="popup-locatie"></span></p>
             <p><strong>Beschikbaar:</strong> <span id="popup-beschikbaar"></span></p>
             <button class="btn-sluiten" onclick="sluitPopup()">Sluiten</button>
+            <button class="btn-wijzigen" onclick="wijzigen()">Wijzigen</button>
         </div>
     </div>
 
     <script>
-        function toonPopup(artikelnummer, omschrijving, locatie, beschikbaar) {
+        function toonPopup(id, artikelnummer, omschrijving, locatie, beschikbaar) {
+            document.getElementById('popup-id').innerText = id;
             document.getElementById('popup-artikelnummer').innerText = artikelnummer;
             document.getElementById('popup-omschrijving').innerText = omschrijving;
             document.getElementById('popup-locatie').innerText = locatie;
@@ -208,6 +223,11 @@
 
         function sluitPopup() {
             document.getElementById('popup-achtergrond').style.display = 'none';
+        }
+
+        function wijzigen() {
+            var id = document.getElementById('popup-id').innerText;
+            window.location.href = '/materiaal/' + id + '/wijzigen';
         }
     </script>
 

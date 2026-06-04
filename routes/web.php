@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MateriaalController;
 use App\Http\Controllers\MeldingController;
+use App\Http\Controllers\WijzigingsverzoekController;
 
 
 Route::get('/', function () {
@@ -12,6 +13,8 @@ Route::get('/', function () {
 Route::get('/materiaal', [MateriaalController::class, 'index']);
 Route::get('/materiaal/create', [MateriaalController::class, 'create']);
 Route::post('/materiaal', [MateriaalController::class, 'store']);
+Route::get('/materiaal/{id}/wijzigen', [WijzigingsverzoekController::class, 'create']);
+Route::post('/materiaal/{id}/wijzigen', [WijzigingsverzoekController::class, 'store']);
 
 Route::get('/levering', [MateriaalController::class, 'leveringCreate']);
 Route::post('/levering', [MateriaalController::class, 'leveringStore']);
