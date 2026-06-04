@@ -31,7 +31,7 @@ if (mysqli_query($conn, $sql)) {
         }
     }
 } else {
-    echo "❌ Fout bij aanmaken tabel: " . mysqli_error($conn);
+    echo " Fout bij aanmaken tabel: " . mysqli_error($conn);
 }
 
 mysqli_close($conn);
