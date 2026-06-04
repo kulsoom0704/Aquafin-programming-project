@@ -165,7 +165,7 @@
     {{-- <a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a> --}}
     {{-- <a href="/levering" class="btn-nieuw">+ Nieuwe levering</a> --}}
     {{-- <a href="/retour" class="btn-nieuw">+ Retour registreren</a> --}}
-    <a href="/meldingen" class="btn-nieuw">🔔 Meldingen</a>
+    <a href="/meldingen" class="btn-nieuw"> Meldingen</a>
 
     <br><br>
 
@@ -235,23 +235,24 @@
             <button class="btn-wijzigen" onclick="wijzigen()">Wijzigen</button>
         </div>
     </div>
-<!-- Foto upload popup -->
-<div class="popup-achtergrond" id="foto-popup-achtergrond">
-    <div class="popup">
-        <h2>Foto uploaden</h2>
-        <form method="POST" id="foto-form" action="" enctype="multipart/form-data">
-            @csrf
-            <input type="file" name="foto" accept="image/*" style="margin-bottom: 10px;">
-            <br>
-            <button type="submit" class="btn-wijzigen">Opslaan</button>
-            <button type="button" class="btn-sluiten" onclick="sluitFotoPopup()">Annuleren</button>
-        </form>
-        <form method="POST" id="foto-verwijder-form" action="" style="margin-top: 10px;">
-            @csrf
-            <button type="submit" style="padding: 6px 14px; background-color: #e74c3c; color: white; border: none; cursor: pointer; border-radius: 4px;">Foto verwijderen</button>
-        </form>
+
+    <!-- Foto upload popup -->
+    <div class="popup-achtergrond" id="foto-popup-achtergrond">
+        <div class="popup">
+            <h2>Foto uploaden</h2>
+            <form method="POST" id="foto-form" action="" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="foto" accept="image/*" style="margin-bottom: 10px;">
+                <br>
+                <button type="submit" class="btn-wijzigen">Opslaan</button>
+                <button type="button" class="btn-sluiten" onclick="sluitFotoPopup()">Annuleren</button>
+            </form>
+            <form method="POST" id="foto-verwijder-form" action="" style="margin-top: 10px;">
+                @csrf
+                <button type="submit" style="padding: 6px 14px; background-color: #e74c3c; color: white; border: none; cursor: pointer; border-radius: 4px;">Foto verwijderen</button>
+            </form>
+        </div>
     </div>
-</div>
 
     <!-- Grote foto popup -->
     <div class="popup-achtergrond" id="grote-foto-achtergrond" onclick="this.style.display='none'">
@@ -290,6 +291,7 @@
 
         function toonFotoPopup(id) {
             document.getElementById('foto-form').action = '/materiaal/' + id + '/foto';
+            document.getElementById('foto-verwijder-form').action = '/materiaal/' + id + '/foto-verwijderen';
             document.getElementById('foto-popup-achtergrond').style.display = 'block';
         }
 
@@ -297,11 +299,10 @@
             document.getElementById('foto-popup-achtergrond').style.display = 'none';
         }
 
-       function toonFotoPopup(id) {
-    document.getElementById('foto-form').action = '/materiaal/' + id + '/foto';
-    document.getElementById('foto-verwijder-form').action = '/materiaal/' + id + '/foto-verwijderen';
-    document.getElementById('foto-popup-achtergrond').style.display = 'block';
-}
+        function toonGroteFoto(src) {
+            document.getElementById('grote-foto').src = src;
+            document.getElementById('grote-foto-achtergrond').style.display = 'block';
+        }
 
         // Live zoeken
         document.getElementById('zoekterm').addEventListener('keyup', function() {
