@@ -29,16 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['naam'] = $gebruiker['Naam'];
         $_SESSION['rol'] = $gebruiker['Rol'];
         
-        // Doorsturen op basis van rol
-    if ($gebruiker['Rol'] == 'Admin') {
-    header("Location: admin_panel.php");
-    } elseif ($gebruiker['Rol'] == 'Technieker') {
-    header("Location: technieker_panel.php");
-    } elseif ($gebruiker['Rol'] == 'Magazijnier') {
-    header("Location: magazijnier_panel.php");
-    } else {
-    header("Location: portaal.php");
-}
+        // Iedereen gaat eerst naar portaal.php
+    header("Location: leeg.php");
         exit();
     } else {
         $foutmelding = " Foutief emailadres of wachtwoord.";
@@ -185,9 +177,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 <button type="submit" class="btn-login"> Inloggen</button>
                             
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="register.php" style="color: #005b96; text-decoration: none;"> Geen account? Maak hier een account aan</a>
-            </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="register.php" style="color: #005b96; text-decoration: none;"> Geen account? Maak hier een account aan</a>
+                </div>
             </form>
             
             <div class="test-info">
