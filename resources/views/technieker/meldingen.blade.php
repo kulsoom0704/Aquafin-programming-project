@@ -1,4 +1,3 @@
-@extends('layouts.app')
 
 {{--
     Bestand: resources/views/technieker/meldingen.blade.php
