@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notitie extends Model
 {
-    protected $fillable = ['installatie_id', 'user_id', 'opmerking'];
+    
+    protected $fillable = ['installatie_id', 'user_id', 'opmerking', 'afbeelding'];
 
     public function installatie()
     {

@@ -81,19 +81,30 @@ class InstallatieController extends Controller
         return view('technieker.logboek', compact('installatie'));
     }
 
-    // Validatie en opslag van een nieuwe interventienotitie
+    // Validatie en opslag van een nieuwe interventienotitie MET FOTO
     public function storeNotitie(Request $request, $id)
     {
+        // 1. Validatie (Maintenant on autorise les images)
         $request->validate([
-            'opmerking' => 'required|string|min:3'
+            'opmerking' => 'required|string|min:3',
+            'afbeelding' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120' // Max 5MB
         ]);
 
         $installatie = Installatie::findOrFail($id);
 
+        // 2. Traitement du fichier image
+        $imagePath = null;
+        if ($request->hasFile('afbeelding')) {
+            // Sauvegarde dans storage/app/public/notities_images
+            $imagePath = $request->file('afbeelding')->store('notities_images', 'public');
+        }
+
+        // 3. Création de la note en base de données
         Notitie::create([
             'installatie_id' => $id,
             'user_id' => 1, // Lukas
-            'opmerking' => $request->opmerking
+            'opmerking' => $request->opmerking,
+            'afbeelding' => $imagePath // Le chemin de l'image est enregistré
         ]);
 
         // Logische update: De laatste onderhoudsdatum wordt direct naar NU gezet
@@ -147,5 +158,30 @@ class InstallatieController extends Controller
         $onderdeel->decrement('voorraad', $request->aantal);
 
         return redirect()->back()->with('success', "Bestelling succesvol geregistreerd voor {$request->aantal}x {$onderdeel->naam}.");
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Historiek van gevalideerde interventies
+    |--------------------------------------------------------------------------
+    */
+    public function historiek()
+    {
+        try {
+            $actieveTechniekerId = 1;
+
+            $notities = Notitie::where('user_id', $actieveTechniekerId)
+                ->with('installatie')
+                ->latest()
+                ->get();
+
+            return view('technieker.historiek', compact('notities'));
+
+        } catch (\Exception $e) {
+            return view('technieker.historiek', [
+                'notities' => collect(),
+                'error' => 'Er is een fout opgetreden bij het laden van de historiek.'
+            ]);
+        }
     }
 }

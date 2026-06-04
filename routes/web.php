@@ -33,4 +33,6 @@ Route::controller(InstallatieController::class)->group(function () {
     
     Route::post('/materiaal/bestellen', 'storeBestelling')->name('materiaal.store');
 
+    Route::get('/technieker/historiek', [InstallatieController::class, 'historiek'])->name('technieker.historiek');
+
 });

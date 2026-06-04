@@ -3,7 +3,7 @@
 {{--
     Bestand: resources/views/technieker/logboek.blade.php
     Doel: Logboekpagina voor de technieker. Toont installatiegegevens,
-    formulier om nieuwe notities toe te voegen en de historiek van notities.
+    formulier om nieuwe notities met optionele foto toe te voegen en de historiek.
 --}}
 
 @section('title', 'Logboek - ' . $installatie->naam)
@@ -63,15 +63,21 @@
             Nieuwe notitie toevoegen
         </h2>
         
-        {{-- Verstuur naar route die notities opslaat gekoppeld aan installatie id --}}
-        <form action="{{ route('notitie.store', $installatie->id) }}" method="POST">
+        {{-- NOUVEAU: enctype toegevoegd om bestanden te kunnen uploaden --}}
+        <form action="{{ route('notitie.store', $installatie->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="relative">
                 <textarea name="opmerking" rows="3" class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-4 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-aquaBlue/50 focus:border-aquaBlue transition-all resize-none" placeholder="Wat is er gebeurd tijdens de interventie? Geef details over vervangen onderdelen of opgeloste storingen..." required></textarea>
             </div>
             
-            <div class="flex justify-end mt-4">
-                <button type="submit" class="bg-aquaDark hover:bg-aquaBlue text-white font-semibold py-2.5 px-6 rounded-xl shadow-md shadow-aquaDark/20 transform hover:-translate-y-0.5 transition-all duration-200 active:scale-95 flex items-center">
+            {{-- NOUVEAU: Upload sectie inline geïntegreerd naast de knop --}}
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-5 gap-4">
+                <div class="w-full sm:w-auto flex-1">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Foto bijlage (optioneel)</label>
+                    <input type="file" name="afbeelding" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-50 file:text-aquaBlue hover:file:bg-blue-100 transition-all cursor-pointer">
+                </div>
+                
+                <button type="submit" class="w-full sm:w-auto bg-aquaDark hover:bg-aquaBlue text-white font-semibold py-2.5 px-6 rounded-xl shadow-md shadow-aquaDark/20 transform hover:-translate-y-0.5 transition-all duration-200 active:scale-95 flex items-center justify-center self-end">
                     <span>Notitie Opslaan</span>
                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
@@ -110,6 +116,13 @@
                                 </span>
                             </div>
                             <p class="text-gray-700 text-sm leading-relaxed">{{ $notitie->opmerking }}</p>
+
+                            {{-- NOUVEAU: Controleert of er een foto gekoppeld is aan de notitie --}}
+                            @if($notitie->afbeelding)
+                                <div class="mt-4 rounded-xl overflow-hidden border border-gray-200 bg-gray-100 max-w-xl group/img">
+                                    <img src="{{ asset('storage/' . $notitie->afbeelding) }}" alt="Visueel bewijs van interventie" class="w-full h-auto max-h-80 object-cover group-hover/img:scale-[1.01] transition-transform duration-300 cursor-pointer">
+                                </div>
+                            @endif
                         </div>
                     </div>
                 @endforeach
