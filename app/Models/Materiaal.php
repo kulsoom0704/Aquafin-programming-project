@@ -13,5 +13,6 @@ class Materiaal extends Model
         'omschrijving',
         'locatie',
         'beschikbaar',
+        'foto',
     ];
 }

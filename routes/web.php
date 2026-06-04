@@ -15,6 +15,8 @@ Route::get('/materiaal/create', [MateriaalController::class, 'create']);
 Route::post('/materiaal', [MateriaalController::class, 'store']);
 Route::get('/materiaal/{id}/wijzigen', [WijzigingsverzoekController::class, 'create']);
 Route::post('/materiaal/{id}/wijzigen', [WijzigingsverzoekController::class, 'store']);
+Route::post('/materiaal/{id}/foto', [MateriaalController::class, 'fotoUpload']);
+Route::post('/materiaal/{id}/foto-verwijderen', [MateriaalController::class, 'fotoVerwijderen']);
 
 Route::get('/levering', [MateriaalController::class, 'leveringCreate']);
 Route::post('/levering', [MateriaalController::class, 'leveringStore']);

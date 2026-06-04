@@ -40,6 +40,7 @@ class MateriaalController extends Controller
             'omschrijving'  => 'required',
             'locatie'       => 'required',
             'beschikbaar'   => 'required|integer|min:1',
+            'foto'          => 'nullable|image|max:2048',
         ], [
             'artikelnummer.required' => 'Artikelnummer is verplicht.',
             'omschrijving.required'  => 'Omschrijving is verplicht.',
@@ -47,12 +48,22 @@ class MateriaalController extends Controller
             'beschikbaar.required'   => 'Beschikbaar is verplicht.',
             'beschikbaar.integer'    => 'Beschikbaar moet een getal zijn.',
             'beschikbaar.min'        => 'Beschikbaar moet minimaal 1 zijn.',
+            'foto.image'             => 'Het bestand moet een afbeelding zijn.',
+            'foto.max'               => 'De foto mag maximaal 2MB zijn.',
         ]);
+
+        $fotopad = null;
+        if ($request->hasFile('foto')) {
+            $fotopad = $request->file('foto')->store('fotos', 'public');
+        }
 
         $materiaal = Materiaal::where('artikelnummer', $request->artikelnummer)->first();
 
         if ($materiaal) {
             $materiaal->beschikbaar += $request->beschikbaar;
+            if ($fotopad) {
+                $materiaal->foto = $fotopad;
+            }
             $materiaal->save();
         } else {
             Materiaal::create([
@@ -60,6 +71,7 @@ class MateriaalController extends Controller
                 'omschrijving'  => $request->omschrijving,
                 'locatie'       => $request->locatie,
                 'beschikbaar'   => $request->beschikbaar,
+                'foto'          => $fotopad,
             ]);
         }
 
@@ -129,4 +141,33 @@ class MateriaalController extends Controller
 
         return redirect('/materiaal')->with('succes', 'Retour geregistreerd!');
     }
+
+    // Upload foto voor een artikel
+    public function fotoUpload(Request $request, $id)
+    {
+        $request->validate([
+            'foto' => 'required|image|max:2048',
+        ], [
+            'foto.required' => 'Kies een foto.',
+            'foto.image'    => 'Het bestand moet een afbeelding zijn.',
+            'foto.max'      => 'De foto mag maximaal 2MB zijn.',
+        ]);
+
+        $materiaal = Materiaal::find($id);
+
+        // Foto opslaan
+        $fotopad = $request->file('foto')->store('fotos', 'public');
+        $materiaal->foto = $fotopad;
+        $materiaal->save();
+
+        return redirect('/materiaal')->with('succes', 'Foto opgeslagen!');
+    }
+    public function fotoVerwijderen($id)
+{
+    $materiaal = Materiaal::find($id);
+    $materiaal->foto = null;
+    $materiaal->save();
+
+    return redirect('/materiaal')->with('succes', 'Foto verwijderd!');
+}
 }

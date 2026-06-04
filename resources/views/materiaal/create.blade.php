@@ -73,7 +73,7 @@
     <h1>Nieuw artikel toevoegen</h1>
 
     <div class="formulier">
-        <form method="POST" action="/materiaal">
+        <form method="POST" action="/materiaal" enctype="multipart/form-data">
             @csrf
 
             <label>Artikelnummer</label>
@@ -91,6 +91,10 @@
             <label>Beschikbaar</label>
             <input type="number" name="beschikbaar" value="{{ old('beschikbaar') }}">
             @error('beschikbaar') <p class="fout">{{ $message }}</p> @enderror
+
+            <label>Foto (optioneel)</label>
+            <input type="file" name="foto" accept="image/*">
+            @error('foto') <p class="fout">{{ $message }}</p> @enderror
 
             <button type="submit" class="btn-opslaan">Opslaan</button>
         </form>
