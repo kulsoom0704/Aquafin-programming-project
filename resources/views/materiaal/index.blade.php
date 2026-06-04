@@ -152,7 +152,7 @@
     <a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a>
     <a href="/levering" class="btn-nieuw">+ Nieuwe levering</a>
     <a href="/retour" class="btn-nieuw">+ Retour registreren</a>
-    <a href="/meldingen" class="btn-nieuw">🔔 Meldingen</a>
+    <a href="/meldingen" class="btn-nieuw"> Meldingen</a>
 
     <br><br>
 

@@ -82,7 +82,7 @@
     <h1>Artikel wijzigen</h1>
 
     <div class="formulier">
-        <p class="info">⚠️ Je wijziging wordt eerst nagekeken door de admin voor het wordt toegepast.</p>
+        <p class="info"> Je wijziging wordt eerst nagekeken door de admin voor het wordt toegepast.</p>
 
         <form method="POST" action="/materiaal/{{ $materiaal->id }}/wijzigen">
             @csrf
