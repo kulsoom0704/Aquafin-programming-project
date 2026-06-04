@@ -31,12 +31,12 @@ try {
         $test_wachtwoord = password_hash("admin123", PASSWORD_DEFAULT);
         $insert = $conn->prepare("INSERT INTO Gebruikers (Naam, Email, Wachtwoord, Rol) VALUES (?, ?, ?, ?)");
         $insert->execute(['Admin Test', 'admin@aquafin.be', $test_wachtwoord, 'Admin']);
-        echo "✅ Test Admin account aangemaakt!<br>";
-        echo "📧 Email: admin@aquafin.be<br>";
-        echo "🔑 Wachtwoord: admin123<br>";
+        echo " Test Admin account aangemaakt!<br>";
+        echo " Email: admin@aquafin.be<br>";
+        echo " Wachtwoord: admin123<br>";
     }
     
 } catch (PDOException $e) {
-    die("❌ Database fout: " . $e->getMessage());
+    die(" Database fout: " . $e->getMessage());
 }
 ?>

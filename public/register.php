@@ -14,41 +14,49 @@ try {
     die("Database fout: " . $e->getMessage());
 }
 
+$succesmelding = "";
 $foutmelding = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $naam = $_POST['naam'];
     $email = $_POST['email'];
     $wachtwoord = $_POST['wachtwoord'];
+    $wachtwoord_bevestigen = $_POST['wachtwoord_bevestigen'];
     
-    $stmt = $db->prepare("SELECT * FROM Gebruikers WHERE Email = ?");
-    $stmt->execute([$email]);
-    $gebruiker = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if ($gebruiker && password_verify($wachtwoord, $gebruiker['Wachtwoord'])) {
-        $_SESSION['gebruiker_id'] = $gebruiker['GebruikersID'];
-        $_SESSION['naam'] = $gebruiker['Naam'];
-        $_SESSION['rol'] = $gebruiker['Rol'];
+    // Validatie
+    if (empty($naam) || empty($email) || empty($wachtwoord)) {
+        $foutmelding = " Alle velden zijn verplicht!";
+    } elseif ($wachtwoord != $wachtwoord_bevestigen) {
+        $foutmelding = " Wachtwoorden komen niet overeen!";
+    } elseif (strlen($wachtwoord) < 4) {
+        $foutmelding = " Wachtwoord moet minimaal 4 tekens zijn!";
+    } else {
+        // Check of email al bestaat
+        $check = $db->prepare("SELECT * FROM Gebruikers WHERE Email = ?");
+        $check->execute([$email]);
         
-        // Doorsturen op basis van rol
-    if ($gebruiker['Rol'] == 'Admin') {
-    header("Location: admin_panel.php");
-    } elseif ($gebruiker['Rol'] == 'Technieker') {
-    header("Location: technieker_panel.php");
-    } elseif ($gebruiker['Rol'] == 'Magazijnier') {
-    header("Location: magazijnier_panel.php");
-    } else {
-    header("Location: portaal.php");
-}
-        exit();
-    } else {
-        $foutmelding = " Foutief emailadres of wachtwoord.";
+        if ($check->fetch()) {
+            $foutmelding = " Dit emailadres bestaat al!";
+        } else {
+            // Nieuwe gebruiker toevoegen (standaard rol = Technieker)
+            $gehasht_wachtwoord = password_hash($wachtwoord, PASSWORD_DEFAULT);
+            $stmt = $db->prepare("INSERT INTO Gebruikers (Naam, Email, Wachtwoord, Rol) VALUES (?, ?, ?, ?)");
+            
+            if ($stmt->execute([$naam, $email, $gehasht_wachtwoord, 'Technieker'])) {
+                $succesmelding = " Account succesvol aangemaakt! Je kunt nu inloggen.";
+                // Optioneel: na 2 seconden doorsturen naar login
+                header("refresh:2; url=login.php");
+            } else {
+                $foutmelding = " Fout bij het aanmaken van account.";
+            }
+        }
     }
 }
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login - Aquafin Portaal</title>
+    <title>Account aanmaken - Aquafin</title>
     <style>
         * {
             margin: 0;
@@ -65,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             align-items: center;
         }
         
-        .login-container {
+        .register-container {
             background-color: white;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
@@ -86,12 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-bottom: 10px;
         }
         
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        .login-body {
+        .register-body {
             padding: 30px;
         }
         
@@ -112,7 +115,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 14px;
-            transition: border-color 0.3s;
         }
         
         .input-group input:focus {
@@ -120,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-color: #005b96;
         }
         
-        .btn-login {
+        .btn-register {
             width: 100%;
             background: linear-gradient(135deg, #005b96 0%, #003d66 100%);
             color: white;
@@ -130,14 +132,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
         }
         
-        .btn-login:hover {
-            transform: translateY(-2px);
+        .succes {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
         }
         
-        .foutmelding {
+        .fout {
             background-color: #f8d7da;
             color: #721c24;
             padding: 10px;
@@ -146,54 +152,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             text-align: center;
         }
         
-        .test-info {
-            background-color: #e2f0fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
+        .login-link {
             text-align: center;
-            font-size: 13px;
+            margin-top: 20px;
         }
         
-        .test-info strong {
+        .login-link a {
             color: #005b96;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="register-container">
         <div class="header">
-            <h1> AQUAFIN</h1>
-            <p>Portaal voor medewerkers</p>
+            <h1> Account aanmaken</h1>
+            <p>Word lid van Aquafin</p>
         </div>
         
-        <div class="login-body">
+        <div class="register-body">
+            <?php if ($succesmelding != ""): ?>
+                <div class="succes"><?php echo $succesmelding; ?></div>
+            <?php endif; ?>
+            
             <?php if ($foutmelding != ""): ?>
-                <div class="foutmelding"><?php echo $foutmelding; ?></div>
+                <div class="fout"><?php echo $foutmelding; ?></div>
             <?php endif; ?>
             
             <form method="POST" action="">
                 <div class="input-group">
+                    <label> Volledige naam</label>
+                    <input type="text" name="naam" placeholder="bv. Jan Janssens" required>
+                </div>
+                
+                <div class="input-group">
                     <label> Emailadres</label>
-                    <input type="email" name="email" placeholder="vul je email in" required>
+                    <input type="email" name="email" placeholder="bv. jan@aquafin.be" required>
                 </div>
                 
                 <div class="input-group">
                     <label> Wachtwoord</label>
-                    <input type="password" name="wachtwoord" placeholder="vul je wachtwoord in" required>
+                    <input type="password" name="wachtwoord" placeholder="minimaal 4 tekens" required>
                 </div>
                 
-                <button type="submit" class="btn-login"> Inloggen</button>
-                            
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="register.php" style="color: #005b96; text-decoration: none;"> Geen account? Maak hier een account aan</a>
-            </div>
+                <div class="input-group">
+                    <label> Bevestig wachtwoord</label>
+                    <input type="password" name="wachtwoord_bevestigen" placeholder="typ hetzelfde wachtwoord" required>
+                </div>
+                
+                <button type="submit" class="btn-register"> Account aanmaken</button>
             </form>
             
-            <div class="test-info">
-                <strong> Test Admin</strong><br>
-                Email: admin@aquafin.be<br>
-                Wachtwoord: admin123
+            <div class="login-link">
+                <a href="login.php">← Terug naar inloggen</a>
             </div>
         </div>
     </div>
