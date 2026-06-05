@@ -14,3 +14,13 @@ class Melding extends Model
         'gelezen',
     ];
 }
+        'installatie_id',
+        'status',
+        'bericht'
+    ];
+
+    public function installatie()
+    {
+        return $this->belongsTo(Installatie::class);
+    }
+}
