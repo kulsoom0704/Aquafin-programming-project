@@ -2,24 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Onderdeel;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. Technici
+        User::create(['name' => 'Lukas Peeters', 'email' => 'lukas@aquafin.be', 'password' => Hash::make('password')]);
+        User::create(['name' => 'Emma Claes', 'email' => 'emma@aquafin.be', 'password' => Hash::make('password')]);
+        User::create(['name' => 'Thomas Maes', 'email' => 'thomas@aquafin.be', 'password' => Hash::make('password')]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // 2. Materiaal in voorraad
+        Onderdeel::create(['naam' => 'Oliefilter Type B', 'voorraad' => 15]);
+        Onderdeel::create(['naam' => 'Rubber Dichting 40mm', 'voorraad' => 50]);
+        Onderdeel::create(['naam' => 'Hydraulische Pomp XL', 'voorraad' => 0]);
+
+        
+        $this->call([
+            InstallatieSeeder::class,
         ]);
     }
 }
