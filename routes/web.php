@@ -4,90 +4,63 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MateriaalController;
 use App\Http\Controllers\MeldingController;
 use App\Http\Controllers\WijzigingsverzoekController;
-
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstallatieController;
 
 /*
 |--------------------------------------------------------------------------
-| Standaard Route (Algemeen)
+|login, register, admin_panel, magazijnier_panel, portaal Routes
 |--------------------------------------------------------------------------
 */
 
-// Startpagina met 3 kaarten
-Route::get('/', function () {
-    return view('start');
-});
+Route::get('/', function () { require public_path('start.php'); exit; });
+Route::any('/start.php', function () { require public_path('start.php'); exit; });
+Route::any('/login.php', function () { require public_path('login.php'); exit; });
+Route::any('/register.php', function () { require public_path('register.php'); exit; });
+Route::any('/leeg.php', function () { require public_path('leeg.php'); exit; });
+Route::any('/logout.php', function () { require public_path('logout.php'); exit; });
+Route::any('/admin_panel.php', function () { require public_path('admin_panel.php'); exit; });
+Route::any('/magazijnier_panel.php', function () { require public_path('magazijnier_panel.php'); exit; });
+Route::any('/portaal.php', function () { require public_path('portaal.php'); exit; });
 
-// Login pagina
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
 
-// Login verwerken
-Route::post('/login', function () {
-    // Hier komt later de login logica
-    return view('login');
-});
+/*
+|--------------------------------------------------------------------------
+|  Technieker 
+|--------------------------------------------------------------------------
+*/
 
-// Registratie pagina
-Route::get('/register', function () {
-    return view('register');
-});
 
-// Admin panel
-Route::get('/admin', function () {
-    return view('admin_panel');
-});
-
-// Technieker panel
 Route::get('/technieker', function () {
-    return view('technieker_panel');
-});
-
-// Magazijnier panel
-Route::get('/magazijnier', function () {
-    return view('magazijnier_panel');
-});
-
-// Portaal
-Route::get('/portaal', function () {
-    return view('portaal');
-});
-
-// Uitloggen
-Route::get('/logout', function () {
-    return view('logout');
-});
     return redirect()->route('technieker.meldingen');
 });
+
+Route::controller(InstallatieController::class)->group(function () {
+    Route::get('/technieker/meldingen', 'meldingen')->name('technieker.meldingen');
+    Route::get('/installatie/{id}', 'show')->name('installatie.show');
+    Route::post('/installatie/{id}/notitie', 'storeNotitie')->name('notitie.store');
+    Route::get('/materiaal/bestellen', 'showBestelformulier')->name('materiaal.bestellen');
+    Route::post('/materiaal/bestellen', 'storeBestelling')->name('materiaal.store');
+    Route::get('/technieker/historiek', 'historiek')->name('technieker.historiek');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes (Laravel)
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 Route::get('/admin/users', [AdminController::class, 'users']);
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 
+
 /*
 |--------------------------------------------------------------------------
-| Installaties, Logboek & Bestellingen (InstallatieController)
+| Materiaal, Levering & Retour (Magazijnier & Meldingen en Laravel)
 |--------------------------------------------------------------------------
 */
-
-Route::controller(InstallatieController::class)->group(function () {
-    
-    
-    Route::get('/technieker/meldingen', 'meldingen')->name('technieker.meldingen');
-
-    Route::get('/installatie/{id}', 'show')->name('installatie.show');
-
-    Route::post('/installatie/{id}/notitie', 'storeNotitie')->name('notitie.store');
-
-    Route::get('/materiaal/bestellen', 'showBestelformulier')->name('materiaal.bestellen');
-    
-    Route::post('/materiaal/bestellen', 'storeBestelling')->name('materiaal.store');
-
-    Route::get('/technieker/historiek', [InstallatieController::class, 'historiek'])->name('technieker.historiek');
-
-});
 
 Route::get('/materiaal', [MateriaalController::class, 'index']);
 Route::get('/materiaal/create', [MateriaalController::class, 'create']);

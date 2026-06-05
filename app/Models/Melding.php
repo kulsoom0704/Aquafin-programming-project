@@ -8,15 +8,13 @@ class Melding extends Model
 {
     protected $table = 'meldingen';
 
+    // On combine tous vos champs
     protected $fillable = [
         'titel',
         'bericht',
         'gelezen',
-    ];
-}
         'installatie_id',
-        'status',
-        'bericht'
+        'status'
     ];
 
     public function installatie()
