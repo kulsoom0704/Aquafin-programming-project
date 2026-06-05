@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class WeerController extends Controller
 {
@@ -43,20 +44,45 @@ public function dashboard(){
             $overstromingsgevaar = 'Laag';
         }
 
-        $voorspellingen = [
+//         $voorspellingen = [
+//     [
+//         'dag' => 'Vrijdag',
+//         'neerslag' => 12
+//     ],
+//     [
+//         'dag' => 'Zaterdag',
+//         'neerslag' => 18
+//     ],
+//     [
+//         'dag' => 'Zondag',
+//         'neerslag' => 4
+//     ]
+// ];
+        $response = Http::get(
+    'https://api.open-meteo.com/v1/forecast',
     [
-        'dag' => 'Vrijdag',
-        'neerslag' => 12
-    ],
-    [
-        'dag' => 'Zaterdag',
-        'neerslag' => 18
-    ],
-    [
-        'dag' => 'Zondag',
-        'neerslag' => 4
+        'latitude' => 50.85,
+        'longitude' => 4.35,
+        'daily' => 'precipitation_sum',
+        'forecast_days' => 3,
+        'timezone' => 'Europe/Brussels'
     ]
-];
+);
+
+$data = $response->json();
+
+$voorspellingen = [];
+
+$dagen = $data['daily']['time'];
+$neerslagWaarden = $data['daily']['precipitation_sum'];
+
+foreach ($dagen as $index => $datum) {
+
+    $voorspellingen[] = [
+        'dag' => \Carbon\Carbon::parse($datum)->translatedFormat('l'),
+        'neerslag' => $neerslagWaarden[$index]
+    ];
+}
         return view('technieker.weer', compact(
             'jaar',
             'seizoen',
