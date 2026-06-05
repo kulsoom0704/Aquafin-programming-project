@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 
 class WeerController extends Controller
 {
-     public function dashboard()
-    {
+public function dashboard(){
+    try {
+
         $jaar = 2025;
 
         $neerslag = [
@@ -25,7 +26,6 @@ class WeerController extends Controller
             'december' => 108,
         ];
 
-        // Zomer = juni + juli + augustus
         $totaleNeerslagSeizoen =
             $neerslag['juni'] +
             $neerslag['juli'] +
@@ -37,16 +37,41 @@ class WeerController extends Controller
 
         if ($totaleNeerslagSeizoen >= $grenswaarde) {
             $overstromingsgevaar = 'Hoog';
+        } elseif ($totaleNeerslagSeizoen >= ($grenswaarde * 0.8)) {
+            $overstromingsgevaar = 'Gemiddeld';
         } else {
             $overstromingsgevaar = 'Laag';
         }
 
+        $voorspellingen = [
+    [
+        'dag' => 'Vrijdag',
+        'neerslag' => 12
+    ],
+    [
+        'dag' => 'Zaterdag',
+        'neerslag' => 18
+    ],
+    [
+        'dag' => 'Zondag',
+        'neerslag' => 4
+    ]
+];
         return view('technieker.weer', compact(
             'jaar',
             'seizoen',
             'totaleNeerslagSeizoen',
             'grenswaarde',
-            'overstromingsgevaar'
+            'overstromingsgevaar',
+            'voorspellingen'
         ));
+
+    } catch (\Exception $e) {
+
+        return view('technieker.weer', [
+            'foutmelding' =>
+                'Geen weersgegevens beschikbaar.'
+        ]);
     }
+}
 }

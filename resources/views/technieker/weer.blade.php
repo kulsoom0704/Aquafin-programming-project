@@ -1,34 +1,113 @@
 @extends('layouts.app')
 
+@section('title', 'Weerdashboard')
+
 @section('content')
 
-<div class="container">
+@if(isset($foutmelding))
 
-    <h1>Weerdashboard</h1>
+<div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl mb-6">
+    {{ $foutmelding }}
+</div>
 
-    <div class="card">
-        <div class="card-body">
+@else
 
-            <h4>{{ $seizoen }} {{ $jaar }}</h4>
+<div class="space-y-8">
 
-            <p>
-                Totale neerslag seizoen:
-                <strong>{{ $totaleNeerslagSeizoen }} mm</strong>
+    <div>
+        <h1 class="text-5xl font-extrabold text-aquaDark tracking-tight">
+            Weerdashboard
+        </h1>
+
+        <p class="mt-2 text-gray-500 text-lg">
+            Bekijk neerslaggegevens en overstromingsgevaar voor jouw regio.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+            <p class="text-sm uppercase tracking-wider text-gray-400 font-semibold">
+                Seizoen
             </p>
 
-            <p>
-                Grenswaarde:
-                <strong>{{ $grenswaarde }} mm</strong>
-            </p>
+            <h2 class="text-3xl font-bold text-aquaDark mt-3">
+                {{ $seizoen }}
+            </h2>
 
-            <p>
-                Overstromingsgevaar:
-                <strong>{{ $overstromingsgevaar }}</strong>
+            <p class="text-gray-500 mt-2">
+                Jaar {{ $jaar }}
             </p>
-
         </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+            <p class="text-sm uppercase tracking-wider text-gray-400 font-semibold">
+                Totale Neerslag
+            </p>
+
+            <h2 class="text-3xl font-bold text-aquaBlue mt-3">
+                {{ $totaleNeerslagSeizoen }} mm
+            </h2>
+
+            <p class="text-gray-500 mt-2">
+                Gemeten voor dit seizoen
+            </p>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+            <p class="text-sm uppercase tracking-wider text-gray-400 font-semibold">
+                Overstromingsgevaar
+            </p>
+
+            <h2 class="text-3xl font-bold mt-3
+                @if($overstromingsgevaar === 'Hoog')
+                    text-red-500
+                @elseif($overstromingsgevaar === 'Gemiddeld')
+                    text-yellow-500
+                @else
+                    text-green-500
+                @endif">
+                {{ $overstromingsgevaar }}
+            </h2>
+
+            <p class="text-gray-500 mt-2">
+                Grenswaarde: {{ $grenswaarde }} mm
+            </p>
+        </div>
+
     </div>
 
 </div>
+    <div class="mt-12">
 
+    <h2 class="text-2xl font-bold text-aquaDark mb-6">
+        Voorspelling komende dagen
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        @foreach($voorspellingen as $voorspelling)
+
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+
+                <p class="text-sm uppercase tracking-wider text-gray-400 font-semibold">
+                    {{ $voorspelling['dag'] }}
+                </p>
+
+                <h3 class="text-3xl font-bold text-aquaBlue mt-3">
+                    {{ $voorspelling['neerslag'] }} mm
+                </h3>
+
+                <p class="text-gray-500 mt-2">
+                    Verwachte neerslag
+                </p>
+
+            </div>
+
+        @endforeach
+
+    </div>
+
+</div>
+@endif
 @endsection
