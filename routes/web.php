@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstallatieController;
+use App\Http\Controllers\WeerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,5 +35,7 @@ Route::controller(InstallatieController::class)->group(function () {
     Route::post('/materiaal/bestellen', 'storeBestelling')->name('materiaal.store');
 
     Route::get('/technieker/historiek', [InstallatieController::class, 'historiek'])->name('technieker.historiek');
+
+    Route::get('/technieker/weer', [WeerController::class, 'dashboard'])->name('technieker.weer');
 
 });

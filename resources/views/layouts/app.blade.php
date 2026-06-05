@@ -85,6 +85,10 @@
                     <a href="{{ route('technieker.historiek') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ Request::routeIs('technieker.historiek') ? 'bg-aquaDark text-white' : 'text-gray-300 hover:text-white' }}">
                         Historiek
                     </a>
+                    <a href="{{ route('technieker.weer') }}"
+   class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ Request::routeIs('technieker.weer') ? 'bg-aquaDark text-white' : 'text-gray-300 hover:text-white' }}">
+    Weer
+</a>
                 </div>
 
                 <div class="flex items-center space-x-4">
