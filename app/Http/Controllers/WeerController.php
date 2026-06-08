@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Models\Onderdeel;
 
 class WeerController extends Controller
 {
 public function dashboard(){
+    $kritiekeMaterialen = Onderdeel::all();
     try {
 
         $jaar = 2025;
@@ -43,21 +45,8 @@ public function dashboard(){
         } else {
             $overstromingsgevaar = 'Laag';
         }
+        $kritiekeMaterialen = Onderdeel::all();
 
-//         $voorspellingen = [
-//     [
-//         'dag' => 'Vrijdag',
-//         'neerslag' => 12
-//     ],
-//     [
-//         'dag' => 'Zaterdag',
-//         'neerslag' => 18
-//     ],
-//     [
-//         'dag' => 'Zondag',
-//         'neerslag' => 4
-//     ]
-// ];
         $response = Http::get(
     'https://api.open-meteo.com/v1/forecast',
     [
@@ -89,7 +78,8 @@ foreach ($dagen as $index => $datum) {
             'totaleNeerslagSeizoen',
             'grenswaarde',
             'overstromingsgevaar',
-            'voorspellingen'
+            'voorspellingen',
+            'kritiekeMaterialen',
         ));
 
     } catch (\Exception $e) {

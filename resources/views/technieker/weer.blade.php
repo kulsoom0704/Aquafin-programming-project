@@ -109,5 +109,46 @@
     </div>
 
 </div>
+<div class="mt-12">
+
+    <h2 class="text-2xl font-bold text-aquaDark mb-6">
+        Materiaalbeschikbaarheid
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        @foreach($kritiekeMaterialen as $materiaal)
+
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+
+                <h3 class="text-lg font-bold text-aquaDark">
+                    {{ $materiaal->naam }}
+                </h3>
+
+                <p class="text-gray-600 mt-2">
+                    Voorraad: {{ $materiaal->voorraad }}
+                </p>
+
+                @if($materiaal->voorraad > 0)
+
+                    <p class="text-green-600 font-semibold mt-2">
+                        ✓ Beschikbaar
+                    </p>
+
+                @else
+
+                    <p class="text-red-600 font-semibold mt-2">
+                        ⚠ Niet beschikbaar
+                    </p>
+
+                @endif
+
+            </div>
+
+        @endforeach
+
+    </div>
+
+</div>
 @endif
 @endsection
