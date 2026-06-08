@@ -126,5 +126,119 @@
         
     </main>
 
+    <div id="support-widget" class="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
+        
+        <div id="chat-panel" class="hidden w-80 sm:w-96 glass-card rounded-2xl overflow-hidden mb-4 shadow-2xl transition-all origin-bottom-right border border-white/50">
+            
+            <div class="bg-gradient-to-r from-[#005b96] to-cyan-500 p-4 flex justify-between items-center text-white shadow-md">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <div>
+                        <span class="block font-bold leading-tight">Aquafin Support</span>
+                        <span class="block text-[10px] text-cyan-100 uppercase tracking-widest font-semibold">Live Dispatch</span>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-white/80 hover:text-white hover:rotate-90 transition-all duration-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="p-5 bg-white/60 backdrop-blur-xl">
+                <p class="text-sm text-slate-600 mb-5 font-medium leading-relaxed">Heb je dringend hulp nodig op de werkvloer? Stuur direct een noodoproep naar het magazijn of de admin.</p>
+                
+                <form id="emergency-chat-form" onsubmit="sendEmergencyMessage(event)">
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wide">Type probleem</label>
+                        <select name="type" required class="w-full bg-white border border-slate-200 text-slate-700 text-sm py-2.5 px-3 rounded-xl focus:outline-none focus:border-[#005b96] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm">
+                            <option value="" disabled selected>Selecteer de urgentie...</option>
+                            <option value="Materiaal onverwacht defect">Materiaal onverwacht defect</option>
+                            <option value="Dringende stockaanvulling nodig">Dringende stockaanvulling nodig</option>
+                            <option value="Technisch advies nodig (Admin)">Technisch advies nodig (Admin)</option>
+                            <option value="Andere noodsituatie">Andere noodsituatie</option>
+                        </select>
+                    </div>
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wide">Jouw Bericht</label>
+                        <textarea name="bericht" required rows="3" placeholder="Beschrijf de situatie kort en bondig..." class="w-full bg-white border border-slate-200 text-slate-700 text-sm py-2.5 px-3 rounded-xl focus:outline-none focus:border-[#005b96] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-[#005b96] hover:bg-blue-800 text-white font-bold rounded-xl text-sm transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 flex justify-center items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        Verstuur Noodoproep
+                    </button>
+                </form>
+            </div>
+            
+            <div id="chat-success" class="hidden p-8 text-center bg-white/80 backdrop-blur-xl">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800 mb-2">Oproep verzonden!</h3>
+                <p class="text-sm text-slate-500 mb-6 font-medium">De dispatch heeft je bericht ontvangen. We nemen zo snel mogelijk contact met je op.</p>
+                <button onclick="toggleChat()" class="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors">Sluiten</button>
+            </div>
+        </div>
+
+        <button onclick="toggleChat()" class="w-16 h-16 bg-gradient-to-r from-[#005b96] to-cyan-500 text-white rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(0,91,150,0.4)] hover:shadow-[0_15px_35px_rgba(0,91,150,0.6)] hover:scale-110 transition-all duration-300 group z-50">
+            <svg class="w-7 h-7 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        </button>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const panel = document.getElementById('chat-panel');
+            const formContainer = document.getElementById('emergency-chat-form').parentElement;
+            const successContainer = document.getElementById('chat-success');
+            
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                formContainer.classList.remove('hidden');
+                successContainer.classList.add('hidden');
+                document.getElementById('emergency-chat-form').reset();
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        
+        function sendEmergencyMessage(event) {
+            event.preventDefault(); 
+            
+            const form = document.getElementById('emergency-chat-form');
+            const formData = new FormData(form);
+
+            
+            fetch("{{ route('support.noodoproep') }}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    
+                    const formContainer = form.parentElement;
+                    const successContainer = document.getElementById('chat-success');
+                    formContainer.classList.add('hidden');
+                    successContainer.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        if (!document.getElementById('chat-panel').classList.contains('hidden')) {
+                            toggleChat();
+                        }
+                    }, 4000);
+                } else {
+                    alert('Er is iets fout gegaan bij het versturen.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Netwerkfout opgetreden.');
+            });
+        }
+    </script>
 </body>
 </html>

@@ -183,4 +183,21 @@ class InstallatieController extends Controller
             ]);
         }
     }
+
+    public function storeNoodoproep(Request $request)
+    {
+        try {
+            \App\Models\Noodoproep::create([
+                'user_id' => session('gebruiker_id', 1), 
+                'type' => $request->type,
+                'bericht' => $request->bericht,
+                'status' => 'open'
+            ]);
+
+            
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }

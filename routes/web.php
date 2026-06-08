@@ -43,6 +43,7 @@ Route::controller(InstallatieController::class)->group(function () {
     Route::post('/materiaal/bestellen', 'storeBestelling')->name('materiaal.store');
     Route::get('/technieker/historiek', 'historiek')->name('technieker.historiek');
     Route::post('/installatie/{id}/valideren', 'valideren')->name('installatie.valideren');
+    Route::post('/support/noodoproep', [App\Http\Controllers\InstallatieController::class, 'storeNoodoproep'])->name('support.noodoproep');
 });
 
 
