@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MateriaalController;
 use App\Http\Controllers\MeldingController;
 use App\Http\Controllers\WijzigingsverzoekController;
@@ -9,27 +10,26 @@ use App\Http\Controllers\InstallatieController;
 
 /*
 |--------------------------------------------------------------------------
-|login, register, admin_panel, magazijnier_panel, portaal Routes
+| Portal & Auth Routes (Nouveau et sécurisé)
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () { require public_path('start.php'); exit; });
-Route::any('/start.php', function () { require public_path('start.php'); exit; });
-Route::any('/login.php', function () { require public_path('login.php'); exit; });
-Route::any('/register.php', function () { require public_path('register.php'); exit; });
-Route::any('/leeg.php', function () { require public_path('leeg.php'); exit; });
-Route::any('/logout.php', function () { require public_path('logout.php'); exit; });
-Route::any('/admin_panel.php', function () { require public_path('admin_panel.php'); exit; });
-Route::any('/magazijnier_panel.php', function () { require public_path('magazijnier_panel.php'); exit; });
-Route::any('/portaal.php', function () { require public_path('portaal.php'); exit; });
+
+Route::get('/', function () {
+    return view('portal');
+})->name('home');
+
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 /*
 |--------------------------------------------------------------------------
-|  Technieker 
+| Technieker Routes
 |--------------------------------------------------------------------------
 */
-
 
 Route::get('/technieker', function () {
     return redirect()->route('technieker.meldingen');
@@ -42,6 +42,7 @@ Route::controller(InstallatieController::class)->group(function () {
     Route::get('/materiaal/bestellen', 'showBestelformulier')->name('materiaal.bestellen');
     Route::post('/materiaal/bestellen', 'storeBestelling')->name('materiaal.store');
     Route::get('/technieker/historiek', 'historiek')->name('technieker.historiek');
+    Route::post('/installatie/{id}/valideren', 'valideren')->name('installatie.valideren');
 });
 
 
@@ -58,7 +59,7 @@ Route::get('/admin/reports', [AdminController::class, 'reports']);
 
 /*
 |--------------------------------------------------------------------------
-| Materiaal, Levering & Retour (Magazijnier & Meldingen en Laravel)
+| Materiaal, Levering & Retour (Magazijnier & Meldingen)
 |--------------------------------------------------------------------------
 */
 
@@ -80,3 +81,5 @@ Route::get('/meldingen', [MeldingController::class, 'index']);
 Route::post('/meldingen/{id}/gelezen', [MeldingController::class, 'gelezen']);
 Route::post('/meldingen/{id}/ongelezen', [MeldingController::class, 'ongelezen']);
 Route::post('/meldingen/{id}/verwijderen', [MeldingController::class, 'verwijderen']);
+
+
