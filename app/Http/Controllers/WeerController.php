@@ -45,7 +45,24 @@ public function dashboard(){
         } else {
             $overstromingsgevaar = 'Laag';
         }
-        $kritiekeMaterialen = Onderdeel::all();
+        if ($overstromingsgevaar == 'Hoog') {
+            dd($overstromingsgevaar);
+
+    $kritiekeMaterialen = Onderdeel::whereIn('naam', [
+        'Hydraulische Pomp XL',
+        'Rubber Dichting 40mm'
+    ])->get();
+
+        } elseif ($overstromingsgevaar == 'Gemiddeld') {
+
+    $kritiekeMaterialen = Onderdeel::whereIn('naam', [
+        'Rubber Dichting 40mm',
+        'Oliefilter Type B'
+    ])->get();
+
+    } else {
+
+    }
 
         $response = Http::get(
     'https://api.open-meteo.com/v1/forecast',
@@ -56,7 +73,7 @@ public function dashboard(){
         'forecast_days' => 3,
         'timezone' => 'Europe/Brussels'
     ]
-);
+    );
 
 $data = $response->json();
 
@@ -71,7 +88,7 @@ foreach ($dagen as $index => $datum) {
         'dag' => \Carbon\Carbon::parse($datum)->translatedFormat('l'),
         'neerslag' => $neerslagWaarden[$index]
     ];
-}
+    }
         return view('technieker.weer', compact(
             'jaar',
             'seizoen',
@@ -89,5 +106,5 @@ foreach ($dagen as $index => $datum) {
                 'Geen weersgegevens beschikbaar.'
         ]);
     }
-}
+    }
 }

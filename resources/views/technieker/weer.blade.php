@@ -108,14 +108,39 @@
 
     </div>
 
-</div>
-<div class="mt-12">
+    </div>
+        <div class="mt-12">
 
-    <h2 class="text-2xl font-bold text-aquaDark mb-6">
-        Materiaalbeschikbaarheid
-    </h2>
+        <h2 class="text-2xl font-bold text-aquaDark mb-2">
+        Kritieke Materialen
+        </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <p class="text-gray-500 mb-6">
+        Aanbevolen materialen op basis van het actuele overstromingsgevaar.
+        </p>
+            @if($overstromingsgevaar == 'Hoog')
+        <div class="bg-red-100 border border-red-300 text-red-700 p-4 rounded-xl mb-6">
+            ⚠ Hoog overstromingsgevaar gedetecteerd. Controleer de voorraad van kritieke onderdelen.
+        </div>
+    @endif
+
+    @if($overstromingsgevaar == 'Gemiddeld')
+        <div class="bg-yellow-100 border border-yellow-300 text-yellow-700 p-4 rounded-xl mb-6">
+            ⚠ Gemiddeld overstromingsgevaar. Extra controle van kritieke onderdelen aanbevolen.
+        </div>
+    @endif
+
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+
+        {{-- <h2 class="text-2xl font-bold text-aquaDark mb-6">
+            Kritieke Materialen
+        </h2>
+
+        <p class="text-gray-500 mb-6">
+            Aanbevolen materialen op basis van het actuele overstromingsgevaar.
+        </p> --}}
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6"> 
 
         @foreach($kritiekeMaterialen as $materiaal)
 
