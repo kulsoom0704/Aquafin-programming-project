@@ -36,16 +36,7 @@ public function dashboard(){
 
         $seizoen = 'Zomer';
         $grenswaarde = 260;
-
-        // if ($totaalVerwachteNeerslag >= 20) {
-        //     $overstromingsgevaar = 'Hoog';
-        // } elseif ($totaalVerwachteNeerslag >= 10) {
-        //     $overstromingsgevaar = 'Gemiddeld';
-        // } else {
-        //     $overstromingsgevaar = 'Laag';
-        // }
         
-
         $response = Http::get(
     'https://api.open-meteo.com/v1/forecast',
     [
