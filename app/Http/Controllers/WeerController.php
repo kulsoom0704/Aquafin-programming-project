@@ -9,7 +9,7 @@ use App\Models\Onderdeel;
 class WeerController extends Controller
 {
 public function dashboard(){
-    $kritiekeMaterialen = Onderdeel::all();
+        \Carbon\Carbon::setLocale('nl');
     try {
 
         $jaar = 2025;
@@ -35,34 +35,16 @@ public function dashboard(){
             $neerslag['augustus'];
 
         $seizoen = 'Zomer';
-
         $grenswaarde = 260;
 
-        if ($totaleNeerslagSeizoen >= $grenswaarde) {
-            $overstromingsgevaar = 'Hoog';
-        } elseif ($totaleNeerslagSeizoen >= ($grenswaarde * 0.8)) {
-            $overstromingsgevaar = 'Gemiddeld';
-        } else {
-            $overstromingsgevaar = 'Laag';
-        }
-        if ($overstromingsgevaar == 'Hoog') {
-            dd($overstromingsgevaar);
-
-    $kritiekeMaterialen = Onderdeel::whereIn('naam', [
-        'Hydraulische Pomp XL',
-        'Rubber Dichting 40mm'
-    ])->get();
-
-        } elseif ($overstromingsgevaar == 'Gemiddeld') {
-
-    $kritiekeMaterialen = Onderdeel::whereIn('naam', [
-        'Rubber Dichting 40mm',
-        'Oliefilter Type B'
-    ])->get();
-
-    } else {
-
-    }
+        // if ($totaalVerwachteNeerslag >= 20) {
+        //     $overstromingsgevaar = 'Hoog';
+        // } elseif ($totaalVerwachteNeerslag >= 10) {
+        //     $overstromingsgevaar = 'Gemiddeld';
+        // } else {
+        //     $overstromingsgevaar = 'Laag';
+        // }
+        
 
         $response = Http::get(
     'https://api.open-meteo.com/v1/forecast',
@@ -82,6 +64,38 @@ $voorspellingen = [];
 $dagen = $data['daily']['time'];
 $neerslagWaarden = $data['daily']['precipitation_sum'];
 
+// Totale verwachte neerslag uit API
+$totaalVerwachteNeerslag = array_sum($neerslagWaarden);
+
+if ($totaalVerwachteNeerslag >= 20) {
+    $overstromingsgevaar = 'Hoog';
+} elseif ($totaalVerwachteNeerslag >= 10) {
+    $overstromingsgevaar = 'Gemiddeld';
+} else {
+    $overstromingsgevaar = 'Laag';
+}
+
+    // Kritieke materialen bepalen
+ if ($overstromingsgevaar == 'Hoog') {
+
+    $kritiekeMaterialen = Onderdeel::whereIn('naam', [
+        'Hydraulische Pomp XL',
+        'Rubber Dichting 40mm'
+    ])->get();
+
+} elseif ($overstromingsgevaar == 'Gemiddeld') {
+
+    $kritiekeMaterialen = Onderdeel::whereIn('naam', [
+        'Rubber Dichting 40mm',
+        'Oliefilter Type B'
+    ])->get();
+
+} else {
+
+    $kritiekeMaterialen = Onderdeel::all();
+}
+
+    
 foreach ($dagen as $index => $datum) {
 
     $voorspellingen[] = [
@@ -97,14 +111,16 @@ foreach ($dagen as $index => $datum) {
             'overstromingsgevaar',
             'voorspellingen',
             'kritiekeMaterialen',
+            'totaalVerwachteNeerslag',
         ));
-
-    } catch (\Exception $e) {
+         } catch (\Exception $e) {
 
         return view('technieker.weer', [
-            'foutmelding' =>
-                'Geen weersgegevens beschikbaar.'
+            'foutmelding' => 'Geen weersgegevens beschikbaar.'
         ]);
-    }
+
     }
 }
+}
+    
+

@@ -46,7 +46,8 @@
             </p>
 
             <h2 class="text-3xl font-bold text-aquaBlue mt-3">
-                {{ $totaleNeerslagSeizoen }} mm
+                {{ round($totaalVerwachteNeerslag, 1) }} mm
+                {{-- {{ $totaleNeerslagSeizoen }} mm --}}
             </h2>
 
             <p class="text-gray-500 mt-2">
@@ -99,7 +100,7 @@
                 </h3>
 
                 <p class="text-gray-500 mt-2">
-                    Verwachte neerslag
+                    Verwachte neerslag 
                 </p>
 
             </div>
@@ -131,14 +132,6 @@
     @endif
 
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-
-        {{-- <h2 class="text-2xl font-bold text-aquaDark mb-6">
-            Kritieke Materialen
-        </h2>
-
-        <p class="text-gray-500 mb-6">
-            Aanbevolen materialen op basis van het actuele overstromingsgevaar.
-        </p> --}}
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6"> 
 
