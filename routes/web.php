@@ -8,11 +8,6 @@ use App\Http\Controllers\WijzigingsverzoekController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstallatieController;
 
-/*
-|--------------------------------------------------------------------------
-| Portal & Auth Routes (Nouveau et sécurisé)
-|--------------------------------------------------------------------------
-*/
 
 
 Route::get('/', function () {
@@ -25,11 +20,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-/*
-|--------------------------------------------------------------------------
-| Technieker Routes
-|--------------------------------------------------------------------------
-*/
+
 
 Route::get('/technieker', function () {
     return redirect()->route('technieker.meldingen');
@@ -47,22 +38,14 @@ Route::controller(InstallatieController::class)->group(function () {
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| Admin Routes (Laravel)
-|--------------------------------------------------------------------------
-*/
+
 
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 Route::get('/admin/users', [AdminController::class, 'users']);
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 
 
-/*
-|--------------------------------------------------------------------------
-| Materiaal, Levering & Retour (Magazijnier & Meldingen)
-|--------------------------------------------------------------------------
-*/
+
 
 Route::get('/materiaal', [MateriaalController::class, 'index']);
 Route::get('/materiaal/create', [MateriaalController::class, 'create']);
