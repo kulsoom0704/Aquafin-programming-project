@@ -34,7 +34,6 @@
             display: block;
         }
 
-        /* Navbar */
         nav {
             background: white;
             padding: 15px 30px;
@@ -101,15 +100,14 @@
             font-weight: bold;
         }
 
-        /* Zoekbalk */
         .zoekbalk {
             margin-bottom: 20px;
         }
 
         .zoekbalk input {
-               padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
 
         .zoekbalk button {
@@ -121,7 +119,6 @@
             cursor: pointer;
         }
 
-        /* Tabel */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -164,7 +161,6 @@
             border-radius: 4px;
         }
 
-        /* Formulier */
         .formulier {
             background-color: white;
             padding: 25px;
@@ -198,7 +194,6 @@
             margin-top: 10px;
         }
 
-        /* Meldingen */
         .melding {
             background-color: white;
             padding: 15px 20px;
@@ -237,7 +232,6 @@
             margin-top: 8px;
         }
 
-        /* Succes/fout */
         .succes {
             color: green;
             margin-bottom: 10px;
@@ -249,7 +243,6 @@
             margin-bottom: 10px;
         }
 
-        /* Popup */
         .popup-achtergrond {
             display: none;
             position: fixed;
@@ -315,7 +308,6 @@
 
 <body>
 
-    <!-- Navbar -->
     <nav>
         <div class="nav-logo">
             <div class="nav-logo-icon">📦</div>
@@ -330,6 +322,7 @@
             <button onclick="toonSectie('meldingen')" id="btn-meldingen">Meldingen</button>
             <button onclick="toonSectie('leveringen')" id="btn-leveringen">Leveringen</button>
             <button onclick="toonSectie('retours')" id="btn-retours">Retours</button>
+            <button onclick="toonSectie('archief')" id="btn-archief">Archief</button>
         </div>
 
         <div class="nav-avatar">M</div>
@@ -346,9 +339,9 @@
             <h1>Voorraad overzicht</h1>
             <br>
             <form method="GET" action="/materiaal" class="zoekbalk" style="display: flex; align-items: center; gap: 8px;">
-    <input type="text" id="zoekterm" name="zoekterm" placeholder="Zoek op artikelnummer, omschrijving of locatie..." value="{{ $zoekterm ?? '' }}" style="width: 25%;">
-    <button type="submit">Zoeken</button>
-</form>
+                <input type="text" id="zoekterm" name="zoekterm" placeholder="Zoek op artikelnummer, omschrijving of locatie..." value="{{ $zoekterm ?? '' }}" style="width: 25%;">
+                <button type="submit">Zoeken</button>
+            </form>
 
             <table>
                 <thead>
@@ -402,10 +395,10 @@
         <div class="sectie" id="sectie-meldingen">
             <h1>Meldingen</h1>
             <br>
-            @if($meldingen->isEmpty())
+            @if($meldingen->where('gearchiveerd', false)->isEmpty())
                 <p style="color: #999;">Geen meldingen.</p>
             @else
-                @foreach($meldingen as $melding)
+                @foreach($meldingen->where('gearchiveerd', false) as $melding)
                 <div class="melding {{ $melding->gelezen ? 'gelezen' : '' }}">
                     <h3>{{ $melding->titel }}</h3>
                     <p>{{ $melding->bericht }}</p>
@@ -422,9 +415,9 @@
                             <button type="submit" class="btn-melding" style="background-color: #999;">Markeer als ongelezen</button>
                         </form>
                     @endif
-                    <form method="POST" action="/meldingen/{{ $melding->id }}/verwijderen" style="display:inline;">
+                    <form method="POST" action="/meldingen/{{ $melding->id }}/archiveren" style="display:inline;">
                         @csrf
-                        <button type="submit" class="btn-melding" style="background-color: #e74c3c;">Verwijderen</button>
+                        <button type="submit" class="btn-melding" style="background-color: #e67e22;">Archiveren</button>
                     </form>
                 </div>
                 @endforeach
@@ -481,6 +474,23 @@
             </div>
         </div>
 
+        <!-- Sectie: Archief -->
+        <div class="sectie" id="sectie-archief">
+            <h1>Archief</h1>
+            <br>
+            @if($meldingen->where('gearchiveerd', true)->isEmpty())
+                <p style="color: #999;">Geen gearchiveerde meldingen.</p>
+            @else
+                @foreach($meldingen->where('gearchiveerd', true) as $melding)
+                <div class="melding gelezen">
+                    <h3>{{ $melding->titel }}</h3>
+                    <p>{{ $melding->bericht }}</p>
+                    <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
+                </div>
+                @endforeach
+            @endif
+        </div>
+
     </div>
 
     <!-- Details Popup -->
@@ -524,7 +534,6 @@
     </div>
 
     <script>
-        // Sectie wisselen
         function toonSectie(naam) {
             document.querySelectorAll('.sectie').forEach(s => s.classList.remove('actief'));
             document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('actief'));
@@ -532,7 +541,6 @@
             document.getElementById('btn-' + naam).classList.add('actief');
         }
 
-        // Check URL parameter voor sectie
         var urlParams = new URLSearchParams(window.location.search);
         var sectie = urlParams.get('sectie');
         if (sectie) {
