@@ -175,7 +175,9 @@
             font-weight: bold;
         }
 
-        select, input[type="number"], input[type="text"] {
+        select,
+        input[type="number"],
+        input[type="text"] {
             display: block;
             width: 100%;
             padding: 8px;
@@ -325,16 +327,6 @@
             cursor: pointer;
         }
 
-        .btn-artikel-toevoegen {
-            padding: 6px 12px;
-            background: #f5f5f5;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 10px;
-            margin-top: 5px;
-        }
-
         .suggesties-lijst {
             position: absolute;
             background: white;
@@ -373,7 +365,7 @@
 
         <div class="nav-links">
             <button onclick="toonSectie('voorraad')" id="btn-voorraad" class="actief">Voorraad</button>
-            <button onclick="toonSectie('meldingen')" id="btn-meldingen">Meldingen</button>
+            <button onclick="toonSectie('meldingen')" id="btn-meldingen">Bestellingen</button>
             <button onclick="toonSectie('leveringen')" id="btn-leveringen">Uitgifte</button>
             <button onclick="toonSectie('retours')" id="btn-retours">Retours</button>
             <button onclick="toonSectie('archief')" id="btn-archief">Archief</button>
@@ -445,31 +437,36 @@
             </table>
         </div>
 
-        <!-- Sectie: Meldingen -->
+        <!-- Sectie: Bestellingen -->
         <div class="sectie" id="sectie-meldingen">
-            <h1>Meldingen</h1>
+            <h1>Bestellingen</h1>
             <br>
             @if($meldingen->where('gearchiveerd', false)->isEmpty())
-                <p style="color: #999;">Geen meldingen.</p>
+                <p style="color: #999;">Geen bestellingen.</p>
             @else
                 @foreach($meldingen->where('gearchiveerd', false) as $melding)
-                <div class="melding {{ $melding->gelezen ? 'gelezen' : '' }}">
+                <div class="melding {{ $melding->gelezen ? 'gelezen' : '' }}" style="cursor: pointer;"
+                    onclick="toonMeldingPopup(
+                        '{{ addslashes($melding->titel) }}',
+                        '{{ addslashes($melding->bericht) }}',
+                        '{{ $melding->created_at->format('d/m/Y H:i') }}'
+                    )">
                     <h3>{{ $melding->titel }}</h3>
                     <p>{{ $melding->bericht }}</p>
                     <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
                     <br>
                     @if(!$melding->gelezen)
-                        <form method="POST" action="/meldingen/{{ $melding->id }}/gelezen" style="display:inline;">
+                        <form method="POST" action="/meldingen/{{ $melding->id }}/gelezen" style="display:inline;" onclick="event.stopPropagation()">
                             @csrf
                             <button type="submit" class="btn-melding" style="background: linear-gradient(to right, #0a5a8a, #00b4d8);">Markeer als gelezen</button>
                         </form>
                     @else
-                        <form method="POST" action="/meldingen/{{ $melding->id }}/ongelezen" style="display:inline;">
+                        <form method="POST" action="/meldingen/{{ $melding->id }}/ongelezen" style="display:inline;" onclick="event.stopPropagation()">
                             @csrf
                             <button type="submit" class="btn-melding" style="background-color: #999;">Markeer als ongelezen</button>
                         </form>
                     @endif
-                    <form method="POST" action="/meldingen/{{ $melding->id }}/archiveren" style="display:inline;">
+                    <form method="POST" action="/meldingen/{{ $melding->id }}/archiveren" style="display:inline;" onclick="event.stopPropagation()">
                         @csrf
                         <button type="submit" class="btn-melding" style="background-color: #e67e22;">Archiveren</button>
                     </form>
@@ -535,18 +532,34 @@
             <h1>Archief</h1>
             <br>
             @if($meldingen->where('gearchiveerd', true)->isEmpty())
-                <p style="color: #999;">Geen gearchiveerde meldingen.</p>
+                <p style="color: #999;">Geen gearchiveerde bestellingen.</p>
             @else
                 @foreach($meldingen->where('gearchiveerd', true) as $melding)
-                <div class="melding" style="opacity: 1; border-left: 5px solid #0a5a8a;">
-                    <h3>{{ $melding->titel }}</h3>
-                    <p>{{ $melding->bericht }}</p>
-                    <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
-                </div>
+                <div class="melding" style="opacity: 1; border-left: 5px solid #0a5a8a; cursor: pointer;"
+    onclick="toonMeldingPopup(
+        '{{ addslashes($melding->titel) }}',
+        '{{ addslashes($melding->bericht) }}',
+        '{{ $melding->created_at->format('d/m/Y H:i') }}'
+    )">
+    <h3>{{ $melding->titel }}</h3>
+    <p>{{ $melding->bericht }}</p>
+    <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
+</div>
                 @endforeach
             @endif
         </div>
 
+    </div>
+
+    <!-- Bestelling popup -->
+    <div class="popup-achtergrond" id="melding-popup-achtergrond">
+        <div class="popup">
+            <h2>Bestelling details</h2>
+            <p><strong>Titel:</strong> <span id="melding-popup-titel"></span></p>
+            <p><strong>Bericht:</strong> <span id="melding-popup-bericht"></span></p>
+            <p><strong>Datum:</strong> <span id="melding-popup-datum"></span></p>
+            <button class="btn-sluiten" onclick="document.getElementById('melding-popup-achtergrond').style.display='none'">Sluiten</button>
+        </div>
     </div>
 
     <!-- Details Popup -->
@@ -591,10 +604,17 @@
 
     <script>
         var alleMateriaal = [
-            @foreach ($materialen as $item)
+            @foreach($materialen as $item)
             { id: {{ $item->id }}, tekst: '{{ addslashes($item->artikelnummer) }} - {{ addslashes($item->omschrijving) }}' },
             @endforeach
         ];
+
+        function toonMeldingPopup(titel, bericht, datum) {
+            document.getElementById('melding-popup-titel').innerText = titel;
+            document.getElementById('melding-popup-bericht').innerText = bericht;
+            document.getElementById('melding-popup-datum').innerText = datum;
+            document.getElementById('melding-popup-achtergrond').style.display = 'block';
+        }
 
         function filterUitgifte() {
             var zoekterm = document.getElementById('zoek-uitgifte').value.toLowerCase();
