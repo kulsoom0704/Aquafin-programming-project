@@ -46,4 +46,14 @@ class MeldingController extends Controller
 
         return redirect('/materiaal?sectie=meldingen');
     }
+
+    // Zet melding terug uit archief
+    public function terugzetten($id)
+    {
+        $melding = Melding::find($id);
+        $melding->gearchiveerd = false;
+        $melding->save();
+
+        return redirect('/materiaal?sectie=archief');
+    }
 }

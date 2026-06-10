@@ -163,9 +163,10 @@
 
         .formulier {
             background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            width: 600px;
+    padding: 25px;
+    border-radius: 8px;
+    width: 600px;
+    margin: 0 auto;
         }
 
         label {
@@ -371,8 +372,13 @@
             <button onclick="toonSectie('archief')" id="btn-archief">Archief</button>
         </div>
 
-        <div class="nav-avatar">M</div>
-    </nav>
+<div style="display: flex; align-items: center; gap: 10px;">
+    <div style="text-align: right;">
+        <div style="font-weight: bold; font-size: 14px;">{{ Auth::user()->name ?? 'Magazijnier' }}</div>
+        <a href="/logout" style="color: #e74c3c; font-size: 12px; text-decoration: none;">Uitloggen →</a>
+    </div>
+    <div class="nav-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'M', 0, 2)) }}</div>
+</div>    </nav>
 
     <div class="content">
 
@@ -475,11 +481,11 @@
             @endif
         </div>
 
-        <!-- Sectie: Uitgifte -->
-        <div class="sectie" id="sectie-leveringen">
-            <h1>Materiaal uitgifte</h1>
-            <br>
-            <div class="formulier">
+       <!-- Sectie: Uitgifte -->
+<div class="sectie" id="sectie-leveringen" style="text-align: center;">
+    <h1>Materiaal uitgifte</h1>
+    <br>
+    <div class="formulier" style="text-align: left;">
                 <form method="POST" action="/levering">
                     @csrf
 
@@ -501,11 +507,11 @@
             </div>
         </div>
 
-        <!-- Sectie: Retours -->
-        <div class="sectie" id="sectie-retours">
-            <h1>Retour registreren</h1>
-            <br>
-            <div class="formulier">
+      <!-- Sectie: Retours -->
+<div class="sectie" id="sectie-retours" style="text-align: center;">
+    <h1>Retour registreren</h1>
+    <br>
+    <div class="formulier" style="text-align: left;">
                 <form method="POST" action="/retour">
                     @csrf
 
@@ -535,7 +541,7 @@
                 <p style="color: #999;">Geen gearchiveerde bestellingen.</p>
             @else
                 @foreach($meldingen->where('gearchiveerd', true) as $melding)
-                <div class="melding" style="opacity: 1; border-left: 5px solid #0a5a8a; cursor: pointer;"
+ <div class="melding" style="opacity: 1; border-left: 5px solid #0a5a8a; cursor: pointer;"
     onclick="toonMeldingPopup(
         '{{ addslashes($melding->titel) }}',
         '{{ addslashes($melding->bericht) }}',
@@ -544,6 +550,11 @@
     <h3>{{ $melding->titel }}</h3>
     <p>{{ $melding->bericht }}</p>
     <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
+    <br>
+    <form method="POST" action="/meldingen/{{ $melding->id }}/terugzetten" style="display:inline;" onclick="event.stopPropagation()">
+        @csrf
+        <button type="submit" class="btn-melding" style="background: linear-gradient(to right, #0a5a8a, #00b4d8);">Terugzetten naar bestellingen</button>
+    </form>
 </div>
                 @endforeach
             @endif
