@@ -165,7 +165,7 @@
             background-color: white;
             padding: 25px;
             border-radius: 8px;
-            width: 400px;
+            width: 600px;
         }
 
         label {
@@ -303,6 +303,60 @@
             color: #2980b9;
             font-size: 13px;
         }
+
+        .artikel-rij {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .artikel-rij input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .btn-verwijder-rij {
+            padding: 6px 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-artikel-toevoegen {
+            padding: 6px 12px;
+            background: #f5f5f5;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            margin-top: 5px;
+        }
+
+        .suggesties-lijst {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+        }
+
+        .suggestie-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .suggestie-item:hover {
+            background: #f0f0f0;
+        }
     </style>
 </head>
 
@@ -320,7 +374,7 @@
         <div class="nav-links">
             <button onclick="toonSectie('voorraad')" id="btn-voorraad" class="actief">Voorraad</button>
             <button onclick="toonSectie('meldingen')" id="btn-meldingen">Meldingen</button>
-<button onclick="toonSectie('leveringen')" id="btn-leveringen">Uitgifte</button>
+            <button onclick="toonSectie('leveringen')" id="btn-leveringen">Uitgifte</button>
             <button onclick="toonSectie('retours')" id="btn-retours">Retours</button>
             <button onclick="toonSectie('archief')" id="btn-archief">Archief</button>
         </div>
@@ -424,27 +478,28 @@
             @endif
         </div>
 
-        <!-- Sectie: Leveringen -->
+        <!-- Sectie: Uitgifte -->
         <div class="sectie" id="sectie-leveringen">
-<h1>Materiaal uitgifte</h1>
+            <h1>Materiaal uitgifte</h1>
             <br>
             <div class="formulier">
                 <form method="POST" action="/levering">
                     @csrf
-                    <label>Artikel</label>
-                    <select name="materiaal_id">
-                        <option value="">-- Kies een artikel --</option>
-                        @foreach ($materialen as $item)
-                            <option value="{{ $item->id }}">{{ $item->artikelnummer }} - {{ $item->omschrijving }}</option>
-                        @endforeach
-                    </select>
-                    @error('materiaal_id') <p class="fout">{{ $message }}</p> @enderror
 
-                    <label>Aantal</label>
-                    <input type="number" name="aantal" value="{{ old('aantal') }}">
-                    @error('aantal') <p class="fout">{{ $message }}</p> @enderror
+                    <label>Naam technieker</label>
+                    <input type="text" name="technieker_naam" placeholder="Naam van de technieker">
+                    @error('technieker_naam') <p class="fout">{{ $message }}</p> @enderror
 
-                    <button type="submit" class="btn-opslaan">Registreren</button>
+                    <label style="margin-top: 10px;">Zoek en voeg artikel toe</label>
+                    <div style="position: relative; margin-bottom: 10px;">
+                        <input type="text" id="zoek-uitgifte" placeholder="Typ om te zoeken..." autocomplete="off" onkeyup="filterUitgifte()">
+                        <div class="suggesties-lijst" id="zoek-suggesties"></div>
+                    </div>
+
+                    <label>Geselecteerde artikelen</label>
+                    <div id="artikelen-lijst" style="margin-bottom: 10px;"></div>
+
+                    <button type="submit" class="btn-opslaan">Uitgifte registreren</button>
                 </form>
             </div>
         </div>
@@ -456,20 +511,21 @@
             <div class="formulier">
                 <form method="POST" action="/retour">
                     @csrf
-                    <label>Artikel</label>
-                    <select name="materiaal_id">
-                        <option value="">-- Kies een artikel --</option>
-                        @foreach ($materialen as $item)
-                            <option value="{{ $item->id }}">{{ $item->artikelnummer }} - {{ $item->omschrijving }}</option>
-                        @endforeach
-                    </select>
-                    @error('materiaal_id') <p class="fout">{{ $message }}</p> @enderror
 
-                    <label>Aantal</label>
-                    <input type="number" name="aantal" value="{{ old('aantal') }}">
-                    @error('aantal') <p class="fout">{{ $message }}</p> @enderror
+                    <label>Naam technieker</label>
+                    <input type="text" name="technieker_naam" placeholder="Naam van de technieker">
+                    @error('technieker_naam') <p class="fout">{{ $message }}</p> @enderror
 
-                    <button type="submit" class="btn-opslaan">Registreren</button>
+                    <label style="margin-top: 10px;">Zoek en voeg artikel toe</label>
+                    <div style="position: relative; margin-bottom: 10px;">
+                        <input type="text" id="zoek-retour" placeholder="Typ om te zoeken..." autocomplete="off" onkeyup="filterRetour()">
+                        <div class="suggesties-lijst" id="zoek-suggesties-retour"></div>
+                    </div>
+
+                    <label>Geselecteerde artikelen</label>
+                    <div id="retour-artikelen-lijst" style="margin-bottom: 10px;"></div>
+
+                    <button type="submit" class="btn-opslaan">Retour registreren</button>
                 </form>
             </div>
         </div>
@@ -482,7 +538,7 @@
                 <p style="color: #999;">Geen gearchiveerde meldingen.</p>
             @else
                 @foreach($meldingen->where('gearchiveerd', true) as $melding)
-                <div class="melding gelezen">
+                <div class="melding" style="opacity: 1; border-left: 5px solid #0a5a8a;">
                     <h3>{{ $melding->titel }}</h3>
                     <p>{{ $melding->bericht }}</p>
                     <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
@@ -534,6 +590,95 @@
     </div>
 
     <script>
+        var alleMateriaal = [
+            @foreach ($materialen as $item)
+            { id: {{ $item->id }}, tekst: '{{ addslashes($item->artikelnummer) }} - {{ addslashes($item->omschrijving) }}' },
+            @endforeach
+        ];
+
+        function filterUitgifte() {
+            var zoekterm = document.getElementById('zoek-uitgifte').value.toLowerCase();
+            var suggesties = document.getElementById('zoek-suggesties');
+
+            if (zoekterm.length < 1) {
+                suggesties.style.display = 'none';
+                return;
+            }
+
+            var resultaten = alleMateriaal.filter(function(item) {
+                return item.tekst.toLowerCase().includes(zoekterm);
+            });
+
+            suggesties.innerHTML = '';
+
+            if (resultaten.length === 0) {
+                suggesties.style.display = 'none';
+                return;
+            }
+
+            resultaten.forEach(function(item) {
+                var div = document.createElement('div');
+                div.className = 'suggestie-item';
+                div.innerText = item.tekst;
+                div.onclick = function() {
+                    voegArtikelToeAanLijst(item.id, item.tekst, 'artikelen-lijst');
+                    document.getElementById('zoek-uitgifte').value = '';
+                    suggesties.style.display = 'none';
+                };
+                suggesties.appendChild(div);
+            });
+
+            suggesties.style.display = 'block';
+        }
+
+        function filterRetour() {
+            var zoekterm = document.getElementById('zoek-retour').value.toLowerCase();
+            var suggesties = document.getElementById('zoek-suggesties-retour');
+
+            if (zoekterm.length < 1) {
+                suggesties.style.display = 'none';
+                return;
+            }
+
+            var resultaten = alleMateriaal.filter(function(item) {
+                return item.tekst.toLowerCase().includes(zoekterm);
+            });
+
+            suggesties.innerHTML = '';
+
+            if (resultaten.length === 0) {
+                suggesties.style.display = 'none';
+                return;
+            }
+
+            resultaten.forEach(function(item) {
+                var div = document.createElement('div');
+                div.className = 'suggestie-item';
+                div.innerText = item.tekst;
+                div.onclick = function() {
+                    voegArtikelToeAanLijst(item.id, item.tekst, 'retour-artikelen-lijst');
+                    document.getElementById('zoek-retour').value = '';
+                    suggesties.style.display = 'none';
+                };
+                suggesties.appendChild(div);
+            });
+
+            suggesties.style.display = 'block';
+        }
+
+        function voegArtikelToeAanLijst(id, tekst, lijstId) {
+            var lijst = document.getElementById(lijstId);
+            var rij = document.createElement('div');
+            rij.className = 'artikel-rij';
+            rij.innerHTML = `
+                <input type="hidden" name="materiaal_id[]" value="${id}">
+                <span style="flex: 2; padding: 8px; background: #f9f9f9; border-radius: 4px;">${tekst}</span>
+                <input type="number" name="aantal[]" placeholder="Aantal" style="width: 80px; flex: none;">
+                <button type="button" class="btn-verwijder-rij" onclick="this.parentElement.remove()">X</button>
+            `;
+            lijst.appendChild(rij);
+        }
+
         function toonSectie(naam) {
             document.querySelectorAll('.sectie').forEach(s => s.classList.remove('actief'));
             document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('actief'));
@@ -600,6 +745,15 @@
                     rij.style.display = 'none';
                 }
             });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#zoek-uitgifte') && !e.target.closest('#zoek-suggesties')) {
+                document.getElementById('zoek-suggesties').style.display = 'none';
+            }
+            if (!e.target.closest('#zoek-retour') && !e.target.closest('#zoek-suggesties-retour')) {
+                document.getElementById('zoek-suggesties-retour').style.display = 'none';
+            }
         });
     </script>
 
