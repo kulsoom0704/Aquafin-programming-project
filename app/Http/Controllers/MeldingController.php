@@ -24,7 +24,7 @@ class MeldingController extends Controller
         $melding->gelezen = true;
         $melding->save();
 
-        return redirect('/meldingen');
+        return redirect('/materiaal?sectie=meldingen');
     }
 
     // Markeer melding als ongelezen
@@ -34,7 +34,7 @@ class MeldingController extends Controller
         $melding->gelezen = false;
         $melding->save();
 
-        return redirect('/meldingen');
+        return redirect('/materiaal?sectie=meldingen');
     }
 
     // Archiveer melding
@@ -44,6 +44,6 @@ class MeldingController extends Controller
         $melding->gearchiveerd = true;
         $melding->save();
 
-        return redirect('/materiaal');
+        return redirect('/materiaal?sectie=meldingen');
     }
 }

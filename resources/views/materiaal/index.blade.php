@@ -320,7 +320,7 @@
         <div class="nav-links">
             <button onclick="toonSectie('voorraad')" id="btn-voorraad" class="actief">Voorraad</button>
             <button onclick="toonSectie('meldingen')" id="btn-meldingen">Meldingen</button>
-            <button onclick="toonSectie('leveringen')" id="btn-leveringen">Leveringen</button>
+<button onclick="toonSectie('leveringen')" id="btn-leveringen">Uitgifte</button>
             <button onclick="toonSectie('retours')" id="btn-retours">Retours</button>
             <button onclick="toonSectie('archief')" id="btn-archief">Archief</button>
         </div>
@@ -426,7 +426,7 @@
 
         <!-- Sectie: Leveringen -->
         <div class="sectie" id="sectie-leveringen">
-            <h1>Nieuwe levering registreren</h1>
+<h1>Materiaal uitgifte</h1>
             <br>
             <div class="formulier">
                 <form method="POST" action="/levering">
