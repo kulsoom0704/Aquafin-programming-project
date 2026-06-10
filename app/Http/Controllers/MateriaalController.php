@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Materiaal;
 use App\Models\Levering;
 use App\Models\Retour;
+use App\Models\Melding;
 use Illuminate\Http\Request;
 
 class MateriaalController extends Controller
@@ -23,7 +24,11 @@ class MateriaalController extends Controller
             $materialen = Materiaal::all();
         }
 
-        return view('materiaal.index', compact('materialen', 'zoekterm'));
+        $meldingen = Melding::orderBy('gelezen', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('materiaal.index', compact('materialen', 'zoekterm', 'meldingen'));
     }
 
     // Toon het formulier om een nieuw artikel toe te voegen
@@ -107,7 +112,7 @@ class MateriaalController extends Controller
         $materiaal->beschikbaar += $request->aantal;
         $materiaal->save();
 
-        return redirect('/materiaal')->with('succes', 'Levering geregistreerd!');
+        return redirect('/materiaal?sectie=leveringen')->with('succes', 'Levering geregistreerd!');
     }
 
     // Toon het formulier voor een retour
@@ -139,7 +144,7 @@ class MateriaalController extends Controller
         $materiaal->beschikbaar -= $request->aantal;
         $materiaal->save();
 
-        return redirect('/materiaal')->with('succes', 'Retour geregistreerd!');
+        return redirect('/materiaal?sectie=retours')->with('succes', 'Retour geregistreerd!');
     }
 
     // Upload foto voor een artikel
@@ -154,20 +159,20 @@ class MateriaalController extends Controller
         ]);
 
         $materiaal = Materiaal::find($id);
-
-        // Foto opslaan
         $fotopad = $request->file('foto')->store('fotos', 'public');
         $materiaal->foto = $fotopad;
         $materiaal->save();
 
         return redirect('/materiaal')->with('succes', 'Foto opgeslagen!');
     }
-    public function fotoVerwijderen($id)
-{
-    $materiaal = Materiaal::find($id);
-    $materiaal->foto = null;
-    $materiaal->save();
 
-    return redirect('/materiaal')->with('succes', 'Foto verwijderd!');
-}
+    // Verwijder foto van een artikel
+    public function fotoVerwijderen($id)
+    {
+        $materiaal = Materiaal::find($id);
+        $materiaal->foto = null;
+        $materiaal->save();
+
+        return redirect('/materiaal')->with('succes', 'Foto verwijderd!');
+    }
 }
