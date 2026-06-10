@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <title>Voorraad overzicht</title>
@@ -12,7 +13,8 @@
 
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #dceefb 0%, #c8e6f5 50%, #d4eef7 100%);
+            min-height: 100vh;
             padding: 30px;
         }
 
@@ -25,7 +27,7 @@
             display: inline-block;
             margin-bottom: 20px;
             padding: 8px 14px;
-            background-color: #2c3e50;
+            background: linear-gradient(to right, #0a5a8a, #00b4d8);
             color: white;
             text-decoration: none;
             border-radius: 4px;
@@ -44,7 +46,7 @@
 
         .zoekbalk button {
             padding: 8px 14px;
-            background-color: #2980b9;
+            background: linear-gradient(to right, #0a5a8a, #00b4d8);
             color: white;
             border: none;
             border-radius: 4px;
@@ -59,8 +61,12 @@
             overflow: hidden;
         }
 
+        thead tr {
+            background: linear-gradient(to right, #0a5a8a, #00b4d8);
+        }
+
         th {
-            background-color: #2c3e50;
+            background: transparent;
             color: white;
             padding: 12px;
             text-align: left;
@@ -82,7 +88,7 @@
 
         .btn-details {
             padding: 5px 12px;
-            background-color: #2980b9;
+            background: linear-gradient(to right, #0a5a8a, #00b4d8);
             color: white;
             border: none;
             cursor: pointer;
@@ -97,9 +103,11 @@
         .popup-achtergrond {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
         .popup {
@@ -139,7 +147,7 @@
         .btn-wijzigen {
             margin-top: 15px;
             padding: 6px 14px;
-            background-color: #2980b9;
+            background: linear-gradient(to right, #0a5a8a, #00b4d8);
             color: white;
             border: none;
             cursor: pointer;
@@ -154,12 +162,13 @@
         }
     </style>
 </head>
+
 <body>
 
     <h1>Voorraad overzicht</h1>
 
     @if(session('succes'))
-        <p class="succes">{{ session('succes') }}</p>
+    <p class="succes">{{ session('succes') }}</p>
     @endif
 
     {{-- <a href="/materiaal/create" class="btn-nieuw">+ Nieuw artikel toevoegen</a> --}}
@@ -190,11 +199,11 @@
             <tr>
                 <td>
                     @if($item->foto)
-                        <img src="{{ asset('storage/' . $item->foto) }}"
-                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; cursor: pointer;"
-                             onclick="toonFotoPopup('{{ $item->id }}')">
+                    <img src="{{ asset('storage/' . $item->foto) }}"
+                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; cursor: pointer;"
+                        onclick="toonFotoPopup('{{ $item->id }}')">
                     @else
-                        <span class="foto-upload" onclick="toonFotoPopup('{{ $item->id }}')">+ Foto</span>
+                    <span class="foto-upload" onclick="toonFotoPopup('{{ $item->id }}')">+ Foto</span>
                     @endif
                 </td>
                 <td>{{ $item->artikelnummer }}</td>
@@ -321,4 +330,5 @@
     </script>
 
 </body>
+
 </html>
