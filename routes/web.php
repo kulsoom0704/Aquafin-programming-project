@@ -49,6 +49,8 @@ Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatu
 
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 
+Route::get('/admin/storingen', [AdminController::class, 'storingen']);
+
 
 /*
 |--------------------------------------------------------------------------
