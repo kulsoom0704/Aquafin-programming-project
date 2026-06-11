@@ -1,237 +1,144 @@
 <!DOCTYPE html>
+
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aquafin - Admin Dashboard</title>
+    <title>Aquafin Dashboard</title>
 
-    <style>
-
-        body{
-            margin:0;
-            font-family: Arial, sans-serif;
-            background:#f4f6f9;
-        }
-
-        .container{
-            width:90%;
-            margin:auto;
-            padding:30px;
-        }
-
-        h1{
-            color:#1b2a41;
-            margin-bottom:10px;
-        }
-
-        h2{
-            color:#0a67c7;
-        }
-
-        .description{
-            margin-bottom:30px;
-            color:#555;
-        }
-
-        .cards{
-            display:flex;
-            gap:20px;
-            flex-wrap:wrap;
-        }
-
-        .card{
-            background:white;
-            border-radius:12px;
-            padding:20px;
-            flex:1;
-            min-width:220px;
-            box-shadow:0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .card h2{
-            color:#0a67c7;
-            margin-top:0;
-        }
-
-        .stat{
-            font-size:35px;
-            font-weight:bold;
-            margin-top:15px;
-        }
-
-        .green{
-            color:green;
-        }
-
-        .orange{
-            color:orange;
-        }
-
-        .red{
-            color:red;
-        }
-
-        table{
-            width:100%;
-            margin-top:30px;
-            background:white;
-            border-collapse:collapse;
-            border-radius:10px;
-            overflow:hidden;
-            box-shadow:0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        th{
-            background:#0a67c7;
-            color:white;
-            padding:15px;
-        }
-
-        td{
-            padding:12px;
-            border-bottom:1px solid #ddd;
-            text-align:center;
-        }
-
-        .chart-container{
-            width:500px;
-            margin:40px auto;
-            background:white;
-            padding:20px;
-            border-radius:12px;
-            box-shadow:0 2px 10px rgba(0,0,0,0.1);
-        }
-
-    </style>
+```
+@vite('resources/css/app.css')
+```
 
 </head>
 
-<body>
+<body class="bg-slate-100">
 
-<div class="container">
+<div class="flex min-h-screen">
 
-    <h1>Master Dashboard & Rapporten</h1>
-<div class="sidebar">
-    <h2>Aquafin</h2>
+```
+<aside class="w-64 bg-blue-700 text-white p-6">
 
-    <a href="/admin/dashboard">Dashboard</a>
-    <a href="/admin/users">Gebruikers</a>
-    <a href="/admin/reports">Rapporten</a>
-</div>
-    
-    <div class="cards">
-
-        <div class="card">
-            <h2>Gebruikers</h2>
-            <div class="stat">15</div>
-        </div>
-
-        <div class="card">
-            <h2>Installaties</h2>
-            <div class="stat green">85%</div>
-            <p>Operationeel</p>
-        </div>
-
-        <div class="card">
-            <h2>Onderhoud</h2>
-            <div class="stat orange">10%</div>
-            <p>In onderhoud</p>
-        </div>
-
-        <div class="card">
-            <h2>Kritieke storingen</h2>
-            <div class="stat red">5%</div>
-            <p>Waarschuwingen</p>
-        </div>
-
-    </div>
-
-    <h2 style="margin-top:40px;">
-        Voorspellingen Overstromingsrisico 2026-2030
+    <h2 class="text-2xl font-bold mb-8">
+        Aquafin
     </h2>
 
-    <table>
+    <nav class="space-y-4">
 
-        <tr>
-            <th>Jaar</th>
-            <th>Gemiddelde Regenval</th>
-            <th>Risico</th>
-        </tr>
+        <a href="/admin/dashboard" class="block hover:text-blue-200">
+            Dashboard
+        </a>
 
-        @foreach($rainfall as $data)
+        <a href="/admin/users" class="block hover:text-blue-200">
+            Gebruikers
+        </a>
 
-        <tr>
+        <a href="/admin/reports" class="block hover:text-blue-200">
+            Rapporten
+        </a>
 
-            <td>{{ $data['year'] }}</td>
+    </nav>
 
-            <td>{{ $data['rainfall'] }} mm</td>
+</aside>
 
-            <td>
+<main class="flex-1 p-8">
 
-                @if($data['risk'] == 'Laag')
+    <h1 class="text-4xl font-bold text-slate-800 mb-8">
+        Master Dashboard & Rapporten
+    </h1>
 
-                    <span class="green">
-                        {{ $data['risk'] }}
-                    </span>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-                @elseif($data['risk'] == 'Hoog')
+        <div class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-lg font-semibold text-gray-500">
+                Gebruikers
+            </h2>
 
-                    <span class="red">
-                        {{ $data['risk'] }}
-                    </span>
+            <p class="text-4xl font-bold mt-4">
+                {{ $userCount }}
+            </p>
+        </div>
 
-                @else
+        <div class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-lg font-semibold text-gray-500">
+                Installaties
+            </h2>
 
-                    <span class="orange">
-                        {{ $data['risk'] }}
-                    </span>
+            <p class="text-4xl font-bold text-green-600 mt-4">
+                85%
+            </p>
+        </div>
 
-                @endif
+        <div class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-lg font-semibold text-gray-500">
+                Onderhoud
+            </h2>
 
-            </td>
+            <p class="text-4xl font-bold text-yellow-500 mt-4">
+                10%
+            </p>
+        </div>
 
-        </tr>
+        <div class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-lg font-semibold text-gray-500">
+                Kritieke storingen
+            </h2>
 
-        @endforeach
-
-    </table>
-
-    <div class="chart-container">
-
-        <h2>Systeemstatus</h2>
-
-        <canvas id="riskChart"></canvas>
+            <p class="text-4xl font-bold text-red-600 mt-4">
+                5%
+            </p>
+        </div>
 
     </div>
 
+    <div class="bg-white rounded-xl shadow p-6 mt-8">
+
+        <h2 class="text-2xl font-bold mb-4">
+            Overstromingsrisico
+        </h2>
+
+        <table class="w-full">
+
+            <thead>
+                <tr class="border-b">
+                    <th class="text-left py-3">Jaar</th>
+                    <th class="text-left py-3">Regenval</th>
+                    <th class="text-left py-3">Risico</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            @foreach($rainfall as $data)
+
+                <tr class="border-b">
+
+                    <td class="py-3">
+                        {{ $data['year'] }}
+                    </td>
+
+                    <td class="py-3">
+                        {{ $data['rainfall'] }} mm
+                    </td>
+
+                    <td class="py-3">
+                        {{ $data['risk'] }}
+                    </td>
+
+                </tr>
+
+            @endforeach
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+```
+
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-
-const ctx = document.getElementById('riskChart');
-
-new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: [
-            'Operationeel',
-            'Onderhoud',
-            'Kritieke storing'
-        ],
-        datasets: [{
-            data: [85,10,5],
-            backgroundColor: [
-                '#28a745',
-                '#ffc107',
-                '#dc3545'
-            ]
-        }]
-    }
-});
-
-</script>
 
 </body>
 </html>
