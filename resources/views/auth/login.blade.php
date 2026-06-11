@@ -74,7 +74,7 @@
                 
                 <div class="mb-5">
                     <label class="block font-bold mb-2" style="color: <?php echo $hoofd_kleur; ?>;"> Emailadres</label>
-                    <input type="email" name="email" value="{{ request('email') }}" placeholder="vul je email in" required class="w-full p-3 border-2 border-gray-200 rounded-xl focus:outline-none transition-all duration-300 focus:shadow-md" style="focus:border-color: <?php echo $hoofd_kleur; ?>;">
+                    <input type="email" name="email" value="{{ request('email') }}" placeholder="vul je email in" required class="w-full p-3 border-2 border-gray-200 rounded-xl focus:outline-none transition-all duration-300 focus:shadow-md">
                 </div>
                 
                 <div class="mb-6">
@@ -86,6 +86,8 @@
                      Inloggen
                 </button>
             </form>
+
+          
             
             <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4 mt-6 text-sm leading-relaxed">
                 <strong class="block mb-2" style="color: <?php echo $hoofd_kleur; ?>;"> Demo (Wachtwoord: admin123) :</strong>
