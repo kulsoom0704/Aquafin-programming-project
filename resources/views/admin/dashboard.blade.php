@@ -36,19 +36,27 @@
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            @php $stats = [
-                ['label' => 'Gebruikers', 'val' => $userCount, 'color' => 'blue'],
-                ['label' => 'Installaties', 'val' => '85%', 'color' => 'green'],
-                ['label' => 'Onderhoud', 'val' => '10%', 'color' => 'yellow'],
-                ['label' => 'Storingen', 'val' => '5%', 'color' => 'red']
-            ]; @endphp
-            
-            @foreach($stats as $stat)
-            <div class="glass-card rounded-3xl p-6 border-t-4 border-{{$stat['color']}}-500 shadow-sm">
-                <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">{{ $stat['label'] }}</p>
-                <h2 class="text-4xl font-extrabold mt-2 text-slate-800">{{ $stat['val'] }}</h2>
-            </div>
-            @endforeach
+           <div class="glass-card rounded-3xl p-6 border-t-4 border-blue-500 shadow-sm">
+    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Gebruikers</p>
+    <h2 class="text-4xl font-extrabold mt-2 text-slate-800">{{ $userCount }}</h2>
+</div>
+
+<div class="glass-card rounded-3xl p-6 border-t-4 border-green-500 shadow-sm">
+    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Installaties</p>
+    <h2 class="text-4xl font-extrabold mt-2 text-slate-800">85%</h2>
+</div>
+
+<div class="glass-card rounded-3xl p-6 border-t-4 border-yellow-500 shadow-sm">
+    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Onderhoud</p>
+    <h2 class="text-4xl font-extrabold mt-2 text-slate-800">10%</h2>
+</div>
+
+<a href="/admin/storingen">
+    <div class="glass-card rounded-3xl p-6 border-t-4 border-red-500 shadow-sm hover:scale-105 transition cursor-pointer">
+        <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Storingen</p>
+        <h2 class="text-4xl font-extrabold mt-2 text-slate-800">5%</h2>
+    </div>
+</a>
         </div>
 
         <div class="glass-card rounded-3xl p-8 mt-10 shadow-sm">
