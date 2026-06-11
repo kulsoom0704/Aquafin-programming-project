@@ -37,18 +37,24 @@ public function dashboard(){
         $seizoen = 'Zomer';
         $grenswaarde = 260;
         
-        $response = Http::get(
-    'https://api.open-meteo.com/v1/forecast',
-    [
-        'latitude' => 50.85,
-        'longitude' => 4.35,
-        'daily' => 'precipitation_sum',
-        'forecast_days' => 3,
-        'timezone' => 'Europe/Brussels'
-    ]
+        $response = Http::withoutVerifying()
+    ->timeout(10)
+    ->retry(3, 1000)
+    ->get(
+        'https://api.open-meteo.com/v1/forecast',
+        [
+            'latitude' => 50.85,
+            'longitude' => 4.35,
+            'daily' => 'precipitation_sum',
+            'forecast_days' => 3,
+            'timezone' => 'Europe/Brussels'
+        ]
     );
 
 $data = $response->json();
+if (!$response->successful()) {
+    throw new \Exception('API niet bereikbaar');
+}
 
 $voorspellingen = [];
 
@@ -104,7 +110,11 @@ foreach ($dagen as $index => $datum) {
             'kritiekeMaterialen',
             'totaalVerwachteNeerslag',
         ));
-         } catch (\Exception $e) {
+        } 
+//         catch (\Exception $e) {
+//     dd($e->getMessage());
+// }
+    catch (\Exception $e) {
 
         return view('technieker.weer', [
             'foutmelding' => 'Geen weersgegevens beschikbaar.'

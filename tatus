@@ -1,0 +1,12 @@
+* [33m956c25d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mkulsoom-technieker[m[33m)[m Automatische selectie van kritieke materialen op basis van weersvoorspellingen
+* [33m67e0d36[m Voeg weersdashboard en materiaalfiltering op basis van overstromingsgevaar toe
+* [33m5a9b360[m implementeer weerdashboard met weerroute, controller, view en API-voorspellingen
+* [33mfd34e53[m weer API integreerd
+* [33m27710b9[m weerdashboard uitgebreid met neerslagvoorspellingen
+* [33m096afbf[m basis weerdashboard toegevoegd voor technieker
+*   [33m56decce[m[33m ([m[1;31morigin/technieker[m[33m, [m[1;32mtechnieker[m[33m)[m Merge pull request #6 from kulsoom0704/selma/technieker
+[32m|[m[33m\[m  
+[32m|[m * [33m0a5d5aa[m[33m ([m[1;31morigin/selma/technieker[m[33m)[m feat: historiek pagina toegevoegd voor gevalideerde taken en foto-uploads
+* [33m|[m [33m4d43e6e[m Merge pull request #5 from kulsoom0704/selma/technieker
+[34m|[m[33m\[m[33m|[m 
+[34m|[m * [33m2ff24db[m double layout is verwijderd
