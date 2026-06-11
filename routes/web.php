@@ -1,16 +1,36 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MateriaalController;
+use App\Http\Controllers\MeldingController;
+use App\Http\Controllers\WijzigingsverzoekController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstallatieController;
 
 /*
-|--------------------------------------------------------------------------
-| Standaard Route (Algemeen)
-|--------------------------------------------------------------------------
+| Portal & Auth Routes (Nouveau et sécurisé)
+
 */
 
+
 Route::get('/', function () {
+    return view('portal');
+})->name('home');
+
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+/*
+
+| Technieker Routes
+
+*/
+
+Route::get('/technieker', function () {
     return redirect()->route('technieker.meldingen');
 });
 
@@ -28,6 +48,7 @@ Route::delete('/admin/users/{user}', [AdminController::class, 'destroy']);
 Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatus']);
 
 Route::get('/admin/reports', [AdminController::class, 'reports']);
+
 
 /*
 |--------------------------------------------------------------------------

@@ -1,72 +1,75 @@
 @extends('layouts.app')
 
-@section('title', 'Mijn Historiek')
+@section('title', 'Interventie Historiek')
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-
-    {{-- Koptekst --}}
-    <div class="mb-8">
-        <h1 class="text-4xl font-extrabold text-aquaDark tracking-tight mb-1">Mijn Gevalideerde Taken</h1>
-        <p class="text-gray-500">Overzicht van al jouw uitgevoerde interventies en updates.</p>
+    
+    <div class="mb-10">
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight flex items-center">
+            <svg class="w-8 h-8 mr-3 text-[#005b96]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Algemene Interventie Historiek
+        </h1>
+        <p class="text-slate-500 mt-2 font-medium">Overzicht van alle logboeken en uitgevoerde acties door het technici-team.</p>
     </div>
 
-    {{-- Foutafhandeling --}}
-    @if(isset($error))
-        <div class="flex items-center bg-red-50 border border-red-100 p-4 rounded-xl mb-8">
-            <p class="text-red-800 font-medium">{{ $error }}</p>
-        </div>
-    @endif
+    <div class="relative border-l-2 border-blue-200/50 ml-4 md:ml-6">
+        
+        @forelse ($notities as $notitie)
+            <div class="mb-10 ml-8 md:ml-10 relative group">
+                
+                <div class="absolute -left-[43px] md:-left-[51px] top-1 w-5 h-5 rounded-full bg-white border-4 border-[#005b96] shadow-[0_0_10px_rgba(0,91,150,0.4)] group-hover:scale-125 transition-transform duration-300"></div>
 
-    {{-- Lijst met validaties --}}
-    @if($notities->count() > 0)
-        <div class="space-y-6">
-            @foreach($notities as $notitie)
-                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-green-400 opacity-60"></div>
+                <div class="glass-card p-6 md:p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                     
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
                         <div>
-                            <span class="text-xs font-bold text-green-600 bg-green-50 px-2.5 py-1 rounded-md border border-green-100 uppercase tracking-wider">
-                                Gevalideerd ✓
-                            </span>
-                            <h3 class="text-lg font-bold text-gray-900 mt-2">
-                                {{ $notitie->installatie->naam ?? 'Onbekende installatie' }}
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#005b96] border border-blue-100">
+                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    {{ $notitie->created_at->format('d M Y - H:i') }}
+                                </span>
+                                
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    {{ $notitie->technieker->name ?? 'Onbekende Technieker' }}
+                                </span>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-slate-800 group-hover:text-[#005b96] transition-colors">
+                                {{ $notitie->installatie->naam ?? 'Onbekende Installatie' }}
                             </h3>
-                            <p class="text-xs text-gray-400 flex items-center mt-0.5">
-                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                                {{ $notitie->installatie->locatie ?? 'Geen locatie' }}
+                            <p class="text-slate-500 text-sm font-medium flex items-center mt-1">
+                                <svg class="w-4 h-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                {{ $notitie->installatie->locatie ?? 'Locatie onbekend' }}
                             </p>
                         </div>
-                        <span class="text-xs font-mono font-medium text-gray-400 bg-gray-50 px-2.5 py-1 rounded-md border border-gray-200">
-                            {{ $notitie->created_at->format('d M Y - H:i') }}
-                        </span>
                     </div>
 
-                    {{-- De ingevoerde tekst --}}
-                    <div class="bg-gray-50/60 rounded-xl p-4 border border-gray-100 text-sm text-gray-700 leading-relaxed">
-                        {{ $notitie->opmerking }}
+                    <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                        <p class="text-slate-600 leading-relaxed">
+                            {{ $notitie->opmerking }}
+                        </p>
                     </div>
 
-                    {{-- Als er een foto is geüpload, tonen we die hier --}}
                     @if($notitie->afbeelding)
-                        <div class="mt-4 rounded-xl overflow-hidden border border-gray-200 bg-gray-50 max-w-md">
-                            <img src="{{ asset('storage/' . $notitie->afbeelding) }}" alt="Bewijs" class="w-full h-auto max-h-48 object-cover">
+                        <div class="mt-5 relative overflow-hidden rounded-xl border border-slate-200">
+                            <img src="{{ asset('storage/' . $notitie->afbeelding) }}" alt="Bewijs van interventie" class="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-700">
                         </div>
                     @endif
-                </div>
-            @endforeach
-        </div>
-    @else
-        {{-- Lege staat --}}
-        <div class="flex flex-col items-center justify-center h-64 text-center bg-white rounded-2xl border-2 border-dashed border-gray-200">
-            <div class="bg-gray-50 p-4 rounded-full mb-4 shadow-inner">
-                <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-            </div>
-            <h3 class="text-lg font-bold text-gray-800 mb-1">Nog geen geschiedenis</h3>
-            <p class="text-gray-400 text-sm max-w-sm">Je hebt momenteel nog geen onderhoudstaken gevalideerd via dit account.</p>
-        </div>
-    @endif
 
+                </div>
+            </div>
+        @empty
+            <div class="ml-4 md:ml-8 glass-card p-12 text-center flex flex-col items-center justify-center">
+                <div class="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                    <svg class="w-12 h-12 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Nog geen historiek</h3>
+                <p class="text-slate-500 max-w-sm mx-auto">Er zijn momenteel geen acties geregistreerd.</p>
+            </div>
+        @endforelse
+
+    </div>
 </div>
 @endsection
