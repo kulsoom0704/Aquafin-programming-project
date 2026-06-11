@@ -9,9 +9,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstallatieController;
 
 /*
-|--------------------------------------------------------------------------
 | Portal & Auth Routes (Nouveau et sécurisé)
-|--------------------------------------------------------------------------
+
 */
 
 
@@ -26,9 +25,9 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 /*
-|--------------------------------------------------------------------------
+
 | Technieker Routes
-|--------------------------------------------------------------------------
+
 */
 
 Route::get('/technieker', function () {
@@ -48,9 +47,9 @@ Route::controller(InstallatieController::class)->group(function () {
 
 
 /*
-|--------------------------------------------------------------------------
+
 | Admin Routes (Laravel)
-|--------------------------------------------------------------------------
+
 */
 
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
@@ -59,9 +58,8 @@ Route::get('/admin/reports', [AdminController::class, 'reports']);
 
 
 /*
-|--------------------------------------------------------------------------
 | Materiaal, Levering & Retour (Magazijnier & Meldingen)
-|--------------------------------------------------------------------------
+
 */
 
 Route::get('/materiaal', [MateriaalController::class, 'index']);
@@ -81,6 +79,6 @@ Route::post('/retour', [MateriaalController::class, 'retourStore']);
 Route::get('/meldingen', [MeldingController::class, 'index']);
 Route::post('/meldingen/{id}/gelezen', [MeldingController::class, 'gelezen']);
 Route::post('/meldingen/{id}/ongelezen', [MeldingController::class, 'ongelezen']);
-Route::post('/meldingen/{id}/verwijderen', [MeldingController::class, 'verwijderen']);
+Route::post('/meldingen/{id}/archiveren', [MeldingController::class, 'archiveren']);
 
-
+Route::post('/meldingen/{id}/terugzetten', [MeldingController::class, 'terugzetten']);

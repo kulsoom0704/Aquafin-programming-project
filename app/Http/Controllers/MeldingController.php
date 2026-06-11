@@ -9,7 +9,8 @@ class MeldingController extends Controller
     // Toon alle meldingen
     public function index()
     {
-        $meldingen = Melding::orderBy('gelezen', 'asc')
+        $meldingen = Melding::where('gearchiveerd', false)
+            ->orderBy('gelezen', 'asc')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -23,7 +24,7 @@ class MeldingController extends Controller
         $melding->gelezen = true;
         $melding->save();
 
-        return redirect('/meldingen');
+        return redirect('/materiaal?sectie=meldingen');
     }
 
     // Markeer melding als ongelezen
@@ -33,15 +34,26 @@ class MeldingController extends Controller
         $melding->gelezen = false;
         $melding->save();
 
-        return redirect('/meldingen');
+        return redirect('/materiaal?sectie=meldingen');
     }
 
-    // Verwijder melding
-    public function verwijderen($id)
+    // Archiveer melding
+    public function archiveren($id)
     {
         $melding = Melding::find($id);
-        $melding->delete();
+        $melding->gearchiveerd = true;
+        $melding->save();
 
-        return redirect('/meldingen');
+        return redirect('/materiaal?sectie=meldingen');
+    }
+
+    // Zet melding terug uit archief
+    public function terugzetten($id)
+    {
+        $melding = Melding::find($id);
+        $melding->gearchiveerd = false;
+        $melding->save();
+
+        return redirect('/materiaal?sectie=archief');
     }
 }
