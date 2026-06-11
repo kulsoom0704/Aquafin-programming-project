@@ -51,6 +51,7 @@ Route::get('/admin/reports', [AdminController::class, 'reports']);
 
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
 
+
 /*
 |--------------------------------------------------------------------------
 | Installaties, Logboek & Bestellingen
