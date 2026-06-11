@@ -24,9 +24,10 @@
             <p class="text-blue-200 text-xs font-bold uppercase tracking-widest mt-1">Beheerplatform</p>
         </div>
         <nav class="flex-grow px-4 space-y-2">
-            <a href="/admin/dashboard" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">📊 Dashboard</a>
-            <a href="/admin/users" class="flex items-center px-4 py-3 rounded-xl bg-white/10 font-bold">👥 Gebruikers</a>
-            <a href="/admin/reports" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">📑 Rapporten</a>
+            <a href="/admin/dashboard" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Dashboard</a>
+            <a href="/admin/users" class="flex items-center px-4 py-3 rounded-xl bg-white/10 font-bold">Gebruikers</a>
+            <a href="/admin/reports" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Rapporten</a>
+            <a href="/admin/storingen" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Storingen</a>
         </nav>
     </aside>
 
