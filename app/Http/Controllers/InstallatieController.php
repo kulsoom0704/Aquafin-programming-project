@@ -132,40 +132,48 @@ class InstallatieController extends Controller
 
     public function showBestelformulier()
     {
-        $onderdelen = Onderdeel::all();
-        $bestellingen = Bestelling::where('user_id', $this->getSessieGebruikerId())
-                                  ->with('onderdeel')
-                                  ->latest()
-                                  ->get();
-
-        return view('technieker.bestellen', compact('onderdelen', 'bestellingen'));
+        // On connecte le technicien au VRAI stock de l'entreprise
+        $materialen = \App\Models\Materiaal::all();
+        return view('technieker.bestellen', compact('materialen'));
     }
 
     public function storeBestelling(Request $request)
     {
-        $request->validate([
-            'onderdeel_id' => 'required|exists:onderdelen,id',
-            'aantal' => 'required|integer|min:1'
-        ]);
+        // On récupère le panier envoyé en format JSON depuis le JavaScript
+        $cart = json_decode($request->cart_data, true);
         
-        $onderdeel = Onderdeel::findOrFail($request->onderdeel_id);
-
-        if ($onderdeel->voorraad < $request->aantal) {
-            return redirect()->back()->with('error', "Bestelling mislukt: Er zijn slechts {$onderdeel->voorraad} stuks van '{$onderdeel->naam}' beschikbaar.");
+        if (!$cart || empty($cart)) {
+            return redirect()->back()->with('error', 'Je winkelwagen is leeg.');
         }
 
-        Bestelling::create([
-            'user_id' => $this->getSessieGebruikerId(),
-            'onderdeel_id' => $onderdeel->id,
-            'aantal' => $request->aantal,
-            'status' => 'In behandeling' 
+        $techniekerNaam = session('naam', 'Een technieker');
+        $bericht = $techniekerNaam . " heeft een nieuwe bestelling geplaatst:\n\n";
+
+        // On boucle sur chaque article du panier pour créer les vraies commandes
+        foreach ($cart as $item) {
+            $materiaal = \App\Models\Materiaal::find($item['id']);
+            if ($materiaal) {
+                \App\Models\Bestelling::create([
+                    'user_id' => session('gebruiker_id', 1),
+                    'onderdeel_id' => $materiaal->id, // Attention, ton modèle Bestelling pointe vers onderdeel_id
+                    'aantal' => $item['aantal'],
+                    'status' => 'In behandeling'
+                ]);
+                $bericht .= "- " . $item['aantal'] . "x " . $materiaal->omschrijving . " (Ref: " . $materiaal->artikelnummer . ")\n";
+            }
+        }
+
+        // On génère UNE SEULE alerte groupée pour le Magazijnier
+        \App\Models\Melding::create([
+            'titel' => 'Nieuwe bestelling: ' . $techniekerNaam,
+            'bericht' => $bericht,
+            'gelezen' => false,
         ]);
         
-        $onderdeel->decrement('voorraad', $request->aantal);
-        
-        return redirect()->back()->with('success', "Bestelling succesvol geregistreerd voor {$request->aantal}x {$onderdeel->naam}.");
+        return redirect()->back()->with('success', 'Je bestelling is succesvol doorgestuurd naar het magazijn!');
     }
-
+    
+    
     public function historiek()
     {
         try {

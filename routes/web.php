@@ -31,7 +31,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 */
 
 Route::get('/technieker', function () {
-    return redirect()->route('technieker.meldingen');
+    return redirect()->route('materiaal.bestellen');
 });
 
 /*
@@ -49,6 +49,12 @@ Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatu
 
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 
+
+/*
+|--------------------------------------------------------------------------
+| Installaties, Logboek & Bestellingen
+|--------------------------------------------------------------------------
+*/
 
 /*
 |--------------------------------------------------------------------------
@@ -75,4 +81,11 @@ Route::controller(InstallatieController::class)->group(function () {
 
     Route::get('/technieker/historiek', 'historiek')
         ->name('technieker.historiek');
+
+    // Les deux routes restaurées pour le bon fonctionnement !
+    Route::post('/installatie/{id}/valideren', 'valideren')
+        ->name('installatie.valideren');
+
+    Route::post('/support/noodoproep', 'storeNoodoproep')
+        ->name('support.noodoproep');
 });

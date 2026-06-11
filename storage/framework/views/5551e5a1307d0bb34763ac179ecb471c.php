@@ -11,7 +11,7 @@
             font-family: 'Outfit', sans-serif; 
         }
         
-        /* Effet Glassmorphism version claire (Apple Style) */
+        
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(20px);
@@ -26,7 +26,7 @@
             box-shadow: 0 15px 50px rgba(1, 124, 191, 0.15);
         }
         
-        /* Fond animé clair et frais (Thème Eau) */
+        
         .bg-animated {
             background: linear-gradient(-45deg, #f8fafc, #e0f2fe, #f0f9ff, #eff6ff);
             background-size: 400% 400%;
@@ -55,38 +55,38 @@
         
         <a href="<?php echo e(route('login', ['email' => 'lukas@aquafin.be'])); ?>" class="glass-card rounded-3xl p-8 flex flex-col items-center text-center group transition-all duration-500 hover:-translate-y-3">
             <div class="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-blue-100 transition-all duration-500 relative shadow-inner">
-                <div class="absolute inset-0 rounded-full border border-blue-200 group-hover:border-blue-400 group-hover:animate-[spin_4s_linear_infinite]"></div>
-                <svg class="w-10 h-10 text-[#005b96]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <div class="absolute inset-0 rounded-full border border-blue-200 group-hover:border-[#003d66]/50 group-hover:animate-[spin_4s_linear_infinite]"></div>
+                <svg class="w-10 h-10 text-[#003d66]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </div>
-            <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-wide">Technieker</h2>
+            <h2 class="text-2xl font-bold text-[#003d66] mb-3 tracking-wide">Technieker</h2>
             <p class="text-slate-500 text-sm leading-relaxed font-medium">Beheer installaties, logboeken en bestellingen in real-time.</p>
-            <div class="mt-8 flex items-center text-[#005b96] text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
+            <div class="mt-8 flex items-center text-[#003d66] text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
                 Direct Inloggen <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </div>
         </a>
 
         
         <a href="<?php echo e(route('login', ['email' => 'magazijnier@aquafin.be'])); ?>" class="glass-card rounded-3xl p-8 flex flex-col items-center text-center group transition-all duration-500 hover:-translate-y-3">
-            <div class="w-24 h-24 rounded-full bg-orange-50 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-orange-100 transition-all duration-500 relative shadow-inner">
-                <div class="absolute inset-0 rounded-full border border-orange-200 group-hover:border-orange-400 group-hover:animate-[spin_4s_linear_infinite_reverse]"></div>
-                <svg class="w-10 h-10 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            <div class="w-24 h-24 rounded-full bg-sky-50 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-sky-100 transition-all duration-500 relative shadow-inner">
+                <div class="absolute inset-0 rounded-full border border-sky-200 group-hover:border-sky-400 group-hover:animate-[spin_4s_linear_infinite_reverse]"></div>
+                <svg class="w-10 h-10 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
             </div>
-            <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-wide">Magazijnier</h2>
+            <h2 class="text-2xl font-bold text-sky-600 mb-3 tracking-wide">Magazijnier</h2>
             <p class="text-slate-500 text-sm leading-relaxed font-medium">Voorraadbeheer, inkomende leveringen en retourzendingen.</p>
-            <div class="mt-8 flex items-center text-orange-600 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
+            <div class="mt-8 flex items-center text-sky-600 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
                 Direct Inloggen <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </div>
         </a>
 
-        
+       
         <a href="<?php echo e(route('login', ['email' => 'admin@aquafin.be'])); ?>" class="glass-card rounded-3xl p-8 flex flex-col items-center text-center group transition-all duration-500 hover:-translate-y-3">
-            <div class="w-24 h-24 rounded-full bg-purple-50 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-purple-100 transition-all duration-500 relative shadow-inner">
-                <div class="absolute inset-0 rounded-full border border-purple-200 group-hover:border-purple-400 group-hover:animate-[spin_4s_linear_infinite]"></div>
-                <svg class="w-10 h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            <div class="w-24 h-24 rounded-full bg-cyan-50 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-cyan-100 transition-all duration-500 relative shadow-inner">
+                <div class="absolute inset-0 rounded-full border border-cyan-200 group-hover:border-cyan-400 group-hover:animate-[spin_4s_linear_infinite]"></div>
+                <svg class="w-10 h-10 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
             </div>
-            <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-wide">Admin</h2>
+            <h2 class="text-2xl font-bold text-cyan-500 mb-3 tracking-wide">Admin</h2>
             <p class="text-slate-500 text-sm leading-relaxed font-medium">Volledig dashboard, systeemconfiguratie en gebruikersbeheer.</p>
-            <div class="mt-8 flex items-center text-purple-600 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
+            <div class="mt-8 flex items-center text-cyan-500 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
                 Direct Inloggen <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </div>
         </a>
