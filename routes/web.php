@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 
 Route::get('/', function () {
-    return view('portal');
+    return view('auth.login');
 })->name('home');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
