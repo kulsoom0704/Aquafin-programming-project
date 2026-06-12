@@ -13,15 +13,14 @@ use Carbon\Carbon;
 
 class InstallatieController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | User Story 1: Onderhoudsmeldingen Dashboard
-    |--------------------------------------------------------------------------
-    */
+    private function getSessieGebruikerId() {
+        return session('gebruiker_id', 1);
+    }
+
     public function meldingen()
     {
         try {
-            $actieveTechniekerId = 1;
+            $actieveTechniekerId = $this->getSessieGebruikerId();
             $installaties = Installatie::where('technieker_id', $actieveTechniekerId)->get();
             $meldingenLijst = collect(); 
 
@@ -31,7 +30,6 @@ class InstallatieController extends Controller
 
                 if ($installatie->laatste_onderhoud_datum) {
                     $volgendeOnderhoud = Carbon::parse($installatie->laatste_onderhoud_datum)->addDays($installatie->onderhoudsinterval_dagen);
-
                     if (Carbon::now()->greaterThanOrEqualTo($volgendeOnderhoud)) {
                         $onderhoudNodig = true;
                         $dagenTeLaat = (int) abs(Carbon::now()->diffInDays($volgendeOnderhoud));
@@ -53,7 +51,9 @@ class InstallatieController extends Controller
             }
 
             $meldingen = $meldingenLijst->sortByDesc('dagen_te_laat');
-            $huidigeTechnieker = User::find($actieveTechniekerId)->name;
+            
+            $user = User::find($actieveTechniekerId);
+            $huidigeTechnieker = $user ? $user->name : 'Technieker';
 
             return view('technieker.meldingen', compact('meldingen', 'huidigeTechnieker'));
 
@@ -65,116 +65,123 @@ class InstallatieController extends Controller
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | User Story 2: Logboek (Detailpagina & Notities)
-    |--------------------------------------------------------------------------
-    */
-    
-    // Weergave van het installatieprofiel en de historiek
     public function show($id)
     {
         $installatie = Installatie::with(['notities' => function($query) {
             $query->latest(); 
         }, 'notities.technieker'])->findOrFail($id);
-
+        
         return view('technieker.logboek', compact('installatie'));
     }
 
-    // Validatie en opslag van een nieuwe interventienotitie MET FOTO
     public function storeNotitie(Request $request, $id)
     {
-        // 1. Validatie (Maintenant on autorise les images)
         $request->validate([
             'opmerking' => 'required|string|min:3',
-            'afbeelding' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120' // Max 5MB
+            'afbeelding' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120'
         ]);
-
+        
         $installatie = Installatie::findOrFail($id);
-
-        // 2. Traitement du fichier image
         $imagePath = null;
+        
         if ($request->hasFile('afbeelding')) {
-            // Sauvegarde dans storage/app/public/notities_images
             $imagePath = $request->file('afbeelding')->store('notities_images', 'public');
         }
 
-        // 3. Création de la note en base de données
         Notitie::create([
             'installatie_id' => $id,
-            'user_id' => 1, // Lukas
+            'user_id' => $this->getSessieGebruikerId(),
             'opmerking' => $request->opmerking,
-            'afbeelding' => $imagePath // Le chemin de l'image est enregistré
+            'afbeelding' => $imagePath 
         ]);
-
-        // Logische update: De laatste onderhoudsdatum wordt direct naar NU gezet
+        
         $installatie->update([
             'laatste_onderhoud_datum' => Carbon::now()
         ]);
-
+        
         return redirect()->route('installatie.show', $id)->with('success', 'Notitie succesvol toegevoegd en installatie bijgewerkt.');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | User Story 3: Materiaalbestellingen (Nieuw)
-    |--------------------------------------------------------------------------
-    */
     
-    // Toon het bestelformulier met de beschikbare onderdelen en bestelhistoriek
+    public function valideren($id)
+    {
+        try {
+            $installatie = Installatie::findOrFail($id);
+            
+            
+            $installatie->update([
+                'laatste_onderhoud_datum' => \Carbon\Carbon::now()
+            ]);
+
+            
+            Melding::where('installatie_id', $id)->update(['status' => 'gelezen']);
+            
+            
+            Notitie::create([
+                'installatie_id' => $id,
+                'user_id' => session('gebruiker_id', 1),
+                'opmerking' => 'Systeem: Snelle validatie en visuele controle uitgevoerd via het dashboard.',
+                'afbeelding' => null
+            ]);
+            
+            return redirect()->back()->with('success', "Installatie '{$installatie->naam}' succesvol gevalideerd. De melding is opgelost!");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Er is een fout opgetreden bij het valideren van de installatie.');
+        }
+    }
+
     public function showBestelformulier()
     {
-        $onderdelen = Onderdeel::all();
-        $bestellingen = Bestelling::with('onderdeel')->latest()->get();
-
-        return view('technieker.bestellen', compact('onderdelen', 'bestellingen'));
+        // On connecte le technicien au VRAI stock de l'entreprise
+        $materialen = \App\Models\Materiaal::all();
+        return view('technieker.bestellen', compact('materialen'));
     }
 
-    // Controleer de voorraad en registreer de bestelling
     public function storeBestelling(Request $request)
     {
-        // 1. Gegevens valideren
-        $request->validate([
-            'onderdeel_id' => 'required|exists:onderdelen,id',
-            'aantal' => 'required|integer|min:1'
-        ]);
-
-        $onderdeel = Onderdeel::findOrFail($request->onderdeel_id);
-
-        // 2. Voorraad en beschikbaarheid controleren (Scenario 2)
-        if ($onderdeel->voorraad < $request->aantal) {
-            return redirect()->back()->with('error', "Bestelling mislukt: Er zijn slechts {$onderdeel->voorraad} stuks van '{$onderdeel->naam}' beschikbaar.");
+        // On récupère le panier envoyé en format JSON depuis le JavaScript
+        $cart = json_decode($request->cart_data, true);
+        
+        if (!$cart || empty($cart)) {
+            return redirect()->back()->with('error', 'Je winkelwagen is leeg.');
         }
 
-        // 3. Bestelling registreren (Scenario 1)
-        Bestelling::create([
-            'user_id' => 1, // Lukas
-            'onderdeel_id' => $onderdeel->id,
-            'aantal' => $request->aantal,
-            'status' => 'In behandeling' // Status beheren
+        $techniekerNaam = session('naam', 'Een technieker');
+        $bericht = $techniekerNaam . " heeft een nieuwe bestelling geplaatst:\n\n";
+
+        // On boucle sur chaque article du panier pour créer les vraies commandes
+        foreach ($cart as $item) {
+            $materiaal = \App\Models\Materiaal::find($item['id']);
+            if ($materiaal) {
+                \App\Models\Bestelling::create([
+                    'user_id' => session('gebruiker_id', 1),
+                    'onderdeel_id' => $materiaal->id, // Attention, ton modèle Bestelling pointe vers onderdeel_id
+                    'aantal' => $item['aantal'],
+                    'status' => 'In behandeling'
+                ]);
+                $bericht .= "- " . $item['aantal'] . "x " . $materiaal->omschrijving . " (Ref: " . $materiaal->artikelnummer . ")\n";
+            }
+        }
+
+        // On génère UNE SEULE alerte groupée pour le Magazijnier
+        \App\Models\Melding::create([
+            'titel' => 'Nieuwe bestelling: ' . $techniekerNaam,
+            'bericht' => $bericht,
+            'gelezen' => false,
         ]);
-
-        // 4. Voorraad fysiek verminderen in de database
-        $onderdeel->decrement('voorraad', $request->aantal);
-
-        return redirect()->back()->with('success', "Bestelling succesvol geregistreerd voor {$request->aantal}x {$onderdeel->naam}.");
+        
+        return redirect()->back()->with('success', 'Je bestelling is succesvol doorgestuurd naar het magazijn!');
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Historiek van gevalideerde interventies
-    |--------------------------------------------------------------------------
-    */
+    
+    
     public function historiek()
     {
         try {
-            $actieveTechniekerId = 1;
-
-            $notities = Notitie::where('user_id', $actieveTechniekerId)
-                ->with('installatie')
+            
+            $notities = Notitie::with(['installatie', 'technieker'])
                 ->latest()
                 ->get();
-
+                
             return view('technieker.historiek', compact('notities'));
 
         } catch (\Exception $e) {
@@ -182,6 +189,23 @@ class InstallatieController extends Controller
                 'notities' => collect(),
                 'error' => 'Er is een fout opgetreden bij het laden van de historiek.'
             ]);
+        }
+    }
+
+    public function storeNoodoproep(Request $request)
+    {
+        try {
+            \App\Models\Noodoproep::create([
+                'user_id' => session('gebruiker_id', 1), 
+                'type' => $request->type,
+                'bericht' => $request->bericht,
+                'status' => 'open'
+            ]);
+
+            
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 }

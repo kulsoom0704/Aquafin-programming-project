@@ -6,29 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
-{
-    Schema::create('meldingen', function (Blueprint $table) {
-        $table->id();
-        
-        $table->foreignId('installatie_id')->constrained('installaties')->onDelete('cascade');
-        
-        $table->string('status')->default('ongelezen'); 
-        
-        $table->text('bericht')->nullable(); 
-        
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('meldingen', function (Blueprint $table) {
+            $table->id();
+            
+            
+            $table->foreignId('installatie_id')->nullable()->constrained('installaties')->onDelete('cascade');
+            $table->string('status')->default('ongelezen');
+            
+            
+            $table->string('titel')->nullable();
+            $table->text('bericht')->nullable();
+            $table->boolean('gelezen')->default(false);
+            
+            $table->timestamps();
+        });
+    }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('meldings');
+        Schema::dropIfExists('meldingen');
     }
 };

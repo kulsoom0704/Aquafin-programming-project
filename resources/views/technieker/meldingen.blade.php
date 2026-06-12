@@ -76,16 +76,15 @@
             @foreach($meldingen as $installatie)
                 @php
                     $isCritical = $installatie->dagen_te_laat > 30 || $installatie->dagen_te_laat === 999;
-                    $glowColor = $isCritical ? 'group-hover:shadow-red-500/20' : 'group-hover:shadow-amber-500/20';
+                    $glowColor = $isCritical ? 'hover:shadow-red-500/20' : 'hover:shadow-amber-500/20';
                     $dotColor = $isCritical ? 'bg-red-500' : 'bg-amber-400';
                 @endphp
 
-                <!-- Carte Premium -->
-                <a href="{{ route('installatie.show', $installatie->id) }}" class="group block bg-white/90 backdrop-blur-xl rounded-2xl p-7 border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 {{ $glowColor }} hover:shadow-xl relative overflow-hidden">
+                <div class="group bg-white/90 backdrop-blur-xl rounded-3xl p-7 border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 {{ $glowColor }} hover:shadow-xl relative overflow-hidden">
                     
                     <div class="absolute top-0 left-0 w-full h-1 {{ $dotColor }} opacity-80"></div>
 
-                    <div class="flex justify-between items-start">
+                    <div class="flex justify-between items-start mb-6">
                         <div>
                             <div class="flex items-center space-x-2 mb-3">
                                 <span class="relative flex h-3 w-3">
@@ -104,18 +103,33 @@
                                 {{ $installatie->locatie ?? 'Onbekend' }}
                             </p>
                         </div>
-                    </div>
-                    
-                    <div class="mt-6 pt-5 border-t border-gray-100 flex justify-between items-center">
-                        <div class="text-sm">
-                            <span class="text-gray-400">Vervaldatum:</span> 
-                            <span class="font-semibold text-gray-800 ml-1">{{ $installatie->laatste_onderhoud_datum ?? 'Geen data' }}</span>
-                        </div>
+                        
                         <div class="font-mono text-xs font-bold {{ $isCritical ? 'text-red-500 bg-red-50' : 'text-amber-600 bg-amber-50' }} px-3 py-1.5 rounded-lg border {{ $isCritical ? 'border-red-100' : 'border-amber-100' }}">
                             +{{ $installatie->dagen_te_laat === 999 ? '∞' : $installatie->dagen_te_laat }} DAGEN
                         </div>
                     </div>
-                </a>
+                    
+                    <div class="pt-5 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="text-sm w-full sm:w-auto">
+                            <span class="text-gray-400 block sm:inline">Vervaldatum:</span> 
+                            <span class="font-semibold text-gray-800">{{ $installatie->laatste_onderhoud_datum ?? 'Geen data' }}</span>
+                        </div>
+                        
+                        <div class="flex space-x-3 w-full sm:w-auto">
+                            <a href="{{ route('installatie.show', $installatie->id) }}" class="flex-1 sm:flex-none text-center px-4 py-2.5 bg-blue-50 text-[#005b96] hover:bg-blue-100 font-bold rounded-xl text-sm transition-colors border border-blue-200">
+                                Logboek
+                            </a>
+                            
+                            <form action="{{ route('installatie.valideren', $installatie->id) }}" method="POST" class="flex-1 sm:flex-none inline">
+                                @csrf
+                                <button type="submit" class="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-transform active:scale-95 shadow-sm tracking-wide flex items-center justify-center">
+                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                    Valideren
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             @endforeach
         </div>
     @else
