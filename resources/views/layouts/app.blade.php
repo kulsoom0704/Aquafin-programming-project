@@ -13,7 +13,7 @@
             font-family: 'Outfit', sans-serif; 
         }
 
-        /* Fond clair thématique eau */
+        /* Licht waterachtig achtergrondthema */
         .bg-animated {
             background: linear-gradient(-45deg, #f8fafc, #e0f2fe, #f0f9ff, #eff6ff);
             background-size: 400% 400%;
@@ -27,14 +27,14 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Barre de navigation haute visibilité */
+        /* Navigatiebalk met hoge zichtbaarheid */
         .premium-nav {
             background: rgba(255, 255, 255, 0.95);
             border-bottom: 2px solid #e2e8f0;
             box-shadow: 0 4px 20px rgba(0, 91, 150, 0.08);
         }
 
-        /* Cartes internes */
+        /* Interne kaarten */
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
@@ -69,19 +69,15 @@
                 </div>
 
                 <div class="hidden md:flex space-x-3 items-center bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-                    <a href="{{ route('technieker.meldingen') }}" class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 {{ request()->routeIs('technieker.meldingen') ? 'bg-[#005b96] text-white shadow-md shadow-blue-900/10' : 'text-slate-600 hover:text-[#005b96] hover:bg-white/80' }}">
-                        Meldingen
-                    </a>
                     <a href="{{ route('materiaal.bestellen') }}" class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 {{ request()->routeIs('materiaal.bestellen') ? 'bg-[#005b96] text-white shadow-md shadow-blue-900/10' : 'text-slate-600 hover:text-[#005b96] hover:bg-white/80' }}">
                         Materiaal bestellen
                     </a>
                     <a href="{{ route('technieker.historiek') }}" class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 {{ request()->routeIs('technieker.historiek') ? 'bg-[#005b96] text-white shadow-md shadow-blue-900/10' : 'text-slate-600 hover:text-[#005b96] hover:bg-white/80' }}">
                         Historiek
                     </a>
-                    <a href="{{ route('technieker.weer') }}"
-   class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ Request::routeIs('technieker.weer') ? 'bg-aquaDark text-white' : 'text-gray-300 hover:text-white' }}">
-    Weer
-</a>
+                    <a href="{{ route('technieker.meldingen') }}" class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 {{ request()->routeIs('technieker.meldingen') ? 'bg-[#005b96] text-white shadow-md shadow-blue-900/10' : 'text-slate-600 hover:text-[#005b96] hover:bg-white/80' }}">
+                        Meldingen
+                    </a>
                 </div>
 
                 <div class="flex items-center space-x-4 pl-4 border-l border-slate-200">
@@ -101,7 +97,7 @@
 
     <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 z-10 relative">
         
-        {{-- Alertes Flash --}}
+        {{-- Flashmeldingen --}}
         @if(session('success'))
             <div class="mb-8 bg-emerald-50 border-2 border-emerald-200 text-emerald-900 px-6 py-4 rounded-xl flex items-center shadow-sm">
                 <div class="bg-emerald-500 text-white p-1.5 rounded-lg mr-4 shadow-sm">

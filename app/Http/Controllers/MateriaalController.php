@@ -329,4 +329,6 @@ class MateriaalController extends Controller
 
         return view('technieker.historiek', compact('bestellingen'));
     }
+
+    
 }

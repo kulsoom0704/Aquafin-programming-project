@@ -63,14 +63,14 @@
             Nieuwe notitie toevoegen
         </h2>
         
-        {{-- NOUVEAU: enctype toegevoegd om bestanden te kunnen uploaden --}}
+        {{-- Nieuw: enctype toegevoegd zodat bestanden geüpload kunnen worden --}}
         <form action="{{ route('notitie.store', $installatie->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="relative">
                 <textarea name="opmerking" rows="3" class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-4 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-aquaBlue/50 focus:border-aquaBlue transition-all resize-none" placeholder="Wat is er gebeurd tijdens de interventie? Geef details over vervangen onderdelen of opgeloste storingen..." required></textarea>
             </div>
             
-            {{-- NOUVEAU: Upload sectie inline geïntegreerd naast de knop --}}
+            {{-- Nieuw: uploadsectie inline naast de knop --}}
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-5 gap-4">
                 <div class="w-full sm:w-auto flex-1">
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Foto bijlage (optioneel)</label>
@@ -117,7 +117,7 @@
                             </div>
                             <p class="text-gray-700 text-sm leading-relaxed">{{ $notitie->opmerking }}</p>
 
-                            {{-- NOUVEAU: Controleert of er een foto gekoppeld is aan de notitie --}}
+                            {{-- Nieuw: controleer of er een foto aan de notitie is gekoppeld --}}
                             @if($notitie->afbeelding)
                                 <div class="mt-4 rounded-xl overflow-hidden border border-gray-200 bg-gray-100 max-w-xl group/img">
                                     <img src="{{ asset('storage/' . $notitie->afbeelding) }}" alt="Visueel bewijs van interventie" class="w-full h-auto max-h-80 object-cover group-hover/img:scale-[1.01] transition-transform duration-300 cursor-pointer">

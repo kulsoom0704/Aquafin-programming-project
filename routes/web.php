@@ -7,11 +7,10 @@ use App\Http\Controllers\MeldingController;
 use App\Http\Controllers\WijzigingsverzoekController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstallatieController;
-use App\Http\Controllers\WeerController;
 
 /*
 |--------------------------------------------------------------------------
-| Portal & Auth Routes (Nouveau et sécurisé)
+| Portal & Auth Routes (Nieuw en beveiligd)
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
@@ -35,7 +34,6 @@ Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatu
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
 
-
 /*
 |--------------------------------------------------------------------------
 | Installaties, Logboek & Meldingen (Technieker)
@@ -50,31 +48,28 @@ Route::controller(InstallatieController::class)->group(function () {
     Route::get('/installatie/{id}', 'show')->name('installatie.show');
     Route::post('/installatie/{id}/notitie', 'storeNotitie')->name('notitie.store');
     
-    // Le formulaire visuel pour commander (Webshop)
+    // Visueel bestelformulier (Webshop)
     Route::get('/materiaal/bestellen', 'showBestelformulier')->name('materiaal.bestellen');
     
-    // Routes de validation et de support
+    // Validatie- en supportroutes
     Route::post('/installatie/{id}/valideren', 'valideren')->name('installatie.valideren');
     Route::post('/support/noodoproep', 'storeNoodoproep')->name('support.noodoproep');
 });
-
-Route::get('/technieker/weer', [WeerController::class, 'dashboard'])->name('technieker.weer');
-
 
 /*
 |--------------------------------------------------------------------------
 | Webshop & Magazijnier (MateriaalController)
 |--------------------------------------------------------------------------
 */
-// L'API pour la barre de recherche intelligente
+// API voor slimme zoekbalk
 Route::get('/api/materiaal/search', [MateriaalController::class, 'searchLogic'])->name('materiaal.search');
 
-// Le Technicien valide son panier (Envoi de la commande)
+// Technieker bevestigt zijn winkelwagen (bestelling versturen)
 Route::post('/materiaal/bestellen', [MateriaalController::class, 'bestellingOpslaan'])->name('materiaal.bestellen.store');
 
-// Le radar du Technicien (Suivi des statuts)
+// Technieker overzicht (status volgen)
 Route::get('/technieker/historiek', [MateriaalController::class, 'techniekerHistoriek'])->name('technieker.historiek');
 
-// Le tableau de bord du Magasinier
+// Magazijnier dashboard
 Route::get('/magazijnier/bestellingen', [MateriaalController::class, 'magazijnierIndex'])->name('magazijnier.bestellingen');
 Route::patch('/magazijnier/bestellingen/{id}/klaarzetten', [MateriaalController::class, 'klaarzetten'])->name('magazijnier.klaarzetten');

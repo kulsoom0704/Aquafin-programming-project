@@ -1,140 +1,143 @@
 <?php $__env->startSection('title', 'Mijn Dashboard'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-6xl mx-auto">
+<div class="max-w-7xl mx-auto relative pb-24 px-4 sm:px-6 lg:px-8 mt-6">
     
-    
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div class="flex flex-col lg:flex-row justify-between lg:items-end gap-6 mb-10">
         <div>
-            <h1 class="text-4xl font-extrabold text-aquaDark tracking-tight mb-1">Overzicht Dashboard</h1>
-            <p class="text-gray-500">Welkom terug. Hier is de actuele status van jouw regio.</p>
-        </div>
-        <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-gray-200 shadow-sm text-sm font-semibold text-gray-600">
-            <svg class="w-5 h-5 text-aquaBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            <span><?php echo e(\Carbon\Carbon::now()->locale('nl')->translatedFormat('l j F Y')); ?></span>
-        </div>
-    </div>
+            <span class="text-xs font-black tracking-[0.2em] text-[#005b96] uppercase mb-2 block">
+                <?php echo e(\Carbon\Carbon::now()->translatedFormat('l d F Y')); ?>
 
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            </span>
+            <h1 class="text-3xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                Welkom terug, <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#005b96] to-cyan-500"><?php echo e(explode(' ', $huidigeTechnieker)[0]); ?></span>
+            </h1>
+        </div>
         
-        
-        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
-            <div class="absolute -right-6 -top-6 bg-blue-50 w-24 h-24 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-            <div class="flex justify-between items-center relative z-10">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Openstaande Meldingen</p>
-                    <p class="text-4xl font-extrabold text-aquaDark"><?php echo e($meldingen->count()); ?></p>
+        <div class="flex gap-4">
+            <div class="bg-white border border-slate-200 rounded-2xl px-6 py-4 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 border border-rose-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 </div>
-                <div class="p-3 bg-blue-50 text-aquaBlue rounded-xl">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                <div>
+                    <div class="text-3xl font-black text-slate-800 leading-none"><?php echo e($meldingen->count()); ?></div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Interventies</div>
                 </div>
             </div>
         </div>
-
-        
-        <?php $critiekCount = $meldingen->where('dagen_te_laat', '>', 30)->count() + $meldingen->where('dagen_te_laat', '===', 999)->count(); ?>
-        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
-            <div class="absolute -right-6 -top-6 bg-red-50 w-24 h-24 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-            <div class="flex justify-between items-center relative z-10">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Kritieke Status</p>
-                    <p class="text-4xl font-extrabold <?php echo e($critiekCount > 0 ? 'text-red-600' : 'text-gray-800'); ?>"><?php echo e($critiekCount); ?></p>
-                </div>
-                <div class="p-3 bg-red-50 text-red-500 rounded-xl">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    
-    <?php if(isset($error)): ?>
-        <div class="flex items-center bg-red-50/80 backdrop-blur-sm border border-red-100 p-4 rounded-xl mb-8">
-            <p class="text-red-800 font-medium"><?php echo e($error); ?></p>
-        </div>
-    <?php endif; ?>
+    <?php if(isset($weer) && $weer['is_beschikbaar']): ?>
+        <div class="mb-12">
+            <div class="bg-gradient-to-br from-[#002a4a] to-[#004274] rounded-[2rem] p-6 md:p-8 relative overflow-hidden shadow-xl border border-[#005b96]">
+                <div class="absolute top-[-50%] right-[-10%] w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 text-[10px] font-black tracking-widest uppercase border border-cyan-400/20">Live Weer & Veiligheid</span>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        </div>
+                        <h2 class="text-2xl font-black text-white tracking-tight">Operationele Status</h2>
+                        <p class="text-blue-200 mt-1 text-sm font-medium max-w-lg">Houd rekening met de actuele omstandigheden tijdens je interventies. Controleer je PBM's in de webshop indien nodig.</p>
+                    </div>
 
-    
-    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
-        <svg class="w-6 h-6 mr-2 text-aquaBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-        Te Behandelen Installaties
-    </h2>
-
-    <?php if($meldingen->count() > 0): ?>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <?php $__currentLoopData = $meldingen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $installatie): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <?php
-                    $isCritical = $installatie->dagen_te_laat > 30 || $installatie->dagen_te_laat === 999;
-                    $glowColor = $isCritical ? 'hover:shadow-red-500/20' : 'hover:shadow-amber-500/20';
-                    $dotColor = $isCritical ? 'bg-red-500' : 'bg-amber-400';
-                ?>
-
-                <div class="group bg-white/90 backdrop-blur-xl rounded-3xl p-7 border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 <?php echo e($glowColor); ?> hover:shadow-xl relative overflow-hidden">
-                    
-                    <div class="absolute top-0 left-0 w-full h-1 <?php echo e($dotColor); ?> opacity-80"></div>
-
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <div class="flex items-center space-x-2 mb-3">
-                                <span class="relative flex h-3 w-3">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full <?php echo e($dotColor); ?> opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-3 w-3 <?php echo e($dotColor); ?>"></span>
-                                </span>
-                                <span class="text-xs font-bold uppercase tracking-wider <?php echo e($isCritical ? 'text-red-600' : 'text-amber-600'); ?>">
-                                    <?php echo e($isCritical ? 'Actie vereist' : 'Onderhoud gepland'); ?>
-
-                                </span>
+                    <div class="flex items-center gap-6">
+                        <div class="flex items-center gap-4 bg-white/5 border border-white/10 px-5 py-3 rounded-2xl backdrop-blur-sm">
+                            <div class="text-white">
+                                <?php if($weer['code'] <= 3): ?>
+                                    <svg class="w-10 h-10 text-amber-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                <?php elseif($weer['code'] >= 71): ?>
+                                    <svg class="w-10 h-10 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                                <?php else: ?>
+                                    <svg class="w-10 h-10 text-cyan-300 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+                                <?php endif; ?>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900 group-hover:text-aquaBlue transition-colors duration-200">
-                                <?php echo e($installatie->naam); ?>
+                            <div class="h-10 w-px bg-white/20"></div>
+                            <div>
+                                <div class="text-[10px] uppercase tracking-widest text-cyan-100/70 font-bold mb-0.5">Brussel</div>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-2xl font-black text-white leading-none"><?php echo e($weer['temp']); ?>°</span>
+                                    <span class="text-sm font-bold <?php echo e($weer['gevaar'] == 'Kritiek' ? 'text-rose-400' : ($weer['gevaar'] == 'Gemiddeld' ? 'text-amber-400' : 'text-emerald-400')); ?>">
+                                        <?php echo e($weer['gevaar'] == 'Kritiek' ? 'Zware Neerslag' : ($weer['gevaar'] == 'Gemiddeld' ? 'Lichte Regen' : 'Optimaal')); ?>
 
-                            </h3>
-                            <p class="text-sm text-gray-500 mt-1 flex items-center">
-                                <svg class="w-4 h-4 mr-1.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                                <?php echo e($installatie->locatie ?? 'Onbekend'); ?>
-
-                            </p>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="font-mono text-xs font-bold <?php echo e($isCritical ? 'text-red-500 bg-red-50' : 'text-amber-600 bg-amber-50'); ?> px-3 py-1.5 rounded-lg border <?php echo e($isCritical ? 'border-red-100' : 'border-amber-100'); ?>">
-                            +<?php echo e($installatie->dagen_te_laat === 999 ? '∞' : $installatie->dagen_te_laat); ?> DAGEN
-                        </div>
-                    </div>
-                    
-                    <div class="pt-5 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <div class="text-sm w-full sm:w-auto">
-                            <span class="text-gray-400 block sm:inline">Vervaldatum:</span> 
-                            <span class="font-semibold text-gray-800"><?php echo e($installatie->laatste_onderhoud_datum ?? 'Geen data'); ?></span>
-                        </div>
-                        
-                        <div class="flex space-x-3 w-full sm:w-auto">
-                            <a href="<?php echo e(route('installatie.show', $installatie->id)); ?>" class="flex-1 sm:flex-none text-center px-4 py-2.5 bg-blue-50 text-[#005b96] hover:bg-blue-100 font-bold rounded-xl text-sm transition-colors border border-blue-200">
-                                Logboek
-                            </a>
-                            
-                            <form action="<?php echo e(route('installatie.valideren', $installatie->id)); ?>" method="POST" class="flex-1 sm:flex-none inline">
-                                <?php echo csrf_field(); ?>
-                                <button type="submit" class="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-transform active:scale-95 shadow-sm tracking-wide flex items-center justify-center">
-                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                    Valideren
-                                </button>
-                            </form>
-                        </div>
+                        <a href="<?php echo e(route('materiaal.bestellen')); ?>" class="hidden md:flex h-16 w-16 bg-cyan-500 hover:bg-cyan-400 text-[#002a4a] rounded-2xl items-center justify-center transition-all shadow-lg hover:shadow-cyan-500/50 hover:-translate-y-1">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        </a>
                     </div>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
-    <?php else: ?>
-        <div class="flex flex-col items-center justify-center h-72 text-center bg-white/90 backdrop-blur-xl rounded-2xl border-2 border-dashed border-green-200 shadow-sm mt-8 transition-all hover:bg-green-50/50">
-            <div class="bg-green-100 p-4 rounded-full mb-5 shadow-inner">
-                <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m11 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
             </div>
-            <h3 class="text-2xl font-extrabold text-gray-900 mb-2">Alles is up-to-date!</h3>
-            <p class="text-gray-500 font-medium">Je hebt momenteel geen dringende onderhoudsmeldingen.<br>Tijd voor een koffiepauze.</p>
         </div>
     <?php endif; ?>
+
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-black text-[#003d66] tracking-tight">Openstaande Taken</h2>
+        <div class="text-sm font-bold text-slate-400"><?php echo e($meldingen->count()); ?> installatie(s) vereisen onderhoud</div>
+    </div>
+
+    <div class="space-y-4">
+        <?php $__empty_1 = true; $__currentLoopData = $meldingen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $taak): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+            <div class="bg-white rounded-[1.5rem] border border-slate-200 shadow-[0_2px_15px_rgba(0,91,150,0.03)] hover:shadow-[0_10px_25px_rgba(0,91,150,0.08)] hover:border-blue-200 transition-all duration-300 p-5 lg:p-6 flex flex-col md:flex-row gap-6 items-start md:items-center group">
+                
+                <div class="w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50/50 border border-blue-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                    <svg class="w-8 h-8 text-[#005b96] opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+
+                <div class="flex-grow">
+                    <div class="flex items-center gap-3 mb-1">
+                        <span class="text-[10px] font-black tracking-widest uppercase text-slate-400"><?php echo e($taak->locatie ?? 'Locatie Onbekend'); ?></span>
+                        
+                        <?php if($taak->dagen_te_laat == 999): ?>
+                            <span class="px-2.5 py-0.5 rounded-md bg-rose-50 border border-rose-100 text-rose-600 text-[10px] font-black tracking-wide">EERSTE ONDERHOUD</span>
+                        <?php elseif($taak->dagen_te_laat > 0): ?>
+                            <span class="px-2.5 py-0.5 rounded-md bg-rose-50 border border-rose-100 text-rose-600 text-[10px] font-black tracking-wide flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                                <?php echo e($taak->dagen_te_laat); ?> DAGEN OVERTIJD
+                            </span>
+                        <?php else: ?>
+                            <span class="px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-100 text-amber-600 text-[10px] font-black tracking-wide">ONDERHOUD VANDAAG</span>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <h3 class="text-xl font-extrabold text-slate-800 leading-tight group-hover:text-[#005b96] transition-colors"><?php echo e($taak->naam); ?></h3>
+                    <p class="text-sm text-slate-500 font-medium mt-1 flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Laatste controle: <?php echo e($taak->laatste_onderhoud_datum ? \Carbon\Carbon::parse($taak->laatste_onderhoud_datum)->format('d/m/Y') : 'Geen historiek'); ?>
+
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0 md:pl-6 md:border-l border-slate-100">
+                    <form action="<?php echo e(route('installatie.valideren', $taak->id)); ?>" method="POST" class="w-full sm:w-auto">
+                        <?php echo csrf_field(); ?>
+                        <button type="submit" class="w-full sm:w-auto px-5 py-3.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                            Snel Valideren
+                        </button>
+                    </form>
+                    
+                    <a href="<?php echo e(route('installatie.show', $taak->id)); ?>" class="w-full sm:w-auto px-5 py-3.5 bg-slate-900 hover:bg-[#005b96] text-white rounded-xl font-bold text-sm transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Logboek openen
+                    </a>
+                </div>
+            </div>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+            <div class="bg-white rounded-[2rem] border border-dashed border-slate-300 p-12 flex flex-col items-center justify-center text-center shadow-sm">
+                <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-5 text-emerald-500 border border-emerald-100">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-black text-slate-800 mb-2">Alles is in orde!</h3>
+                <p class="text-slate-500 font-medium">Er zijn momenteel geen installaties die onderhoud vereisen.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+
 </div>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\ramon\Aquafin-programming-project\resources\views/technieker/meldingen.blade.php ENDPATH**/ ?>
