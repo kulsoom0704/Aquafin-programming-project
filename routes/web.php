@@ -7,6 +7,7 @@ use App\Http\Controllers\MeldingController;
 use App\Http\Controllers\WijzigingsverzoekController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstallatieController;
+use App\Http\Controllers\WeerController;
 
 /*
 | Portal & Auth Routes (Nouveau et sécurisé)
@@ -96,5 +97,6 @@ Route::post('/materiaal/bestellen', [App\Http\Controllers\MateriaalController::c
 Route::get('/magazijnier/bestellingen', [App\Http\Controllers\MateriaalController::class, 'magazijnierIndex'])->name('magazijnier.bestellingen');
 Route::patch('/magazijnier/bestellingen/{id}/klaarzetten', [App\Http\Controllers\MateriaalController::class, 'klaarzetten'])->name('magazijnier.klaarzetten');
 
-// --- ROUTE DU TECHNICIEN (SUIVI) ---
-Route::get('/technieker/historiek', [App\Http\Controllers\MateriaalController::class, 'techniekerHistoriek'])->name('technieker.historiek');
+    Route::get('/technieker/weer', [WeerController::class, 'dashboard'])->name('technieker.weer');
+
+});
