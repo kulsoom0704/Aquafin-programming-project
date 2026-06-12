@@ -6,18 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bestelling extends Model
 {
-    
+    // Specifieke tabelnaam omdat het model niet standaard wordt afgeleid
     protected $table = 'bestellingen';
 
-    protected $fillable = ['user_id', 'onderdeel_id', 'aantal', 'status'];
+    // Velden die veilig massaal kunnen worden ingevuld
+    protected $fillable = [
+        'user_id', 
+        'onderdeel_id', 
+        'aantal', 
+        'status'
+    ];
 
-    public function onderdeel()
+    // Materialen-relatie voor de bestelling
+    public function materiaal()
     {
-        return $this->belongsTo(Onderdeel::class);
+        return $this->belongsTo(Materiaal::class, 'onderdeel_id');
     }
 
-    public function technieker()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 }

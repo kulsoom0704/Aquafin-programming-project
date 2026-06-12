@@ -123,7 +123,7 @@
             </div>
 
         <div class="p-6 border-t border-slate-200 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
-            <form action="<?php echo e(route('materiaal.store')); ?>" method="POST" id="checkoutForm">
+            <form action="<?php echo e(route('materiaal.bestellen.store')); ?>" method="POST" id="checkoutForm">
                 <?php echo csrf_field(); ?>
                 <input type="hidden" name="cart_data" id="cartDataInput">
                 <button type="submit" id="btnCheckout" class="w-full py-4 bg-gradient-to-r from-[#005b96] to-cyan-600 hover:from-blue-800 hover:to-cyan-700 text-white font-black rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
@@ -143,8 +143,9 @@
     let favorites = JSON.parse(localStorage.getItem('aquafin_favorites')) || [];
     let currentCategory = 'ALL';
     let showOnlyFavorites = false;
+    let serverValidIds = null; // C'est ici qu'on stockera ce que le serveur valide
 
-    // --- 1. GESTION DU PANIER & DE L'INTERFACE ---
+    // --- 1. GESTION DU PANIER & DE L'INTERFACE (Ton code d'origine intact) ---
     function toggleCart() {
         const sidebar = document.getElementById('cartSidebar');
         const overlay = document.getElementById('cartOverlay');
@@ -264,137 +265,99 @@
         });
     }
 
-    // Le tag invisible qui vide le panier si on vient de valider une commande avec succès
     if (document.querySelector('meta[name="clear-cart"]')) {
         localStorage.removeItem('aquafin_cart');
         cart = [];
         updateCartBadge();
     }
 
-    // --- 2. RECHERCHE COGNITIVE (Dictionnaire de synonymes & fautes) ---
+    // --- 2. LA RECHERCHE AVEC LE SERVEUR ---
     const searchInput = document.getElementById('searchInput');
     const suggestionsBox = document.getElementById('searchSuggestions');
     const cards = document.querySelectorAll('.product-card');
 
-    // Le cerveau de ta barre de recherche (FR, EN, et fautes de frappes courantes -> NL)
-    const typoDictionary = {
-        'button': 'bouten', 'bautton': 'bouten', 'bouton': 'bouten', 'boute': 'bouten', 'boeten': 'bouten',
-        'vis': 'schroef', 'viss': 'schroef', 'shroef': 'schroef', 'schroof': 'schroef', 'vijz': 'schroef', 'vijzen': 'schroef',
-        'casque': 'helm', 'kask': 'helm', 'helme': 'helm',
-        'gant': 'handschoenen', 'gants': 'handschoenen', 'handchoenen': 'handschoenen', 'gans': 'handschoenen',
-        'outil': 'gereedschap', 'outils': 'gereedschap', 'geredschap': 'gereedschap',
-        'clef': 'sleutel', 'cle': 'sleutel', 'slutel': 'sleutel',
-        'pince': 'tang', 'tange': 'tang',
-        'marteau': 'hamer', 'amer': 'hamer',
-        'pompe': 'pomp', 'pompen': 'pomp',
-        'machine': 'boormachine', 'bormachine': 'boormachine'
-    };
-
-    // Outil mathématique de secours (Distance de Levenshtein)
-    function calculDistance(a, b) {
-        if(a.length == 0) return b.length; 
-        if(b.length == 0) return a.length; 
-        var m = [];
-        for(var i=0; i<=b.length; i++) m[i] = [i];
-        for(var j=0; j<=a.length; j++) m[0][j] = j;
-        for(var i=1; i<=b.length; i++){
-            for(var j=1; j<=a.length; j++){
-                if(b.charAt(i-1) == a.charAt(j-1)) m[i][j] = m[i-1][j-1];
-                else m[i][j] = Math.min(m[i-1][j-1]+1, Math.min(m[i][j-1]+1, m[i-1][j]+1));
-            }
-        }
-        return m[b.length][a.length];
-    }
-
     searchInput.addEventListener('input', function() {
-        let rechercheBrute = this.value.toLowerCase().trim();
+        let rechercheBrute = this.value.trim();
         suggestionsBox.innerHTML = '';
         
         if(rechercheBrute.length === 0) {
             suggestionsBox.classList.add('hidden');
+            serverValidIds = null;
             filtrerGrid(''); 
             return;
         }
 
-        // Étape 1 : Le code corrige les mots de l'utilisateur silencieusement
-        let mots = rechercheBrute.split(' ');
-        let rechercheCorrigee = mots.map(mot => {
-            if(typoDictionary[mot]) return typoDictionary[mot]; // Trouvé direct dans le dico
-            
-            // Si le mot n'est pas dans le dico, on regarde s'il ressemble à une clé du dico
-            for(let key in typoDictionary) {
-                if(mot.length >= 4 && calculDistance(mot, key) <= 1) {
-                    return typoDictionary[key];
+        // On interroge ton backend Laravel (qui a la logique des langues et des fautes)
+        fetch(`/api/materiaal/search?q=${encodeURIComponent(rechercheBrute)}`)
+            .then(response => response.json())
+            .then(data => {
+                suggestionsBox.innerHTML = '';
+                let aAfficher = false;
+
+                // 1. Si le serveur a corrigé une faute, on affiche ta bulle esthétique "Bedoelde je:"
+                if(data.bedoelde_je) {
+                    suggestionsBox.innerHTML += `
+                        <div class="p-3 bg-blue-50 border-b border-blue-100 flex items-center text-sm transition-colors cursor-pointer hover:bg-blue-100" onclick="appliquerCorrection('${data.bedoelde_je}')">
+                            <svg class="w-5 h-5 mr-2 text-[#005b96]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="text-slate-700">Bedoelde je: <strong class="text-[#005b96] uppercase tracking-wide">${data.bedoelde_je}</strong> ?</span>
+                        </div>
+                    `;
+                    aAfficher = true;
+                } 
+                
+                // 2. On affiche aussi tes 3 options rapides comme avant
+                if (data.artikelen.length > 0) {
+                    data.artikelen.slice(0, 3).forEach(item => {
+                        // On échappe les apostrophes pour le onclick
+                        let nomSafe = item.omschrijving.replace(/'/g, "\\'");
+                        suggestionsBox.innerHTML += `
+                            <div class="p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0 flex items-center text-sm text-slate-600" onclick="appliquerCorrection('${nomSafe}')">
+                                <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg> 
+                                ${item.omschrijving}
+                            </div>
+                        `;
+                    });
+                    aAfficher = true;
+                } else if (!data.bedoelde_je) {
+                    suggestionsBox.innerHTML = `<div class="p-4 text-slate-400 text-sm text-center font-medium">Geen materiaal gevonden</div>`;
+                    aAfficher = true;
                 }
-            }
-            return mot;
-        }).join(' ');
 
-        let aEteCorrige = (rechercheBrute !== rechercheCorrigee);
+                if(aAfficher) suggestionsBox.classList.remove('hidden');
 
-        // Étape 2 : On affiche la suggestion esthétique
-        if(aEteCorrige) {
-            suggestionsBox.innerHTML = `
-                <div class="p-3 bg-blue-50 border-b border-blue-100 flex items-center text-sm transition-colors cursor-pointer hover:bg-blue-100" onclick="appliquerCorrection('${rechercheCorrigee}')">
-                    <svg class="w-5 h-5 mr-2 text-[#005b96]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span class="text-slate-700">Bedoelde je: <strong class="text-[#005b96] uppercase tracking-wide">${rechercheCorrigee}</strong> ?</span>
-                </div>
-            `;
-            suggestionsBox.classList.remove('hidden');
-        } else {
-            // Si pas de faute, on propose juste 3 articles max pour aller vite
-            let resultatsExacts = [];
-            cards.forEach(card => {
-                let nom = card.getAttribute('data-name').toLowerCase();
-                if(nom.includes(rechercheCorrigee)) resultatsExacts.push(card.getAttribute('data-name'));
+                // 3. On enregistre les IDs validés par le serveur et on filtre la grille
+                serverValidIds = data.artikelen.map(i => i.id.toString());
+                filtrerGrid(data.bedoelde_je || rechercheBrute);
             });
-
-            if (resultatsExacts.length > 0) {
-                resultatsExacts.slice(0, 3).forEach(nom => {
-                    let div = document.createElement('div');
-                    div.className = 'p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0 flex items-center text-sm text-slate-600';
-                    div.innerHTML = `<svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg> ${nom}`;
-                    div.onclick = () => appliquerCorrection(nom);
-                    suggestionsBox.appendChild(div);
-                });
-                suggestionsBox.classList.remove('hidden');
-            } else {
-                suggestionsBox.innerHTML = `<div class="p-4 text-slate-400 text-sm text-center font-medium">Geen materiaal gevonden</div>`;
-                suggestionsBox.classList.remove('hidden');
-            }
-        }
-        
-        // La magie : On filtre la grille avec le mot corrigé, le technicien trouve ce qu'il veut sans effort
-        filtrerGrid(rechercheCorrigee);
     });
 
     window.appliquerCorrection = function(correction) {
         searchInput.value = correction;
         suggestionsBox.classList.add('hidden');
-        filtrerGrid(correction.toLowerCase());
+        searchInput.dispatchEvent(new Event('input')); // Relance la recherche serveur avec le mot propre
     };
 
-    // On ferme le menu si on clique dans le vide
     document.addEventListener('click', function(e) {
         if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
             suggestionsBox.classList.add('hidden');
         }
     });
 
-    // --- 3. FILTRAGE HYBRIDE (Catégories + Recherche) ---
+    // --- 3. FILTRAGE HYBRIDE (Catégories + Recherche Serveur) ---
     function filtrerGrid(recherche) {
         let visibleCount = 0;
 
         cards.forEach(card => {
-            let id = parseInt(card.getAttribute('data-id'));
-            let nomItem = card.getAttribute('data-name').toLowerCase();
+            let id = card.getAttribute('data-id');
             let refItem = card.getAttribute('data-ref').toUpperCase();
             
             let matchCategory = (currentCategory === 'ALL') || refItem.startsWith(currentCategory);
-            let matchFavorite = !showOnlyFavorites || favorites.includes(id);
-            let matchText = (recherche.length === 0) || nomItem.includes(recherche) || refItem.toLowerCase().includes(recherche);
+            let matchFavorite = !showOnlyFavorites || favorites.includes(parseInt(id));
+            
+            // On vérifie si l'ID de la carte fait partie de ceux renvoyés par Laravel
+            let matchSearch = (serverValidIds === null) || serverValidIds.includes(id);
 
-            if (matchCategory && matchText && matchFavorite) {
+            if (matchCategory && matchSearch && matchFavorite) {
                 card.style.display = '';
                 visibleCount++;
             } else {
@@ -415,7 +378,7 @@
             this.classList.remove('bg-white', 'text-slate-600');
             this.classList.add('bg-[#005b96]', 'text-white', 'shadow-md');
             currentCategory = this.getAttribute('data-prefix');
-            filtrerGrid(searchInput.value.toLowerCase().trim()); // On garde la recherche en cours quand on change de catégorie
+            filtrerGrid(searchInput.value.trim()); 
         });
     });
 
@@ -425,7 +388,7 @@
         this.classList.toggle('bg-rose-500');
         this.classList.toggle('text-white');
         this.classList.toggle('border-rose-600');
-        filtrerGrid(searchInput.value.toLowerCase().trim());
+        filtrerGrid(searchInput.value.trim());
     });
 
     function initFavorites() {
@@ -454,7 +417,7 @@
             btnElement.innerHTML = `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
         }
         localStorage.setItem('aquafin_favorites', JSON.stringify(favorites));
-        if(showOnlyFavorites) filtrerGrid(searchInput.value.toLowerCase().trim()); 
+        if(showOnlyFavorites) filtrerGrid(searchInput.value.trim()); 
     }
 
     // --- INITIALISATION ---

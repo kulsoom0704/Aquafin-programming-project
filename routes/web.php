@@ -34,6 +34,8 @@ Route::get('/technieker', function () {
     return redirect()->route('materiaal.bestellen');
 });
 
+Route::get('/api/materiaal/search', [App\Http\Controllers\MateriaalController::class, 'searchLogic'])->name('materiaal.search');
+
 /*
 |--------------------------------------------------------------------------
 | Admin
@@ -52,11 +54,6 @@ Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
 
 
-/*
-|--------------------------------------------------------------------------
-| Installaties, Logboek & Bestellingen
-|--------------------------------------------------------------------------
-*/
 
 /*
 |--------------------------------------------------------------------------
@@ -91,3 +88,13 @@ Route::controller(InstallatieController::class)->group(function () {
     Route::post('/support/noodoproep', 'storeNoodoproep')
         ->name('support.noodoproep');
 });
+
+// --- ROUTE POUR LE PANIER ---
+Route::post('/materiaal/bestellen', [App\Http\Controllers\MateriaalController::class, 'bestellingOpslaan'])->name('materiaal.bestellen.store');
+
+// --- ROUTES DU MAGASINIER ---
+Route::get('/magazijnier/bestellingen', [App\Http\Controllers\MateriaalController::class, 'magazijnierIndex'])->name('magazijnier.bestellingen');
+Route::patch('/magazijnier/bestellingen/{id}/klaarzetten', [App\Http\Controllers\MateriaalController::class, 'klaarzetten'])->name('magazijnier.klaarzetten');
+
+// --- ROUTE DU TECHNICIEN (SUIVI) ---
+Route::get('/technieker/historiek', [App\Http\Controllers\MateriaalController::class, 'techniekerHistoriek'])->name('technieker.historiek');
