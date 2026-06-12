@@ -78,6 +78,10 @@
                     <a href="<?php echo e(route('technieker.historiek')); ?>" class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 <?php echo e(request()->routeIs('technieker.historiek') ? 'bg-[#005b96] text-white shadow-md shadow-blue-900/10' : 'text-slate-600 hover:text-[#005b96] hover:bg-white/80'); ?>">
                         Historiek
                     </a>
+                    <a href="<?php echo e(route('technieker.weer')); ?>"
+   class="px-4 py-2 rounded-lg text-sm font-medium transition-colors <?php echo e(Request::routeIs('technieker.weer') ? 'bg-aquaDark text-white' : 'text-gray-300 hover:text-white'); ?>">
+    Weer
+</a>
                 </div>
 
                 <div class="flex items-center space-x-4 pl-4 border-l border-slate-200">
