@@ -3,6 +3,13 @@
 @section('title', 'Logboek - ' . $installatie->naam)
 
 @section('content')
+{{--
+    Logboekpagina voor een installatie:
+    - Linkt terug naar het meldingenscherm
+    - Toont installatiegegevens en locatie
+    - Biedt een formulier om een interventie toe te voegen
+    - Laat een tijdlijn zien van eerdere notities en foto’s
+--}}
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div class="flex items-center gap-4">
@@ -29,6 +36,11 @@
                 </h2>
             </div>
             
+            {{--
+                Registratieformulier voor een nieuwe notitie:
+                - opmerking: technisch verslag of interventiebeschrijving
+                - afbeelding: optioneel visueel bewijs
+            --}}
             <form action="{{ route('notitie.store', $installatie->id) }}" method="POST" enctype="multipart/form-data" class="p-5 flex flex-col gap-5">
                 @csrf
                 
@@ -80,6 +92,13 @@
                             <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">{{ $notitie->created_at->format('d/m/Y H:i') }}</span>
                         </div>
                         
+                        {{--
+                            Notitie-item:
+                            - auteurnaam en initialen
+                            - datum en tijd
+                            - opmerkingtekst
+                            - optionele foto als bewijsmateriaal
+                        --}}
                         <p class="text-sm text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">{{ $notitie->opmerking }}</p>
                         
                         @if($notitie->afbeelding)
