@@ -3,6 +3,12 @@
 @section('title', 'Mijn Dashboard')
 
 @section('content')
+{{--
+    Meldingenpagina voor de technieker:
+    - Toont openstaande taken en interventies
+    - Laat belangrijke statusbadges zien op basis van deadlines
+    - Biedt snelle acties: valideren of logboek openen
+--}}
 <div class="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-8">
     <div>
         <span class="text-[10px] md:text-xs font-black tracking-[0.2em] text-[#005b96] uppercase mb-1 block">
@@ -30,6 +36,7 @@
     <h2 class="text-xl font-black text-[#001e33] tracking-tight">Actuele Interventies</h2>
 </div>
 
+{{-- Takenlijst: herhaal per melding met dynamische status en actieknoppen --}}
 <div class="grid grid-cols-1 gap-4">
     @forelse($meldingen as $taak)
         <div class="bg-white rounded-3xl border border-slate-200 shadow-[0_2px_15px_rgba(0,0,0,0.02)] p-5 md:p-6 flex flex-col md:flex-row gap-5 items-start md:items-center group hover:border-[#005b96]/40 hover:shadow-lg transition-all duration-300">
