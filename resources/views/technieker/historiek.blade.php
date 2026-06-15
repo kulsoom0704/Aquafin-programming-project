@@ -3,6 +3,12 @@
 @section('title', 'Mijn Bestelhistoriek')
 
 @section('content')
+{{--
+    Historiek-pagina voor technieker:
+    - Toont alle bestellingen van de ingelogde gebruiker
+    - Gebruikt de collectie $bestellingen met geladen materiaalrelatie
+    - Elke bestelling toont status, hoeveelheid en materiaalgegevens
+--}}
 <div class="mb-10 flex flex-col md:flex-row justify-between md:items-end gap-6">
     <div>
         <div class="flex items-center gap-3 mb-2">
@@ -23,6 +29,7 @@
 </div>
 
 <div class="grid grid-cols-1 gap-4">
+    {{-- Bestellingen-lijst: toon elke opdracht als kaart met visuele statusindicatoren --}}
     @forelse($bestellingen as $order)
         @php
             $prefix = strtoupper(substr($order->materiaal->artikelnummer ?? '', 0, 3));
@@ -97,6 +104,11 @@
     @endforelse
 </div>
 
+{{--
+    Scriptgedeelte:
+    - Verwijdert lokaal opgeslagen winkelwagengegevens na een succesvolle bestelling
+    - Dit voorkomt dat de vorige bestelling in de lokale opslag blijft staan
+--}}
 <script>
     // Wis het winkelwagentje automatisch bij succesvol bestellen
     @if(session('success'))
