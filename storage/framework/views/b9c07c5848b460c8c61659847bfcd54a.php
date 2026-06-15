@@ -1,79 +1,106 @@
-<?php $__env->startSection('title', 'Interventie Historiek'); ?>
+<?php $__env->startSection('title', 'Mijn Bestelhistoriek'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-4xl mx-auto">
-    
-    <div class="mb-10">
-        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight flex items-center">
-            <svg class="w-8 h-8 mr-3 text-[#005b96]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            Algemene Interventie Historiek
-        </h1>
-        <p class="text-slate-500 mt-2 font-medium">Overzicht van alle logboeken en uitgevoerde acties door het technici-team.</p>
+<div class="mb-10 flex flex-col md:flex-row justify-between md:items-end gap-6">
+    <div>
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#005b96] to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Bestelhistoriek</h1>
+        </div>
+        <p class="text-sm md:text-base text-slate-500 font-medium ml-1">Volg de status van je aangevraagde materialen in real-time.</p>
     </div>
-
-    <div class="relative border-l-2 border-blue-200/50 ml-4 md:ml-6">
-        
-        <?php $__empty_1 = true; $__currentLoopData = $notities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notitie): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-            <div class="mb-10 ml-8 md:ml-10 relative group">
-                
-                <div class="absolute -left-[43px] md:-left-[51px] top-1 w-5 h-5 rounded-full bg-white border-4 border-[#005b96] shadow-[0_0_10px_rgba(0,91,150,0.4)] group-hover:scale-125 transition-transform duration-300"></div>
-
-                <div class="glass-card p-6 md:p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    
-                    <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
-                        <div>
-                            <div class="flex flex-wrap gap-2 mb-3">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#005b96] border border-blue-100">
-                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    <?php echo e($notitie->created_at->format('d M Y - H:i')); ?>
-
-                                </span>
-                                
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                    <?php echo e($notitie->technieker->name ?? 'Onbekende Technieker'); ?>
-
-                                </span>
-                            </div>
-                            
-                            <h3 class="text-xl font-bold text-slate-800 group-hover:text-[#005b96] transition-colors">
-                                <?php echo e($notitie->installatie->naam ?? 'Onbekende Installatie'); ?>
-
-                            </h3>
-                            <p class="text-slate-500 text-sm font-medium flex items-center mt-1">
-                                <svg class="w-4 h-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                <?php echo e($notitie->installatie->locatie ?? 'Locatie onbekend'); ?>
-
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-                        <p class="text-slate-600 leading-relaxed">
-                            <?php echo e($notitie->opmerking); ?>
-
-                        </p>
-                    </div>
-
-                    <?php if($notitie->afbeelding): ?>
-                        <div class="mt-5 relative overflow-hidden rounded-xl border border-slate-200">
-                            <img src="<?php echo e(asset('storage/' . $notitie->afbeelding)); ?>" alt="Bewijs van interventie" class="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-700">
-                        </div>
-                    <?php endif; ?>
-
-                </div>
-            </div>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-            <div class="ml-4 md:ml-8 glass-card p-12 text-center flex flex-col items-center justify-center">
-                <div class="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                    <svg class="w-12 h-12 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 mb-2">Nog geen historiek</h3>
-                <p class="text-slate-500 max-w-sm mx-auto">Er zijn momenteel geen acties geregistreerd.</p>
-            </div>
-        <?php endif; ?>
-
+    
+    <div class="w-full md:w-auto">
+        <a href="<?php echo e(route('materiaal.bestellen')); ?>" class="w-full md:w-auto h-12 bg-white text-[#005b96] border border-blue-100 px-6 rounded-xl font-black text-sm shadow-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-blue-50">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+            Nieuwe bestelling
+        </a>
     </div>
 </div>
+
+<div class="grid grid-cols-1 gap-4">
+    <?php $__empty_1 = true; $__currentLoopData = $bestellingen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+        <?php
+            $prefix = strtoupper(substr($order->materiaal->artikelnummer ?? '', 0, 3));
+            $gradient = match($prefix) {
+                'BEV' => 'from-blue-500 to-blue-600', 
+                'PBM' => 'from-orange-400 to-orange-500', 
+                'GER' => 'from-amber-400 to-amber-500', 
+                'TEC' => 'from-cyan-500 to-blue-500', 
+                'AQF' => 'from-sky-400 to-sky-500', 
+                default => 'from-slate-400 to-slate-500'
+            };
+            $iconPath = match($prefix) {
+                'BEV' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>',
+                'PBM' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>',
+                'GER' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>',
+                default => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>'
+            };
+        ?>
+
+        <div class="bg-white rounded-[2rem] border border-slate-200 shadow-[0_2px_15px_rgba(0,0,0,0.02)] p-5 md:p-6 flex flex-col md:flex-row gap-5 items-start md:items-center group hover:border-[#005b96]/40 transition-all duration-300">
+            
+            <div class="w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-br <?php echo e($gradient); ?> flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-500">
+                <?php if(isset($order->materiaal->foto) && $order->materiaal->foto): ?>
+                    <img src="<?php echo e(asset('storage/' . $order->materiaal->foto)); ?>" class="w-full h-full object-cover rounded-2xl">
+                <?php else: ?>
+                    <svg class="w-8 h-8 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><?php echo $iconPath; ?></svg>
+                <?php endif; ?>
+            </div>
+
+            <div class="flex-grow w-full min-w-0">
+                <div class="flex flex-wrap items-center gap-3 mb-2">
+                    <span class="text-[10px] font-black tracking-widest text-[#005b96] bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md uppercase"><?php echo e($order->materiaal->artikelnummer ?? 'N/A'); ?></span>
+                    <span class="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <?php echo e($order->created_at->format('d M Y - H:i')); ?>
+
+                    </span>
+                </div>
+                <h3 class="text-lg font-black text-slate-800 leading-tight group-hover:text-[#005b96] transition-colors"><?php echo e($order->materiaal->omschrijving ?? 'Onbekend materiaal'); ?></h3>
+            </div>
+
+            <div class="flex flex-row items-center justify-between w-full md:w-auto gap-4 shrink-0 md:pl-6 md:border-l border-slate-100 pt-3 md:pt-0">
+                
+                <div class="bg-slate-50 border border-slate-200 h-12 px-5 rounded-2xl flex items-center gap-3">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Qty</span>
+                    <span class="text-lg font-black text-slate-900"><?php echo e($order->aantal); ?></span>
+                </div>
+
+                <?php if($order->status == 'klaargezet'): ?>
+                    <div class="flex-grow md:w-48 h-12 flex justify-center items-center gap-2 px-4 rounded-2xl text-[10px] font-black bg-emerald-500/10 text-emerald-600 border border-emerald-500/10 uppercase tracking-wider shadow-sm">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                        Klaar voor afhaal
+                    </div>
+                <?php else: ?>
+                    <div class="flex-grow md:w-48 h-12 flex justify-center items-center gap-2 px-4 rounded-2xl text-[10px] font-black bg-amber-500/10 text-amber-600 border border-amber-500/10 uppercase tracking-wider shadow-sm">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        </span>
+                        In verwerking
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+        <div class="bg-white rounded-[3rem] border border-dashed border-slate-200 p-16 flex flex-col items-center justify-center text-center">
+            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6 text-slate-300">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 mb-2">Geen bestellingen gevonden</h3>
+            <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">Je hebt momenteel geen actieve aanvragen.</p>
+        </div>
+    <?php endif; ?>
+</div>
+
+<script>
+    // SNIPER : Nettoyage automatique du panier dès qu'on arrive ici avec un succès
+    <?php if(session('success')): ?>
+        localStorage.removeItem('aquafin_cart');
+    <?php endif; ?>
+</script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\ramon\Aquafin-programming-project\resources\views/technieker/historiek.blade.php ENDPATH**/ ?>
