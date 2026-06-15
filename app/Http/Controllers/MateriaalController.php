@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 
 class MateriaalController extends Controller
 {
-    // Toon alle materialen
     public function index(Request $request)
     {
         $zoekterm = $request->zoekterm;
@@ -31,13 +30,11 @@ class MateriaalController extends Controller
         return view('materiaal.index', compact('materialen', 'zoekterm', 'meldingen'));
     }
 
-    // Toon het formulier om een nieuw artikel toe te voegen
     public function create()
     {
         return view('materiaal.create');
     }
 
-    // Sla het nieuwe artikel op of verhoog de voorraad
     public function store(Request $request)
     {
         $request->validate([
@@ -46,15 +43,6 @@ class MateriaalController extends Controller
             'locatie'       => 'required',
             'beschikbaar'   => 'required|integer|min:1',
             'foto'          => 'nullable|image|max:2048',
-        ], [
-            'artikelnummer.required' => 'Artikelnummer is verplicht.',
-            'omschrijving.required'  => 'Omschrijving is verplicht.',
-            'locatie.required'       => 'Locatie is verplicht.',
-            'beschikbaar.required'   => 'Beschikbaar is verplicht.',
-            'beschikbaar.integer'    => 'Beschikbaar moet een getal zijn.',
-            'beschikbaar.min'        => 'Beschikbaar moet minimaal 1 zijn.',
-            'foto.image'             => 'Het bestand moet een afbeelding zijn.',
-            'foto.max'               => 'De foto mag maximaal 2MB zijn.',
         ]);
 
         $fotopad = null;
@@ -66,9 +54,7 @@ class MateriaalController extends Controller
 
         if ($materiaal) {
             $materiaal->beschikbaar += $request->beschikbaar;
-            if ($fotopad) {
-                $materiaal->foto = $fotopad;
-            }
+            if ($fotopad) $materiaal->foto = $fotopad;
             $materiaal->save();
         } else {
             Materiaal::create([
@@ -83,36 +69,28 @@ class MateriaalController extends Controller
         return redirect('/materiaal');
     }
 
-    // Toon het formulier voor een nieuwe levering
     public function leveringCreate()
     {
         $materialen = Materiaal::all();
         return view('materiaal.levering', compact('materialen'));
     }
 
-    // Sla de uitgifte op en verminder de voorraad
     public function leveringStore(Request $request)
     {
         $request->validate([
             'technieker_naam' => 'required',
             'materiaal_id'    => 'required|array',
             'aantal'          => 'required|array',
-        ], [
-            'technieker_naam.required' => 'Naam technieker is verplicht.',
-            'materiaal_id.required'    => 'Kies minstens één artikel.',
         ]);
 
         foreach ($request->materiaal_id as $index => $id) {
             if (!$id) continue;
-
             $aantal = $request->aantal[$index] ?? 1;
-
             Levering::create([
                 'materiaal_id'    => $id,
                 'aantal'          => $aantal,
                 'technieker_naam' => $request->technieker_naam,
             ]);
-
             $materiaal = Materiaal::find($id);
             $materiaal->beschikbaar -= $aantal;
             $materiaal->save();
@@ -121,36 +99,28 @@ class MateriaalController extends Controller
         return redirect('/materiaal?sectie=leveringen')->with('succes', 'Uitgifte geregistreerd!');
     }
 
-    // Toon het formulier voor een retour
     public function retourCreate()
     {
         $materialen = Materiaal::all();
         return view('materiaal.retour', compact('materialen'));
     }
 
-    // Sla de retour op en verhoog de voorraad
     public function retourStore(Request $request)
     {
         $request->validate([
             'technieker_naam' => 'required',
             'materiaal_id'    => 'required|array',
             'aantal'          => 'required|array',
-        ], [
-            'technieker_naam.required' => 'Naam technieker is verplicht.',
-            'materiaal_id.required'    => 'Kies minstens één artikel.',
         ]);
 
         foreach ($request->materiaal_id as $index => $id) {
             if (!$id) continue;
-
             $aantal = $request->aantal[$index] ?? 1;
-
             Retour::create([
                 'materiaal_id'    => $id,
                 'aantal'          => $aantal,
                 'technieker_naam' => $request->technieker_naam,
             ]);
-
             $materiaal = Materiaal::find($id);
             $materiaal->beschikbaar += $aantal;
             $materiaal->save();
@@ -159,32 +129,56 @@ class MateriaalController extends Controller
         return redirect('/materiaal?sectie=retours')->with('succes', 'Retour geregistreerd!');
     }
 
-    // Upload foto voor een artikel
     public function fotoUpload(Request $request, $id)
     {
-        $request->validate([
-            'foto' => 'required|image|max:2048',
-        ], [
-            'foto.required' => 'Kies een foto.',
-            'foto.image'    => 'Het bestand moet een afbeelding zijn.',
-            'foto.max'      => 'De foto mag maximaal 2MB zijn.',
-        ]);
-
+        $request->validate(['foto' => 'required|image|max:2048']);
         $materiaal = Materiaal::find($id);
         $fotopad = $request->file('foto')->store('fotos', 'public');
         $materiaal->foto = $fotopad;
         $materiaal->save();
-
         return redirect('/materiaal')->with('succes', 'Foto opgeslagen!');
     }
 
-    // Verwijder foto van een artikel
     public function fotoVerwijderen($id)
     {
         $materiaal = Materiaal::find($id);
         $materiaal->foto = null;
         $materiaal->save();
-
         return redirect('/materiaal')->with('succes', 'Foto verwijderd!');
+    }
+
+    public function bestellingGoedkeuren(Request $request, $id)
+    {
+        $request->validate([
+            'materiaal_id' => 'required|exists:materiaal,id',
+        ]);
+
+        $bestelling = \App\Models\Bestelling::findOrFail($id);
+        $materiaal = Materiaal::findOrFail($request->materiaal_id);
+
+        if ($materiaal->beschikbaar < $bestelling->aantal) {
+            return redirect('/materiaal?sectie=meldingen')
+                ->with('fout', "Niet genoeg voorraad! Beschikbaar: {$materiaal->beschikbaar}, Gevraagd: {$bestelling->aantal}");
+        }
+
+        $materiaal->beschikbaar -= $bestelling->aantal;
+        $materiaal->save();
+
+        $bestelling->status = 'Goedgekeurd';
+        $bestelling->materiaal_id = $materiaal->id;
+        $bestelling->save();
+
+        return redirect('/materiaal?sectie=meldingen')->with('succes', 'Bestelling goedgekeurd en voorraad bijgewerkt!');
+    }
+
+    public function bestellingAfwijzen($id)
+    {
+        $bestelling = \App\Models\Bestelling::findOrFail($id);
+        $onderdeel = \App\Models\Onderdeel::findOrFail($bestelling->onderdeel_id);
+        $onderdeel->voorraad += $bestelling->aantal;
+        $onderdeel->save();
+        $bestelling->status = 'Afgewezen';
+        $bestelling->save();
+        return redirect('/materiaal?sectie=meldingen')->with('succes', 'Bestelling afgewezen.');
     }
 }

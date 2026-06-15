@@ -5,51 +5,36 @@
     <meta charset="UTF-8">
     <title>Magazijnier Portaal</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #dceefb 0%, #c8e6f5 50%, #d4eef7 100%);
             min-height: 100vh;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-
-        .sectie {
-            display: none;
-        }
-
-        .sectie.actief {
-            display: block;
-        }
-
-        nav {
-            background: white;
-            padding: 15px 30px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #eee;
         }
 
-        .nav-logo {
+        .sidebar {
+            width: 220px;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #eee;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .sidebar-logo {
             display: flex;
             align-items: center;
             gap: 10px;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
         }
 
-        .nav-logo-icon {
+        .sidebar-logo-icon {
             background: linear-gradient(to right, #0a5a8a, #00b4d8);
             padding: 8px;
             border-radius: 8px;
@@ -57,38 +42,42 @@
             color: white;
         }
 
-        .nav-logo-titel {
-            font-weight: bold;
+        .sidebar-logo-titel { font-weight: bold; color: #0a5a8a; font-size: 16px; }
+        .sidebar-logo-subtitel { font-size: 11px; color: #999; }
+
+        .sidebar-nav { flex: 1; padding: 15px 0; }
+
+        .sidebar-nav button {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #555;
+            font-size: 14px;
+            text-align: left;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav button:hover { background: #f5f5f5; }
+
+        .sidebar-nav button.actief {
             color: #0a5a8a;
-            font-size: 16px;
+            background: #f0f7ff;
+            border-left: 3px solid #0a5a8a;
+            font-weight: bold;
         }
 
-        .nav-logo-subtitel {
-            font-size: 11px;
-            color: #999;
-        }
-
-        .nav-links {
+        .sidebar-gebruiker {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
             display: flex;
+            align-items: center;
             gap: 10px;
         }
 
-        .nav-links button {
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            color: #555;
-            background: #f5f5f5;
-            font-size: 14px;
-        }
-
-        .nav-links button.actief {
-            color: white;
-            background: linear-gradient(to right, #0a5a8a, #00b4d8);
-        }
-
-        .nav-avatar {
+        .sidebar-avatar {
             background: linear-gradient(to right, #0a5a8a, #00b4d8);
             color: white;
             width: 36px;
@@ -98,18 +87,19 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 13px;
+            flex-shrink: 0;
         }
 
-        .zoekbalk {
-            margin-bottom: 20px;
-        }
+        .hoofdinhoud { margin-left: 220px; padding: 30px; flex: 1; }
 
-        .zoekbalk input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+        h1 { color: #2c3e50; margin-bottom: 20px; }
 
+        .sectie { display: none; }
+        .sectie.actief { display: block; }
+
+        .zoekbalk { margin-bottom: 20px; }
+        .zoekbalk input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
         .zoekbalk button {
             padding: 8px 14px;
             background: linear-gradient(to right, #0a5a8a, #00b4d8);
@@ -119,38 +109,13 @@
             cursor: pointer;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+        table { width: 100%; border-collapse: collapse; background-color: white; border-radius: 8px; overflow: hidden; }
+        thead tr { background: linear-gradient(to right, #0a5a8a, #00b4d8); }
+        th { background: transparent; color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        tr:hover { background-color: #f9f9f9; }
 
-        thead tr {
-            background: linear-gradient(to right, #0a5a8a, #00b4d8);
-        }
-
-        th {
-            background: transparent;
-            color: white;
-            padding: 12px;
-            text-align: left;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
-
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .kritiek {
-            color: red;
-            font-weight: bold;
-        }
+        .kritiek { color: red; font-weight: bold; }
 
         .btn-details {
             padding: 5px 12px;
@@ -163,22 +128,15 @@
 
         .formulier {
             background-color: white;
-    padding: 25px;
-    border-radius: 8px;
-    width: 600px;
-    margin: 0 auto;
+            padding: 25px;
+            border-radius: 8px;
+            width: 600px;
+            margin: 0 auto;
         }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #2c3e50;
-            font-weight: bold;
-        }
+        label { display: block; margin-bottom: 5px; color: #2c3e50; font-weight: bold; }
 
-        select,
-        input[type="number"],
-        input[type="text"] {
+        select, input[type="number"], input[type="text"] {
             display: block;
             width: 100%;
             padding: 8px;
@@ -205,25 +163,10 @@
             border-left: 5px solid #00b4d8;
         }
 
-        .melding.gelezen {
-            border-left: 5px solid #ccc;
-            opacity: 0.6;
-        }
-
-        .melding h3 {
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .melding p {
-            color: #555;
-            font-size: 14px;
-        }
-
-        .melding small {
-            color: #999;
-            font-size: 12px;
-        }
+        .melding.gelezen { border-left: 5px solid #ccc; opacity: 0.6; }
+        .melding h3 { color: #2c3e50; margin-bottom: 5px; }
+        .melding p { color: #555; font-size: 14px; }
+        .melding small { color: #999; font-size: 12px; }
 
         .btn-melding {
             padding: 5px 12px;
@@ -235,51 +178,21 @@
             margin-top: 8px;
         }
 
-        .succes {
-            color: green;
-            margin-bottom: 10px;
-        }
-
-        .fout {
-            color: red;
-            font-size: 13px;
-            margin-bottom: 10px;
-        }
+        .succes { color: green; margin-bottom: 10px; }
+        .fout { color: red; font-size: 13px; margin-bottom: 10px; }
 
         .popup-achtergrond {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
         }
 
-        .popup {
-            background: white;
-            margin: 10% auto;
-            padding: 25px;
-            width: 400px;
-            border-radius: 8px;
-        }
-
-        .popup h2 {
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-
-        .popup p {
-            margin: 8px 0;
-            font-size: 15px;
-        }
-
-        .popup img {
-            width: 100%;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
+        .popup { background: white; margin: 10% auto; padding: 25px; width: 400px; border-radius: 8px; }
+        .popup h2 { margin-bottom: 15px; color: #2c3e50; }
+        .popup p { margin: 8px 0; font-size: 15px; }
 
         .btn-sluiten {
             margin-top: 15px;
@@ -301,23 +214,8 @@
             margin-left: 5px;
         }
 
-        .foto-upload {
-            cursor: pointer;
-            color: #2980b9;
-            font-size: 13px;
-        }
-
-        .artikel-rij {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-            align-items: center;
-        }
-
-        .artikel-rij input {
-            flex: 1;
-            margin-bottom: 0;
-        }
+        .artikel-rij { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+        .artikel-rij input { flex: 1; margin-bottom: 0; }
 
         .btn-verwijder-rij {
             padding: 6px 10px;
@@ -340,31 +238,34 @@
             z-index: 100;
         }
 
-        .suggestie-item {
-            padding: 8px 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-        }
+        .suggestie-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 14px; }
+        .suggestie-item:hover { background: #f0f0f0; }
 
-        .suggestie-item:hover {
-            background: #f0f0f0;
+        .badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
         }
+        .badge-nieuw { background: #fff3cd; color: #856404; }
+        .badge-goedgekeurd { background: #d4edda; color: #155724; }
+        .badge-afgewezen { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 
 <body>
 
-    <nav>
-        <div class="nav-logo">
-            <div class="nav-logo-icon">📦</div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">M</div>
             <div>
-                <div class="nav-logo-titel">AQUAFIN</div>
-                <div class="nav-logo-subtitel">MAGAZIJNIER PORTAAL</div>
+                <div class="sidebar-logo-titel">AQUAFIN</div>
+                <div class="sidebar-logo-subtitel">MAGAZIJNIER PORTAAL</div>
             </div>
         </div>
 
-        <div class="nav-links">
+        <div class="sidebar-nav">
             <button onclick="toonSectie('voorraad')" id="btn-voorraad" class="actief">Voorraad</button>
             <button onclick="toonSectie('meldingen')" id="btn-meldingen">Bestellingen</button>
             <button onclick="toonSectie('leveringen')" id="btn-leveringen">Uitgifte</button>
@@ -372,21 +273,27 @@
             <button onclick="toonSectie('archief')" id="btn-archief">Archief</button>
         </div>
 
-<div style="display: flex; align-items: center; gap: 10px;">
-    <div style="text-align: right;">
-        <div style="font-weight: bold; font-size: 14px;">{{ Auth::user()->name ?? 'Magazijnier' }}</div>
-        <a href="/logout" style="color: #e74c3c; font-size: 12px; text-decoration: none;">Uitloggen →</a>
+        <div class="sidebar-gebruiker">
+            <div class="sidebar-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'M', 0, 2)) }}</div>
+            <div>
+                <div style="font-weight: bold; font-size: 13px;">{{ Auth::user()->name ?? 'Magazijnier' }}</div>
+                <a href="/logout" style="color: #e74c3c; font-size: 12px; text-decoration: none;">Uitloggen</a>
+            </div>
+        </div>
     </div>
-    <div class="nav-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'M', 0, 2)) }}</div>
-</div>    </nav>
 
-    <div class="content">
+    <!-- HOOFDINHOUD -->
+    <div class="hoofdinhoud">
 
         @if(session('succes'))
         <p class="succes">{{ session('succes') }}</p>
         @endif
 
-        <!-- Sectie: Voorraad -->
+        @if(session('fout'))
+        <p class="fout">{{ session('fout') }}</p>
+        @endif
+
+        <!-- Voorraad -->
         <div class="sectie actief" id="sectie-voorraad">
             <h1>Voorraad overzicht</h1>
             <br>
@@ -398,7 +305,6 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Foto</th>
                         <th>Artikelnummer</th>
                         <th>Omschrijving</th>
                         <th>Locatie</th>
@@ -409,15 +315,6 @@
                 <tbody>
                     @foreach ($materialen as $item)
                     <tr>
-                        <td>
-                            @if($item->foto)
-                            <img src="{{ asset('storage/' . $item->foto) }}"
-                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; cursor: pointer;"
-                                onclick="toonFotoPopup('{{ $item->id }}')">
-                            @else
-                            <span class="foto-upload" onclick="toonFotoPopup('{{ $item->id }}')">+ Foto</span>
-                            @endif
-                        </td>
                         <td>{{ $item->artikelnummer }}</td>
                         <td>{{ $item->omschrijving }}</td>
                         <td>{{ $item->locatie }}</td>
@@ -431,8 +328,7 @@
                                     '{{ $item->artikelnummer }}',
                                     '{{ $item->omschrijving }}',
                                     '{{ $item->locatie }}',
-                                    '{{ $item->beschikbaar }}',
-                                    '{{ $item->foto ? asset('storage/' . $item->foto) : '' }}'
+                                    '{{ $item->beschikbaar }}'
                                 )">
                                 Details
                             </button>
@@ -443,52 +339,79 @@
             </table>
         </div>
 
-        <!-- Sectie: Bestellingen -->
+        <!-- Bestellingen -->
         <div class="sectie" id="sectie-meldingen">
             <h1>Bestellingen</h1>
             <br>
-            @if($meldingen->where('gearchiveerd', false)->isEmpty())
+
+            @php $bestellingen = \App\Models\Bestelling::with(['onderdeel','user'])->latest()->get(); @endphp
+
+            @if($bestellingen->isEmpty())
                 <p style="color: #999;">Geen bestellingen.</p>
             @else
-                @foreach($meldingen->where('gearchiveerd', false) as $melding)
-                <div class="melding {{ $melding->gelezen ? 'gelezen' : '' }}" style="cursor: pointer;"
-                    onclick="toonMeldingPopup(
-                        '{{ addslashes($melding->titel) }}',
-                        '{{ addslashes($melding->bericht) }}',
-                        '{{ $melding->created_at->format('d/m/Y H:i') }}'
-                    )">
-                    <h3>{{ $melding->titel }}</h3>
-                    <p>{{ $melding->bericht }}</p>
-                    <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
-                    <br>
-                    @if(!$melding->gelezen)
-                        <form method="POST" action="/meldingen/{{ $melding->id }}/gelezen" style="display:inline;" onclick="event.stopPropagation()">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nummer</th>
+                        <th>Technieker</th>
+                        <th>Onderdeel</th>
+                        <th>Aantal</th>
+                        <th>Datum</th>
+                        <th>Status</th>
+                        <th>Actie</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach($bestellingen as $bestelling)
+                <tr>
+                    <td>#{{ $bestelling->id }}</td>
+                    <td>{{ $bestelling->user->name ?? '-' }}</td>
+                    <td>{{ $bestelling->onderdeel->naam ?? '-' }}</td>
+                    <td>{{ $bestelling->aantal }}</td>
+                    <td>{{ $bestelling->created_at->format('d/m/Y') }}</td>
+                    <td>
+                        @if($bestelling->status === 'Goedgekeurd')
+                            <span class="badge badge-goedgekeurd">Goedgekeurd</span>
+                        @elseif($bestelling->status === 'Afgewezen')
+                            <span class="badge badge-afgewezen">Afgewezen</span>
+                        @else
+                            <span class="badge badge-nieuw">In behandeling</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($bestelling->status === 'In behandeling')
+                        <form method="POST" action="/bestellingen/{{ $bestelling->id }}/goedkeuren" style="display:inline;">
                             @csrf
-                            <button type="submit" class="btn-melding" style="background: linear-gradient(to right, #0a5a8a, #00b4d8);">Markeer als gelezen</button>
+                            <select name="materiaal_id" required style="padding:4px; border-radius:4px; border:1px solid #ccc; font-size:13px;">
+                                <option value="">-- Kies materiaal --</option>
+                                @foreach($materialen as $mat)
+                                    <option value="{{ $mat->id }}">{{ $mat->artikelnummer }} - {{ $mat->omschrijving }} ({{ $mat->beschikbaar }} beschikbaar)</option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="btn-details" style="margin-left:5px;">Goedkeuren</button>
                         </form>
-                    @else
-                        <form method="POST" action="/meldingen/{{ $melding->id }}/ongelezen" style="display:inline;" onclick="event.stopPropagation()">
+                        <form method="POST" action="/bestellingen/{{ $bestelling->id }}/afwijzen" style="display:inline; margin-left:5px;">
                             @csrf
-                            <button type="submit" class="btn-melding" style="background-color: #999;">Markeer als ongelezen</button>
+                            <button type="submit" style="padding:5px 12px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer;">Afwijzen</button>
                         </form>
-                    @endif
-                    <form method="POST" action="/meldingen/{{ $melding->id }}/archiveren" style="display:inline;" onclick="event.stopPropagation()">
-                        @csrf
-                        <button type="submit" class="btn-melding" style="background-color: #e67e22;">Archiveren</button>
-                    </form>
-                </div>
+                        @else
+                            <span style="color:#999; font-size:13px;">Verwerkt</span>
+                        @endif
+                    </td>
+                </tr>
                 @endforeach
+                </tbody>
+            </table>
             @endif
         </div>
 
-       <!-- Sectie: Uitgifte -->
-<div class="sectie" id="sectie-leveringen" style="text-align: center;">
-    <h1>Materiaal uitgifte</h1>
-    <br>
-    <div class="formulier" style="text-align: left;">
+        <!-- Uitgifte -->
+        <div class="sectie" id="sectie-leveringen" style="text-align: center;">
+            <h1>Materiaal uitgifte</h1>
+            <br>
+            <div class="formulier" style="text-align: left;">
                 <form method="POST" action="/levering">
                     @csrf
-
                     <label>Naam technieker</label>
                     <input type="text" name="technieker_naam" placeholder="Naam van de technieker">
                     @error('technieker_naam') <p class="fout">{{ $message }}</p> @enderror
@@ -507,14 +430,13 @@
             </div>
         </div>
 
-      <!-- Sectie: Retours -->
-<div class="sectie" id="sectie-retours" style="text-align: center;">
-    <h1>Retour registreren</h1>
-    <br>
-    <div class="formulier" style="text-align: left;">
+        <!-- Retours -->
+        <div class="sectie" id="sectie-retours" style="text-align: center;">
+            <h1>Retour registreren</h1>
+            <br>
+            <div class="formulier" style="text-align: left;">
                 <form method="POST" action="/retour">
                     @csrf
-
                     <label>Naam technieker</label>
                     <input type="text" name="technieker_naam" placeholder="Naam van de technieker">
                     @error('technieker_naam') <p class="fout">{{ $message }}</p> @enderror
@@ -533,7 +455,7 @@
             </div>
         </div>
 
-        <!-- Sectie: Archief -->
+        <!-- Archief -->
         <div class="sectie" id="sectie-archief">
             <h1>Archief</h1>
             <br>
@@ -541,21 +463,21 @@
                 <p style="color: #999;">Geen gearchiveerde bestellingen.</p>
             @else
                 @foreach($meldingen->where('gearchiveerd', true) as $melding)
- <div class="melding" style="opacity: 1; border-left: 5px solid #0a5a8a; cursor: pointer;"
-    onclick="toonMeldingPopup(
-        '{{ addslashes($melding->titel) }}',
-        '{{ addslashes($melding->bericht) }}',
-        '{{ $melding->created_at->format('d/m/Y H:i') }}'
-    )">
-    <h3>{{ $melding->titel }}</h3>
-    <p>{{ $melding->bericht }}</p>
-    <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
-    <br>
-    <form method="POST" action="/meldingen/{{ $melding->id }}/terugzetten" style="display:inline;" onclick="event.stopPropagation()">
-        @csrf
-        <button type="submit" class="btn-melding" style="background: linear-gradient(to right, #0a5a8a, #00b4d8);">Terugzetten naar bestellingen</button>
-    </form>
-</div>
+                <div class="melding" style="opacity: 1; border-left: 5px solid #0a5a8a; cursor: pointer;"
+                    onclick="toonMeldingPopup(
+                        '{{ addslashes($melding->titel) }}',
+                        '{{ addslashes($melding->bericht) }}',
+                        '{{ $melding->created_at->format('d/m/Y H:i') }}'
+                    )">
+                    <h3>{{ $melding->titel }}</h3>
+                    <p>{{ $melding->bericht }}</p>
+                    <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
+                    <br>
+                    <form method="POST" action="/meldingen/{{ $melding->id }}/terugzetten" style="display:inline;" onclick="event.stopPropagation()">
+                        @csrf
+                        <button type="submit" class="btn-melding" style="background: linear-gradient(to right, #0a5a8a, #00b4d8);">Terugzetten naar bestellingen</button>
+                    </form>
+                </div>
                 @endforeach
             @endif
         </div>
@@ -578,38 +500,12 @@
         <div class="popup">
             <h2>Artikel details</h2>
             <p style="display:none;"><span id="popup-id"></span></p>
-            <img id="popup-foto" src="" style="display:none;" onclick="toonGroteFoto(this.src)">
             <p><strong>Artikelnummer:</strong> <span id="popup-artikelnummer"></span></p>
             <p><strong>Omschrijving:</strong> <span id="popup-omschrijving"></span></p>
             <p><strong>Locatie:</strong> <span id="popup-locatie"></span></p>
             <p><strong>Beschikbaar:</strong> <span id="popup-beschikbaar"></span></p>
             <button class="btn-sluiten" onclick="sluitPopup()">Sluiten</button>
             <button class="btn-wijzigen" onclick="wijzigen()">Wijzigen</button>
-        </div>
-    </div>
-
-    <!-- Foto upload popup -->
-    <div class="popup-achtergrond" id="foto-popup-achtergrond">
-        <div class="popup">
-            <h2>Foto uploaden</h2>
-            <form method="POST" id="foto-form" action="" enctype="multipart/form-data">
-                @csrf
-                <input type="file" name="foto" accept="image/*" style="margin-bottom: 10px;">
-                <br>
-                <button type="submit" class="btn-wijzigen">Opslaan</button>
-                <button type="button" class="btn-sluiten" onclick="sluitFotoPopup()">Annuleren</button>
-            </form>
-            <form method="POST" id="foto-verwijder-form" action="" style="margin-top: 10px;">
-                @csrf
-                <button type="submit" style="padding: 6px 14px; background-color: #e74c3c; color: white; border: none; cursor: pointer; border-radius: 4px;">Foto verwijderen</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Grote foto popup -->
-    <div class="popup-achtergrond" id="grote-foto-achtergrond" onclick="this.style.display='none'">
-        <div style="margin: 5% auto; text-align: center; width: 80%;">
-            <img id="grote-foto" src="" style="max-width: 100%; max-height: 80vh; border-radius: 8px;">
         </div>
     </div>
 
@@ -630,23 +526,10 @@
         function filterUitgifte() {
             var zoekterm = document.getElementById('zoek-uitgifte').value.toLowerCase();
             var suggesties = document.getElementById('zoek-suggesties');
-
-            if (zoekterm.length < 1) {
-                suggesties.style.display = 'none';
-                return;
-            }
-
-            var resultaten = alleMateriaal.filter(function(item) {
-                return item.tekst.toLowerCase().includes(zoekterm);
-            });
-
+            if (zoekterm.length < 1) { suggesties.style.display = 'none'; return; }
+            var resultaten = alleMateriaal.filter(function(item) { return item.tekst.toLowerCase().includes(zoekterm); });
             suggesties.innerHTML = '';
-
-            if (resultaten.length === 0) {
-                suggesties.style.display = 'none';
-                return;
-            }
-
+            if (resultaten.length === 0) { suggesties.style.display = 'none'; return; }
             resultaten.forEach(function(item) {
                 var div = document.createElement('div');
                 div.className = 'suggestie-item';
@@ -658,30 +541,16 @@
                 };
                 suggesties.appendChild(div);
             });
-
             suggesties.style.display = 'block';
         }
 
         function filterRetour() {
             var zoekterm = document.getElementById('zoek-retour').value.toLowerCase();
             var suggesties = document.getElementById('zoek-suggesties-retour');
-
-            if (zoekterm.length < 1) {
-                suggesties.style.display = 'none';
-                return;
-            }
-
-            var resultaten = alleMateriaal.filter(function(item) {
-                return item.tekst.toLowerCase().includes(zoekterm);
-            });
-
+            if (zoekterm.length < 1) { suggesties.style.display = 'none'; return; }
+            var resultaten = alleMateriaal.filter(function(item) { return item.tekst.toLowerCase().includes(zoekterm); });
             suggesties.innerHTML = '';
-
-            if (resultaten.length === 0) {
-                suggesties.style.display = 'none';
-                return;
-            }
-
+            if (resultaten.length === 0) { suggesties.style.display = 'none'; return; }
             resultaten.forEach(function(item) {
                 var div = document.createElement('div');
                 div.className = 'suggestie-item';
@@ -693,7 +562,6 @@
                 };
                 suggesties.appendChild(div);
             });
-
             suggesties.style.display = 'block';
         }
 
@@ -712,69 +580,44 @@
 
         function toonSectie(naam) {
             document.querySelectorAll('.sectie').forEach(s => s.classList.remove('actief'));
-            document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('actief'));
+            document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('actief'));
             document.getElementById('sectie-' + naam).classList.add('actief');
             document.getElementById('btn-' + naam).classList.add('actief');
         }
 
-        var urlParams = new URLSearchParams(window.location.search);
-        var sectie = urlParams.get('sectie');
-        if (sectie) {
-            toonSectie(sectie);
-        }
+       var urlParams = new URLSearchParams(window.location.search);
+var sectie = urlParams.get('sectie') || localStorage.getItem('actieveSectie') || 'voorraad';
+toonSectie(sectie);
 
-        function toonPopup(id, artikelnummer, omschrijving, locatie, beschikbaar, foto) {
+function toonSectie(naam) {
+    document.querySelectorAll('.sectie').forEach(s => s.classList.remove('actief'));
+    document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('actief'));
+    document.getElementById('sectie-' + naam).classList.add('actief');
+    document.getElementById('btn-' + naam).classList.add('actief');
+    localStorage.setItem('actieveSectie', naam);
+}
+
+        function toonPopup(id, artikelnummer, omschrijving, locatie, beschikbaar) {
             document.getElementById('popup-id').innerText = id;
             document.getElementById('popup-artikelnummer').innerText = artikelnummer;
             document.getElementById('popup-omschrijving').innerText = omschrijving;
             document.getElementById('popup-locatie').innerText = locatie;
             document.getElementById('popup-beschikbaar').innerText = beschikbaar;
-
-            var fotoEl = document.getElementById('popup-foto');
-            if (foto) {
-                fotoEl.src = foto;
-                fotoEl.style.display = 'block';
-            } else {
-                fotoEl.style.display = 'none';
-            }
-
             document.getElementById('popup-achtergrond').style.display = 'block';
         }
 
-        function sluitPopup() {
-            document.getElementById('popup-achtergrond').style.display = 'none';
-        }
+        function sluitPopup() { document.getElementById('popup-achtergrond').style.display = 'none'; }
 
         function wijzigen() {
             var id = document.getElementById('popup-id').innerText;
             window.location.href = '/materiaal/' + id + '/wijzigen';
         }
 
-        function toonFotoPopup(id) {
-            document.getElementById('foto-form').action = '/materiaal/' + id + '/foto';
-            document.getElementById('foto-verwijder-form').action = '/materiaal/' + id + '/foto-verwijderen';
-            document.getElementById('foto-popup-achtergrond').style.display = 'block';
-        }
-
-        function sluitFotoPopup() {
-            document.getElementById('foto-popup-achtergrond').style.display = 'none';
-        }
-
-        function toonGroteFoto(src) {
-            document.getElementById('grote-foto').src = src;
-            document.getElementById('grote-foto-achtergrond').style.display = 'block';
-        }
-
         document.getElementById('zoekterm').addEventListener('keyup', function() {
             var zoekterm = this.value.toLowerCase();
             var rijen = document.querySelectorAll('tbody tr');
             rijen.forEach(function(rij) {
-                var tekst = rij.innerText.toLowerCase();
-                if (tekst.includes(zoekterm)) {
-                    rij.style.display = '';
-                } else {
-                    rij.style.display = 'none';
-                }
+                rij.style.display = rij.innerText.toLowerCase().includes(zoekterm) ? '' : 'none';
             });
         });
 

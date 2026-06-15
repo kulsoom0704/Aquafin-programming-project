@@ -13,6 +13,18 @@
         <p class="text-slate-500 mt-2 font-medium">Bestel nieuwe onderdelen voor je installaties vanuit het centrale magazijn.</p>
     </div>
 
+    @if(session('success'))
+        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 font-medium">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 font-medium">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="glass-card p-6 md:p-8 mb-10">
         <h2 class="text-xl font-bold text-slate-800 mb-6 border-b border-slate-200 pb-4 flex items-center">
             <svg class="w-5 h-5 mr-2 text-[#005b96]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -29,7 +41,7 @@
                         <option value="" disabled selected>Kies een onderdeel...</option>
                         @foreach($onderdelen as $onderdeel)
                             <option value="{{ $onderdeel->id }}">
-                                {{ $onderdeel->naam }} (Voorraad: {{ $onderdeel->voorraad }})
+                                {{ $onderdeel->naam }} (Beschikbaar: {{ $onderdeel->voorraad }})
                             </option>
                         @endforeach
                     </select>
@@ -88,10 +100,14 @@
                                             <span class="w-2 h-2 rounded-full bg-amber-500 mr-1.5 animate-pulse"></span>
                                             In behandeling
                                         </span>
-                                    @elseif($bestelling->status == 'Geleverd')
+                                    @elseif($bestelling->status == 'Goedgekeurd')
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                            Geleverd
+                                            Goedgekeurd
+                                        </span>
+                                    @elseif($bestelling->status == 'Afgewezen')
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">
+                                            Afgewezen
                                         </span>
                                     @else
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">

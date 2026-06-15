@@ -102,20 +102,16 @@ class InstallatieController extends Controller
         return redirect()->route('installatie.show', $id)->with('success', 'Notitie succesvol toegevoegd en installatie bijgewerkt.');
     }
 
-    
     public function valideren($id)
     {
         try {
             $installatie = Installatie::findOrFail($id);
             
-            
             $installatie->update([
                 'laatste_onderhoud_datum' => \Carbon\Carbon::now()
             ]);
 
-            
             Melding::where('installatie_id', $id)->update(['status' => 'gelezen']);
-            
             
             Notitie::create([
                 'installatie_id' => $id,
@@ -158,18 +154,15 @@ class InstallatieController extends Controller
             'user_id' => $this->getSessieGebruikerId(),
             'onderdeel_id' => $onderdeel->id,
             'aantal' => $request->aantal,
-            'status' => 'In behandeling' 
+            'status' => 'In behandeling'
         ]);
-        
-        $onderdeel->decrement('voorraad', $request->aantal);
-        
+
         return redirect()->back()->with('success', "Bestelling succesvol geregistreerd voor {$request->aantal}x {$onderdeel->naam}.");
     }
 
     public function historiek()
     {
         try {
-            
             $notities = Notitie::with(['installatie', 'technieker'])
                 ->latest()
                 ->get();
@@ -194,7 +187,6 @@ class InstallatieController extends Controller
                 'status' => 'open'
             ]);
 
-            
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
