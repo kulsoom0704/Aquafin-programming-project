@@ -38,6 +38,13 @@
 
 <body class="bg-animated text-slate-800 antialiased h-[100dvh] flex overflow-hidden pb-16 md:pb-0">
 
+    {{--
+        Hoofdlayout voor techniekerportaal:
+        - Sidebar navigatie voor desktop
+        - Mobiele topbar en bottomtab voor navigatie op kleine schermen
+        - Main content met dynamische body via @yield('content')
+        - Optionele scripts via @yield('scripts')
+    --}}
     <aside class="hidden md:flex flex-col w-72 bg-[#001e33] h-full z-40 relative shadow-[4px_0_30px_rgba(0,0,0,0.15)]">
         
         <div class="p-8 pb-8 flex items-center gap-4 border-b border-white/5">
@@ -95,7 +102,12 @@
     <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-transparent relative z-10 custom-scrollbar pt-16 md:pt-0">
         <div class="px-4 sm:px-6 lg:px-10 py-8 max-w-[1600px] w-full mx-auto pb-28 md:pb-10">
             
-            {{-- Système d'alerte & Sniper d'effacement automatique du panier --}}
+            {{--
+                Alert-sectie voor successmeldingen:
+                - toont een bevestiging bovenaan de content
+                - wist het lokale winkelwagen opgeslagen object bij succes
+                - wordt gebruikt door bestelformulieren en andere acties
+            --}}
             @if(session('success'))
                 <script>
                     // Code absolu : Si un succès apparaît, la commande a réussi -> On détruit le panier local
