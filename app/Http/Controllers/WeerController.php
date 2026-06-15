@@ -111,9 +111,6 @@ foreach ($dagen as $index => $datum) {
             'totaalVerwachteNeerslag',
         ));
         } 
-//         catch (\Exception $e) {
-//     dd($e->getMessage());
-// }
     catch (\Exception $e) {
 
         return view('technieker.weer', [

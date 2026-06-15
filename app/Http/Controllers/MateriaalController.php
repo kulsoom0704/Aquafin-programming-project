@@ -190,9 +190,7 @@ class MateriaalController extends Controller
         return redirect('/materiaal')->with('succes', 'Foto verwijderd!');
     }
 
-    // =====================================================================
-    // API voor slimme zoekbalk (Type Bol.com) - Aangeroepen via AJAX
-    // =====================================================================
+    // API voor slimme zoekbalk - Aangeroepen via AJAX
     public function searchLogic(Request $request)
     {
         $query = strtolower(trim($request->query('q', '')));
@@ -254,11 +252,9 @@ class MateriaalController extends Controller
         ]);
     }
 
-    // =====================================================================
-    // FUNCTIES VOOR BESTELLINGEN (TECHNIEKER & MAGAZIJNIER)
-    // =====================================================================
+    // Bestellingsfuncties
 
-    // 1. Technieker bevestigt de bestelling
+    // 1. Technicus bevestigt de bestelling
     public function bestellingOpslaan(Request $request)
     {
         $cart = json_decode($request->cart_data, true);
@@ -267,10 +263,10 @@ class MateriaalController extends Controller
             return redirect()->back()->with('error', 'Winkelwagen is leeg.');
         }
 
-        // Tijdelijk foreign key-constraints uitschakelen voor bulkbestellingen
+        // Schakel sleutelconstraints tijdelijk uit
         \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
 
-        // Controleer of er een geldig gebruiker-ID is
+        // Controleer gebruiker-ID
         $userId = \Illuminate\Support\Facades\Auth::id();
         if (!$userId) {
             $eersteUser = \App\Models\User::first();
@@ -286,15 +282,15 @@ class MateriaalController extends Controller
             ]);
         }
 
-        // Herstel de foreign key-constraints na het opslaan
+        // Herstellen sleutelconstraints
         \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
 
         return redirect()->back()->with('success', 'Bestelling succesvol geplaatst! Je kan de status volgen in je historiek.');
     }
-    // 2. Magazijnier bekijkt bestellingen om klaar te zetten
+    // 2. Magazijnier bekijkt lopende bestellingen
     public function magazijnierIndex()
     {
-        // Alleen bestellingen met status 'in afwachting' ophalen
+        // Haal alleen bestellingen op met status 'in afwachting'
         $bestellingen = Bestelling::with(['materiaal'])
             ->where('status', 'in afwachting')
             ->orderBy('created_at', 'asc')
@@ -303,14 +299,14 @@ class MateriaalController extends Controller
         return view('magazijnier.bestellingen', compact('bestellingen'));
     }
 
-    // 3. Magazijnier zet bestelling op klaargezet
+    // 3. Magazijnier markeert bestelling als klaar
     public function klaarzetten($id)
     {
         $bestelling = Bestelling::findOrFail($id);
         $bestelling->status = 'klaargezet';
         $bestelling->save();
 
-        // Voorraad daadwerkelijk verminderen bij het klaarmaken
+        // Verminder voorraad bij klaarzetten
         if($bestelling->materiaal) {
             $bestelling->materiaal->beschikbaar -= $bestelling->aantal;
             $bestelling->materiaal->save();
@@ -319,11 +315,13 @@ class MateriaalController extends Controller
         return redirect()->back()->with('success', 'Bestelling succesvol klaargezet!');
     }
 
-    // 4. Technieker bekijkt zijn bestelhistoriek
+    // 4. Technicus bekijkt zijn bestelhistorie
     public function techniekerHistoriek()
     {
-        $bestellingen = Bestelling::with('materiaal')
-            ->where('user_id', Auth::id() ?? 1)
+        $gebruiker_id = session('gebruiker_id', 1);
+
+        $bestellingen = \App\Models\Bestelling::with('materiaal')
+            ->where('user_id', $gebruiker_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
