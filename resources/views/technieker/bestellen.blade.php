@@ -2,6 +2,13 @@
 @section('title', 'Materiaal Webshop')
 
 @section('content')
+{{--
+    Bestelpagina voor technieker:
+    - Toont aanbevolen materialen op basis van weerdata
+    - Toont productgrid met filterbare categorieën
+    - Maakt gebruik van localStorage voor winkelwagen en favorieten
+    - Stuurt bestelling naar route materiaal.bestellen.store via hidden cart_data
+--}}
 
 @php
     $suggestedRefs = $weer['aanbevolen_refs'] ?? [];
@@ -186,6 +193,16 @@
 @endsection
 
 @section('scripts')
+{{--
+    JavaScript logica voor de bestelpagina:
+    - toggleCart: opent / sluit de zijbalk winkelwagen
+    - addToCart: voegt items toe aan localStorage winkelwagen
+    - updateCartQty / removeFromCart: beheert de winkelwageninhoud
+    - updateCartBadge: werkt teller en verborgen forminput bij
+    - searchInput: zoekt via AJAX en filtert het productgrid
+    - initFavorites / toggleFavorite: bewaart favorieten in localStorage
+--}}
+
 <script>
     let cart = JSON.parse(localStorage.getItem('aquafin_cart')) || [];
     let favorites = JSON.parse(localStorage.getItem('aquafin_favorites')) || [];
