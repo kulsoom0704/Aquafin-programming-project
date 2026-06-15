@@ -38,15 +38,10 @@
 
 <body class="bg-animated text-slate-800 antialiased h-[100dvh] flex overflow-hidden pb-16 md:pb-0">
 
-    {{--
-        Hoofdlayout voor techniekerportaal:
-        - Sidebar navigatie voor desktop
-        - Mobiele topbar en bottomtab voor navigatie op kleine schermen
-        - Main content met dynamische body via @yield('content')
-        - Optionele scripts via @yield('scripts')
-    --}}
+    <!-- 🖥️ SIDEBAR DESKTOP PREMIUM BLUE NUIT -->
     <aside class="hidden md:flex flex-col w-72 bg-[#001e33] h-full z-40 relative shadow-[4px_0_30px_rgba(0,0,0,0.15)]">
         
+        <!-- Logo Section -->
         <div class="p-8 pb-8 flex items-center gap-4 border-b border-white/5">
             <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#005b96] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.233.588 1.81l-3.97 2.883a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.971-2.883a1 1 0 00-1.175 0l-3.97 2.883c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.97-2.883c-.772-.577-.373-1.81.588-1.81h4.906a1 1 0 00.95-.69l1.519-4.674z"></path></svg>
@@ -57,6 +52,7 @@
             </div>
         </div>
 
+        <!-- Navigation Links -->
         <div class="px-4 py-6 flex-grow">
             <nav class="space-y-1.5">
                 <a href="{{ route('materiaal.bestellen') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-sm transition-all {{ request()->routeIs('materiaal.bestellen') ? 'bg-[#005b96] text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
@@ -74,6 +70,7 @@
             </nav>
         </div>
 
+        <!-- User Profile footer -->
         <div class="p-4 border-t border-white/5">
             <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5">
                 <img class="w-10 h-10 rounded-lg object-cover shadow-inner" src="https://ui-avatars.com/api/?name={{ urlencode(session('naam', 'T')) }}&background=005b96&color=fff&bold=true" alt="Avatar">
@@ -87,6 +84,7 @@
         </div>
     </aside>
 
+    <!-- 📱 TOP BAR MOBILE -->
     <div class="md:hidden fixed top-0 inset-x-0 h-16 bg-[#001e33] border-b border-white/5 z-40 flex items-center justify-between px-4 shadow-md">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#005b96] to-cyan-400 flex items-center justify-center">
@@ -99,18 +97,13 @@
         </a>
     </div>
 
+    <!-- 📜 CONTENU DE L'APPLICATION -->
     <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-transparent relative z-10 custom-scrollbar pt-16 md:pt-0">
         <div class="px-4 sm:px-6 lg:px-10 py-8 max-w-[1600px] w-full mx-auto pb-28 md:pb-10">
             
-            {{--
-                Alert-sectie voor successmeldingen:
-                - toont een bevestiging bovenaan de content
-                - wist het lokale winkelwagen opgeslagen object bij succes
-                - wordt gebruikt door bestelformulieren en andere acties
-            --}}
+            {{-- Système d'alerte & Sniper d'effacement du panier --}}
             @if(session('success'))
                 <script>
-                    // Code absolu : Si un succès apparaît, la commande a réussi -> On détruit le panier local
                     localStorage.removeItem('aquafin_cart');
                 </script>
                 <div class="mb-6 bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 px-5 py-4 rounded-2xl flex items-center shadow-sm">
@@ -126,7 +119,64 @@
         </div>
     </main>
 
-    <div class="md:hidden fixed bottom-0 inset-x-0 bg-[#001e33] border-t border-white/5 pb-safe z-50 shadow-[0_-8px_30px_rgba(0,0,0,0.3)]">
+    <!-- 🛠️ BOUTON FLOTTANT DE SIGNALEMENT (ACCESSIBLE PARTOUT) -->
+    <div class="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50">
+        <button onclick="toggleSupportTicket()" class="w-14 h-14 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center text-white shadow-2xl hover:scale-105 active:scale-95 transition-all relative border border-orange-400/20 group">
+            <span class="absolute inset-0 rounded-2xl bg-orange-400/20 animate-ping opacity-75"></span>
+            <svg class="w-6 h-6 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- 📑 COULISSANT DU COMPTE-RENDU / TICKET POUR L'ADMIN -->
+    <div id="supportTicketWindow" class="fixed bottom-36 right-4 md:bottom-24 md:right-6 w-[calc(100vw-32px)] sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-200 z-50 translate-y-10 opacity-0 pointer-events-none transition-all duration-300 flex flex-col overflow-hidden">
+        
+        <!-- Header -->
+        <div class="p-4 bg-[#001e33] text-white flex justify-between items-center border-b border-white/5">
+            <div class="flex items-center gap-2.5">
+                <div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
+                <span class="font-black text-xs tracking-wider uppercase text-amber-400">Probleem signaleren</span>
+            </div>
+            <button onclick="toggleSupportTicket()" class="text-slate-400 hover:text-white p-1 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <!-- FORMULAIRE SANS CRASH (Action en attente de route) -->
+        <form action="#" method="POST" class="p-5 flex flex-col gap-4 bg-slate-50">
+            @csrf
+            
+            <p class="text-xs text-slate-500 font-medium leading-relaxed mb-1">
+                Kies een onderwerp en beschrijf het probleem. Dit wordt direct doorgestuurd naar de hoofdbeheerder.
+            </p>
+
+            <div>
+                <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Onderwerp</label>
+                <select name="onderwerp" required class="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-700 focus:outline-none focus:border-[#005b96] transition-colors shadow-sm">
+                    <option value="" disabled selected>Selecteer een categorie...</option>
+                    <option value="logistiek">Logistieke fout (Magazijn)</option>
+                    <option value="defect">Technisch defect (Installatie)</option>
+                    <option value="applicatie">Fout in de applicatie (Bug)</option>
+                    <option value="veiligheid">Dringend veiligheidsprobleem</option>
+                    <option value="andere">Andere storing</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Beschrijving van het probleem</label>
+                <textarea name="bericht" rows="4" required class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-[#005b96] transition-colors shadow-sm resize-none" placeholder="Wees zo specifiek mogelijk (ref, locatie, foutmelding)..."></textarea>
+            </div>
+
+            <button type="submit" class="w-full h-11 bg-[#005b96] hover:bg-[#004a7c] text-white rounded-xl font-black text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 mt-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                Verzenden naar Admin
+            </button>
+        </form>
+    </div>
+
+    <!-- 📱 BOTTOM NAV MOBILE -->
+    <div class="md:hidden fixed bottom-0 inset-x-0 bg-[#001e33] border-t border-white/5 pb-safe z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.3)]">
         <div class="flex justify-around items-center h-16">
             <a href="{{ route('materiaal.bestellen') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('materiaal.bestellen') ? 'text-cyan-400' : 'text-slate-400' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -142,6 +192,18 @@
             </a>
         </div>
     </div>
+
+    <!-- LOGIQUE LOGICIELLE DE L'AFFICHAGE -->
+    <script>
+        function toggleSupportTicket() {
+            const windowDiv = document.getElementById('supportTicketWindow');
+            if(windowDiv.classList.contains('pointer-events-none')) {
+                windowDiv.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-10');
+            } else {
+                windowDiv.classList.add('pointer-events-none', 'opacity-0', 'translate-y-10');
+            }
+        }
+    </script>
 
     @yield('scripts')
 </body>

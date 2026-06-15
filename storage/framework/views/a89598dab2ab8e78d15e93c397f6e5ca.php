@@ -2,6 +2,7 @@
 
 <?php $__env->startSection('content'); ?>
 
+
 <?php
     $suggestedRefs = $weer['aanbevolen_refs'] ?? [];
     $aanbevolenMaterialen = $materialen->filter(function($item) use ($suggestedRefs) {
@@ -9,14 +10,14 @@
     });
 ?>
 
-<!-- EN-TÊTE PREMIUM -->
+<!-- Kopgedeelte -->
 <div class="mb-8 flex flex-col lg:flex-row justify-between lg:items-end gap-4">
     <div>
         <span class="text-[10px] md:text-xs font-black tracking-[0.2em] text-[#005b96] uppercase mb-1 block">Aquafin Logistiek</span>
         <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Centraal Magazijn</h1>
     </div>
     
-    <!-- Barre de recherche & Panier -->
+    <!-- Zoekbalk en winkelwagen -->
     <div class="flex flex-col sm:flex-row gap-3 relative z-30 w-full lg:w-auto">
         <div class="w-full sm:w-80 relative">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -34,7 +35,7 @@
     </div>
 </div>
 
-<!-- 🌟 SECTION METEO (Agrandie aussi) -->
+<!-- Weersadvies sectie -->
 <?php if(isset($weer) && $weer['is_beschikbaar']): ?>
     <div id="weatherSection" class="mb-8">
         <div class="bg-gradient-to-br from-[#001e33] to-[#00365c] rounded-3xl p-5 md:p-6 relative overflow-hidden shadow-lg border border-white/5">
@@ -66,7 +67,6 @@
                                         <span class="text-[10px] font-black text-cyan-300 tracking-wider bg-slate-900/50 px-2.5 py-1 rounded-lg"><?php echo e($item->artikelnummer); ?></span>
                                         <div class="w-2 h-2 rounded-full <?php echo e($item->beschikbaar > 0 ? 'bg-emerald-400' : 'bg-rose-400'); ?>"></div>
                                     </div>
-                                    <!-- Plus de truncate ici, on laisse 2 lignes -->
                                     <h3 class="text-base font-bold text-white leading-tight mb-5 line-clamp-2 min-h-[2.5rem]"><?php echo e($item->omschrijving); ?></h3>
                                 </div>
                                 <div class="flex items-center gap-3 mt-auto">
@@ -84,7 +84,7 @@
     </div>
 <?php endif; ?>
 
-<!-- FILTRES DE CATEGORIES -->
+<!-- Categoriefilters -->
 <div class="flex gap-2 overflow-x-auto pb-4 w-full hide-scrollbar border-b border-slate-200 mb-6">
     <button class="cat-btn active bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs tracking-wide whitespace-nowrap shadow-sm shrink-0" data-prefix="ALL">Alles</button>
     <button class="cat-btn bg-white text-slate-600 border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wide whitespace-nowrap shrink-0" data-prefix="BEV">Bevestiging</button>
@@ -96,7 +96,7 @@
     </button>
 </div>
 
-<!-- GRILLE PRINCIPALE (CARTES VERTICALES GRAND FORMAT) -->
+<!-- Productgrid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" id="productGrid">
     <?php $__currentLoopData = $materialen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <!-- La nouvelle carte grande taille -->
@@ -156,7 +156,7 @@
     <h3 class="text-base font-bold text-slate-800 mb-1">Geen resultaten</h3>
 </div>
 
-<!-- SIDEBAR SHOPPING CART -->
+<!-- Winkelwagen zijbalk -->
 <div id="cartSidebar" class="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-slate-50 shadow-[ -10px_0_40px_rgba(0,0,0,0.1) ] transform translate-x-full transition-transform duration-300 z-[100] flex flex-col border-l border-slate-200">
     <div class="p-5 bg-white flex justify-between items-center border-b border-slate-100 pt-safe">
         <div class="flex items-center gap-3">
@@ -188,6 +188,8 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('scripts'); ?>
+
+
 <script>
     let cart = JSON.parse(localStorage.getItem('aquafin_cart')) || [];
     let favorites = JSON.parse(localStorage.getItem('aquafin_favorites')) || [];

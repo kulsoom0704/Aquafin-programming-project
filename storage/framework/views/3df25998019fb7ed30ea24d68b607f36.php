@@ -1,6 +1,7 @@
 <?php $__env->startSection('title', 'Mijn Dashboard'); ?>
 
 <?php $__env->startSection('content'); ?>
+
 <div class="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-8">
     <div>
         <span class="text-[10px] md:text-xs font-black tracking-[0.2em] text-[#005b96] uppercase mb-1 block">
@@ -28,6 +29,7 @@
 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-2">
     <h2 class="text-xl font-black text-[#001e33] tracking-tight">Actuele Interventies</h2>
 </div>
+
 
 <div class="grid grid-cols-1 gap-4">
     <?php $__empty_1 = true; $__currentLoopData = $meldingen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $taak): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
