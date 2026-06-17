@@ -32,6 +32,7 @@ Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
 Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
 Route::get('/admin/helpdesk/{id}', [AdminController::class, 'showHelpdesk']);
+Route::patch('/admin/helpdesk/{id}/sluiten', [AdminController::class, 'sluitGesprek']);
 
 /*
 |--------------------------------------------------------------------------
