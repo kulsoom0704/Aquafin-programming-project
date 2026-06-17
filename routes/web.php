@@ -18,12 +18,15 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+<<<<<<< HEAD
+=======
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
 |--------------------------------------------------------------------------
 */
 
+>>>>>>> b33d888597bb90900bd7440e04111540177786fe
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 Route::get('/admin/users', [AdminController::class, 'users']);
 Route::post('/admin/users', [AdminController::class, 'store']);
@@ -31,6 +34,9 @@ Route::delete('/admin/users/{user}', [AdminController::class, 'destroy']);
 Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatus']);
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
+<<<<<<< HEAD
+
+=======
 Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
 Route::get('/admin/helpdesk/{id}', [AdminController::class, 'showHelpdesk']);
 Route::patch('/admin/helpdesk/{id}/sluiten', [AdminController::class, 'sluitGesprek']);
@@ -41,6 +47,7 @@ Route::get('/admin/helpdesk/gesloten', [AdminController::class, 'geslotenTickets
 | Installaties, Logboek & Meldingen (Technieker)
 |--------------------------------------------------------------------------
 */
+>>>>>>> b33d888597bb90900bd7440e04111540177786fe
 Route::get('/technieker', function () {
     return redirect()->route('materiaal.bestellen');
 });
@@ -49,30 +56,45 @@ Route::controller(InstallatieController::class)->group(function () {
     Route::get('/technieker/meldingen', 'meldingen')->name('technieker.meldingen');
     Route::get('/installatie/{id}', 'show')->name('installatie.show');
     Route::post('/installatie/{id}/notitie', 'storeNotitie')->name('notitie.store');
-    
-    // Visueel bestelformulier (Webshop)
     Route::get('/materiaal/bestellen', 'showBestelformulier')->name('materiaal.bestellen');
-    
-    // Validatie- en supportroutes
     Route::post('/installatie/{id}/valideren', 'valideren')->name('installatie.valideren');
     Route::post('/support/noodoproep', 'storeNoodoproep')->name('support.noodoproep');
 });
 
+<<<<<<< HEAD
+=======
 
 // API voor slimme zoekbalk
+>>>>>>> b33d888597bb90900bd7440e04111540177786fe
 Route::get('/api/materiaal/search', [MateriaalController::class, 'searchLogic'])->name('materiaal.search');
-
-// Technieker bevestigt zijn winkelwagen (bestelling versturen)
 Route::post('/materiaal/bestellen', [MateriaalController::class, 'bestellingOpslaan'])->name('materiaal.bestellen.store');
-
-// Technieker overzicht (status volgen)
 Route::get('/technieker/historiek', [MateriaalController::class, 'techniekerHistoriek'])->name('technieker.historiek');
-
-// Magazijnier dashboard
 Route::get('/magazijnier/bestellingen', [MateriaalController::class, 'magazijnierIndex'])->name('magazijnier.bestellingen');
 Route::patch('/magazijnier/bestellingen/{id}/klaarzetten', [MateriaalController::class, 'klaarzetten'])->name('magazijnier.klaarzetten');
 
+<<<<<<< HEAD
+Route::get('/materiaal', [MateriaalController::class, 'index']);
+Route::get('/materiaal/create', [MateriaalController::class, 'create']);
+Route::post('/materiaal', [MateriaalController::class, 'store']);
+Route::get('/materiaal/{id}/wijzigen', [WijzigingsverzoekController::class, 'create']);
+Route::post('/materiaal/{id}/wijzigen', [WijzigingsverzoekController::class, 'store']);
+Route::post('/materiaal/{id}/foto', [MateriaalController::class, 'fotoUpload']);
+Route::post('/materiaal/{id}/foto-verwijderen', [MateriaalController::class, 'fotoVerwijderen']);
+Route::get('/levering', [MateriaalController::class, 'leveringCreate']);
+Route::post('/levering', [MateriaalController::class, 'leveringStore']);
+Route::get('/retour', [MateriaalController::class, 'retourCreate']);
+Route::post('/retour', [MateriaalController::class, 'retourStore']);
+Route::get('/meldingen', [MeldingController::class, 'index']);
+Route::post('/meldingen/{id}/gelezen', [MeldingController::class, 'gelezen']);
+Route::post('/meldingen/{id}/ongelezen', [MeldingController::class, 'ongelezen']);
+Route::post('/meldingen/{id}/archiveren', [MeldingController::class, 'archiveren']);
+Route::post('/meldingen/{id}/terugzetten', [MeldingController::class, 'terugzetten']);
+Route::get('/api/magazijn/search', [MateriaalController::class, 'magazijnSearchLogic']);
+Route::get('/api/bestelling/opzoeken', [MateriaalController::class, 'bestellingOpzoeken']);
+Route::post('/bestellingen/{id}/terugzetten', [MateriaalController::class, 'bestellingTerugzetten']);
+=======
 
 
 Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
 Route::post('/chat/reply/{id}', [ChatController::class, 'reply'])->name('chat.reply');
+>>>>>>> b33d888597bb90900bd7440e04111540177786fe

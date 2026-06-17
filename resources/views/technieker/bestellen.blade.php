@@ -2,14 +2,6 @@
 @section('title', 'Materiaal Webshop')
 
 @section('content')
-{{--
-    Bestelpagina voor technieker:
-    - Toont aanbevolen materialen op basis van weerdata
-    - Toont productgrid met filterbare categorieën
-    - Maakt gebruik van localStorage voor winkelwagen en favorieten
-    - Stuurt bestelling naar route materiaal.bestellen.store via hidden cart_data
---}}
-
 @php
     $suggestedRefs = $weer['aanbevolen_refs'] ?? [];
     $aanbevolenMaterialen = $materialen->filter(function($item) use ($suggestedRefs) {
@@ -17,14 +9,12 @@
     });
 @endphp
 
-<!-- Kopgedeelte -->
 <div class="mb-8 flex flex-col lg:flex-row justify-between lg:items-end gap-4">
     <div>
         <span class="text-[10px] md:text-xs font-black tracking-[0.2em] text-[#005b96] uppercase mb-1 block">Aquafin Logistiek</span>
         <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Centraal Magazijn</h1>
     </div>
     
-    <!-- Zoekbalk en winkelwagen -->
     <div class="flex flex-col sm:flex-row gap-3 relative z-30 w-full lg:w-auto">
         <div class="w-full sm:w-80 relative">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -42,19 +32,16 @@
     </div>
 </div>
 
-<!-- Weersadvies sectie -->
 @if(isset($weer) && $weer['is_beschikbaar'])
     <div id="weatherSection" class="mb-8">
         <div class="bg-gradient-to-br from-[#001e33] to-[#00365c] rounded-3xl p-5 md:p-6 relative overflow-hidden shadow-lg border border-white/5">
             <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-400/5 rounded-full blur-3xl pointer-events-none"></div>
-            
             <div class="relative z-10">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
                     <div>
                         <span class="px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-300 text-[9px] font-black tracking-widest uppercase border border-cyan-400/10 mb-1 inline-block">Weersadvies</span>
                         <h2 class="text-xl font-black text-white tracking-tight">Geadviseerde uitrusting voor vandaag</h2>
                     </div>
-
                     <div class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5 w-full md:w-auto">
                         <span class="text-xl font-black text-white leading-none">{{ $weer['temp'] }}°C</span>
                         <div class="h-4 w-px bg-white/10"></div>
@@ -63,7 +50,6 @@
                         </span>
                     </div>
                 </div>
-
                 @if($aanbevolenMaterialen->count() > 0)
                     <div class="flex overflow-x-auto gap-4 pb-2 hide-scrollbar snap-x">
                         @foreach($aanbevolenMaterialen as $item)
@@ -90,7 +76,6 @@
     </div>
 @endif
 
-<!-- Categoriefilters -->
 <div class="flex gap-2 overflow-x-auto pb-4 w-full hide-scrollbar border-b border-slate-200 mb-6">
     <button class="cat-btn active bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs tracking-wide whitespace-nowrap shadow-sm shrink-0" data-prefix="ALL">Alles</button>
     <button class="cat-btn bg-white text-slate-600 border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wide whitespace-nowrap shrink-0" data-prefix="BEV">Bevestiging</button>
@@ -102,13 +87,9 @@
     </button>
 </div>
 
-<!-- Productgrid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" id="productGrid">
     @foreach($materialen as $item)
-        <!-- La nouvelle carte grande taille -->
         <div class="product-card bg-white p-5 rounded-[1.5rem] border border-slate-200 shadow-sm flex flex-col justify-between group hover:border-[#005b96]/40 hover:shadow-xl transition-all duration-300" data-id="{{ $item->id }}" data-ref="{{ $item->artikelnummer }}" data-item-ref="{{ strtoupper($item->artikelnummer) }}">
-            
-            <!-- Haut: Image/Icone & Badges -->
             <div class="flex justify-between items-start mb-4">
                 <div class="w-16 h-16 shrink-0 rounded-2xl relative overflow-hidden flex items-center justify-center bg-slate-50 border border-slate-100 group-hover:bg-[#005b96]/5 transition-colors">
                     @php
@@ -122,7 +103,6 @@
                     @endphp
                     <svg class="w-8 h-8 text-slate-400 group-hover:text-[#005b96] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">{!! $iconPath !!}</svg>
                 </div>
-                
                 <div class="flex flex-col items-end gap-1.5">
                     <span class="text-[10px] font-black tracking-widest text-slate-500 uppercase bg-slate-100 px-2.5 py-1 rounded-lg">{{ $item->artikelnummer }}</span>
                     <span class="text-[9px] font-black px-2 py-1 rounded-md {{ $item->beschikbaar > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
@@ -130,21 +110,15 @@
                     </span>
                 </div>
             </div>
-
-            <!-- Milieu: Titre Complet (Plus de truncate, mais line-clamp) -->
             <div class="flex-grow mb-5">
                 <h3 class="text-base font-black text-slate-800 leading-snug group-hover:text-[#005b96] transition-colors line-clamp-3">{{ $item->omschrijving }}</h3>
             </div>
-
-            <!-- Bas: Actions & Boutons -->
             <div class="flex items-center justify-between pt-4 border-t border-slate-100">
                 <button class="btn-favorite p-2 rounded-full bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors" onclick="toggleFavorite({{ $item->id }}, this)">
                     <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 </button>
-                
                 <div class="flex items-center gap-2">
                     <input type="number" id="qty-main-{{ $item->id }}" min="1" max="{{ $item->beschikbaar > 0 ? $item->beschikbaar : 1 }}" value="1" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-14 h-11 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl text-center font-black text-sm focus:outline-none focus:border-[#005b96] focus:ring-2 focus:ring-blue-500/20 transition-all">
-                    
                     <button onclick="addToCart({{ $item->id }}, '{{ addslashes($item->omschrijving) }}', '{{ $item->artikelnummer }}', {{ $item->beschikbaar }}, 'main')" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-11 h-11 bg-[#005b96] text-white disabled:bg-slate-100 disabled:text-slate-400 hover:bg-[#004a7c] rounded-xl flex items-center justify-center active:scale-95 transition-all shadow-md shadow-blue-900/10">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                     </button>
@@ -161,8 +135,7 @@
     <h3 class="text-base font-bold text-slate-800 mb-1">Geen resultaten</h3>
 </div>
 
-<!-- Winkelwagen zijbalk -->
-<div id="cartSidebar" class="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-slate-50 shadow-[ -10px_0_40px_rgba(0,0,0,0.1) ] transform translate-x-full transition-transform duration-300 z-[100] flex flex-col border-l border-slate-200">
+<div id="cartSidebar" class="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-slate-50 shadow-[-10px_0_40px_rgba(0,0,0,0.1)] transform translate-x-full transition-transform duration-300 z-[100] flex flex-col border-l border-slate-200">
     <div class="p-5 bg-white flex justify-between items-center border-b border-slate-100 pt-safe">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-xl bg-[#005b96]/10 flex items-center justify-center text-[#005b96]">
@@ -174,9 +147,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
     </div>
-    
     <div id="cartItems" class="flex-grow overflow-y-auto p-4 space-y-3 custom-scrollbar pb-32"></div>
-
     <div class="absolute bottom-0 inset-x-0 p-4 bg-white border-t border-slate-100 pb-safe">
         <form action="{{ route('materiaal.bestellen.store') }}" method="POST" id="checkoutForm">
             @csrf
@@ -193,16 +164,6 @@
 @endsection
 
 @section('scripts')
-{{--
-    JavaScript logica voor de bestelpagina:
-    - toggleCart: opent / sluit de zijbalk winkelwagen
-    - addToCart: voegt items toe aan localStorage winkelwagen
-    - updateCartQty / removeFromCart: beheert de winkelwageninhoud
-    - updateCartBadge: werkt teller en verborgen forminput bij
-    - searchInput: zoekt via AJAX en filtert het productgrid
-    - initFavorites / toggleFavorite: bewaart favorieten in localStorage
---}}
-
 <script>
     let cart = JSON.parse(localStorage.getItem('aquafin_cart')) || [];
     let favorites = JSON.parse(localStorage.getItem('aquafin_favorites')) || [];
@@ -228,9 +189,7 @@
     function addToCart(id, name, ref, maxStock, prefix) {
         const qtyInput = document.getElementById(`qty-${prefix}-${id}`);
         const qty = parseInt(qtyInput.value) || 1;
-        
         if(qty > maxStock || qty < 1) return alert('Ongeldig aantal of stock onvoldoende');
-        
         const existingItem = cart.find(i => i.id === id);
         if(existingItem) {
             if(existingItem.aantal + qty > maxStock) existingItem.aantal = maxStock;
@@ -238,10 +197,8 @@
         } else {
             cart.push({ id: id, naam: name, ref: ref, aantal: qty, max: maxStock });
         }
-        
         localStorage.setItem('aquafin_cart', JSON.stringify(cart));
         updateCartBadge();
-        
         const cartBtn = document.getElementById('cartCount').parentElement;
         cartBtn.classList.add('scale-105');
         setTimeout(() => cartBtn.classList.remove('scale-105'), 200);
@@ -251,12 +208,8 @@
         let item = cart.find(i => i.id === id);
         if(item) {
             item.aantal += delta;
-            if(item.aantal <= 0) {
-                removeFromCart(id);
-                return;
-            } else if(item.aantal > item.max) {
-                item.aantal = item.max;
-            }
+            if(item.aantal <= 0) { removeFromCart(id); return; }
+            else if(item.aantal > item.max) item.aantal = item.max;
             localStorage.setItem('aquafin_cart', JSON.stringify(cart));
             renderCart();
             updateCartBadge();
@@ -276,7 +229,6 @@
         badge.innerText = total;
         if(total > 0) badge.classList.remove('scale-0');
         else badge.classList.add('scale-0');
-        
         document.getElementById('cartDataInput').value = JSON.stringify(cart);
         document.getElementById('btnCheckout').disabled = total === 0;
     }
@@ -285,13 +237,9 @@
         const container = document.getElementById('cartItems');
         container.innerHTML = '';
         if(cart.length === 0) {
-            container.innerHTML = `
-                <div class="text-center text-slate-400 py-10">
-                    <p class="font-medium text-sm">Je winkelwagen is leeg.</p>
-                </div>`;
+            container.innerHTML = `<div class="text-center text-slate-400 py-10"><p class="font-medium text-sm">Je winkelwagen is leeg.</p></div>`;
             return;
         }
-        
         cart.forEach(item => {
             container.innerHTML += `
                 <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col group">
@@ -321,37 +269,28 @@
     searchInput.addEventListener('input', function() {
         let rechercheBrute = this.value.trim();
         suggestionsBox.innerHTML = '';
-        
         if(rechercheBrute.length === 0) {
             suggestionsBox.classList.add('hidden');
             serverValidIds = null;
-            filtrerGrid(''); 
+            filtrerGrid('');
             const weatherSec = document.getElementById('weatherSection');
             if(weatherSec) weatherSec.style.display = '';
             return;
         }
-
         const weatherSec = document.getElementById('weatherSection');
         if(weatherSec) weatherSec.style.display = 'none';
-
         fetch(`/api/materiaal/search?q=${encodeURIComponent(rechercheBrute)}`)
             .then(response => response.json())
             .then(data => {
                 suggestionsBox.innerHTML = '';
                 let aAfficher = false;
-
                 if (data.artikelen.length > 0) {
                     data.artikelen.slice(0, 4).forEach(item => {
-                        suggestionsBox.innerHTML += `
-                            <div class="p-3 hover:bg-slate-50 cursor-pointer flex items-center text-sm text-slate-700 font-medium rounded-lg m-1" onclick="appliquerCorrection('${item.omschrijving.replace(/'/g, "\\'")}')">
-                                ${item.omschrijving}
-                            </div>
-                        `;
+                        suggestionsBox.innerHTML += `<div class="p-3 hover:bg-slate-50 cursor-pointer flex items-center text-sm text-slate-700 font-medium rounded-lg m-1" onclick="appliquerCorrection('${item.omschrijving.replace(/'/g, "\\'")}')">${item.omschrijving}</div>`;
                     });
                     aAfficher = true;
                 }
                 if(aAfficher) suggestionsBox.classList.remove('hidden');
-
                 serverValidIds = data.artikelen.map(i => i.id.toString());
                 filtrerGrid(data.bedoelde_je || rechercheBrute);
             });
@@ -371,13 +310,8 @@
             let matchCategory = (currentCategory === 'ALL') || (refPrefix === currentCategory);
             let matchFavorite = !showOnlyFavorites || favorites.includes(parseInt(id));
             let matchSearch = (serverValidIds === null) || serverValidIds.includes(id);
-
-            if (matchCategory && matchSearch && matchFavorite) {
-                card.style.display = '';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
+            if (matchCategory && matchSearch && matchFavorite) { card.style.display = ''; visibleCount++; }
+            else { card.style.display = 'none'; }
         });
         document.getElementById('noResults').style.display = visibleCount === 0 ? 'flex' : 'none';
         document.getElementById('productGrid').style.display = visibleCount === 0 ? 'none' : 'grid';
@@ -392,7 +326,7 @@
             this.classList.remove('bg-white', 'text-slate-600');
             this.classList.add('bg-slate-900', 'text-white', 'shadow-md');
             currentCategory = this.getAttribute('data-prefix');
-            filtrerGrid(searchInput.value.trim()); 
+            filtrerGrid(searchInput.value.trim());
         });
     });
 
@@ -427,7 +361,7 @@
             btnElement.classList.add('text-rose-500', 'bg-rose-50');
         }
         localStorage.setItem('aquafin_favorites', JSON.stringify(favorites));
-        if(showOnlyFavorites) filtrerGrid(searchInput.value.trim()); 
+        if(showOnlyFavorites) filtrerGrid(searchInput.value.trim());
     }
 
     document.addEventListener('DOMContentLoaded', () => {
