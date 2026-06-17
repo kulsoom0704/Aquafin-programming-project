@@ -20,11 +20,16 @@ class AdminController extends Controller
         ];
 
         $userCount = User::count();
+        $helpdeskCount = Noodoproep::where('status', 'open')->count();
 
         return view(
-            'admin.dashboard',
-            compact('rainfall', 'userCount')
-        );
+    'admin.dashboard',
+    compact(
+        'rainfall',
+        'userCount',
+        'helpdeskCount'
+    )
+);
     }
 
     public function users()
