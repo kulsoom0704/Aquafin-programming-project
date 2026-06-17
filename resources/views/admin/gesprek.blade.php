@@ -48,10 +48,16 @@
                     Versturen
                 </button>
 
+                <form action="/admin/helpdesk/{{ $oproep->id }}/sluiten" method="POST">
+                 @csrf
+                 @method('PATCH')
+
                 <button
-                    class="bg-red-600 text-white px-6 py-3 rounded-xl">
+                    type="submit"
+                    class="bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700">
                     Gesprek afsluiten
                 </button>
+            </form>
 
             </div>
 
