@@ -433,20 +433,18 @@
             <h1>Retour registreren</h1>
             <br>
             <div class="formulier" style="text-align: left;">
-                <form method="POST" action="/retour">
+                <label>Bestelnummer</label>
+                <input type="text" id="bestelnummer-input" placeholder="Bv. 8" autocomplete="off">
+                <div id="bestelling-resultaat" style="margin-top: 10px;"></div>
+
+                <form method="POST" action="/retour" id="retour-form" style="display:none; margin-top: 15px;">
                     @csrf
-                    <label>Naam technieker</label>
-                    <input type="text" name="technieker_naam" placeholder="Naam van de technieker">
-                    @error('technieker_naam') <p class="fout">{{ $message }}</p> @enderror
+                    <input type="hidden" name="materiaal_id[]" id="retour-materiaal-id">
+                    <input type="hidden" name="technieker_naam" id="retour-technieker-naam">
+                    <input type="hidden" name="bestelling_id" id="retour-bestelling-id">
 
-                    <label style="margin-top: 10px;">Zoek en voeg artikel toe</label>
-                    <div style="position: relative; margin-bottom: 10px;">
-                        <input type="text" id="zoek-retour" placeholder="Typ om te zoeken..." autocomplete="off" onkeyup="filterRetour()">
-                        <div class="suggesties-lijst" id="zoek-suggesties-retour"></div>
-                    </div>
-
-                    <label>Geselecteerde artikelen</label>
-                    <div id="retour-artikelen-lijst" style="margin-bottom: 10px;"></div>
+                    <label>Aantal terug te brengen</label>
+                    <input type="number" name="aantal[]" id="retour-aantal" min="1">
 
                     <button type="submit" class="btn-opslaan">Retour registreren</button>
                 </form>
@@ -458,8 +456,7 @@
             <h1>Archief</h1>
             <br>
 
-            @php $gearchiveerdeBestellingen = \App\Models\Bestelling::with(['onderdeel','user','materiaal'])->where('status', 'klaargezet')->orWhere('status', 'Goedgekeurd')->latest()->get(); @endphp
-
+@php $gearchiveerdeBestellingen = \App\Models\Bestelling::with(['onderdeel','user','materiaal'])->whereIn('status', ['klaargezet', 'Goedgekeurd', 'geretourneerd'])->latest()->get(); @endphp
             @if($gearchiveerdeBestellingen->isEmpty())
                 <p style="color: #999;">Geen gearchiveerde bestellingen.</p>
             @else
@@ -483,7 +480,13 @@
                     <td>{{ $bestelling->materiaal->omschrijving ?? ($bestelling->onderdeel->naam ?? '-') }}</td>
                     <td>{{ $bestelling->aantal }}</td>
                     <td>{{ $bestelling->created_at->format('d/m/Y') }}</td>
-                    <td><span class="badge badge-goedgekeurd">Klaargezet</span></td>
+                    <td>
+    @if($bestelling->status === 'geretourneerd')
+        <span class="badge" style="background:#cce5ff; color:#004085;">Geretourneerd</span>
+    @else
+        <span class="badge badge-goedgekeurd">Klaargezet</span>
+    @endif
+</td>
                     <td>
                         <form method="POST" action="/bestellingen/{{ $bestelling->id }}/terugzetten" style="display:inline;">
                             @csrf
@@ -566,6 +569,46 @@
                 });
         });
 
+        var bestelnummerInput = document.getElementById('bestelnummer-input');
+        var bestellingResultaat = document.getElementById('bestelling-resultaat');
+        var retourForm = document.getElementById('retour-form');
+
+        bestelnummerInput.addEventListener('input', function() {
+            var nummer = this.value.trim();
+
+            if (nummer.length === 0) {
+                bestellingResultaat.innerHTML = '';
+                retourForm.style.display = 'none';
+                return;
+            }
+
+            fetch('/api/bestelling/opzoeken?nummer=' + encodeURIComponent(nummer))
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (!data.gevonden) {
+                        bestellingResultaat.innerHTML = '<p style="color:#e74c3c;">Geen klaargezette bestelling gevonden met dit nummer.</p>';
+                        retourForm.style.display = 'none';
+                        return;
+                    }
+
+                    bestellingResultaat.innerHTML = `
+                        <div style="background:#f9f9f9; padding:12px; border-radius:6px;">
+                            <p><strong>Technieker:</strong> ${data.technieker}</p>
+                            <p><strong>Materiaal:</strong> ${data.omschrijving}</p>
+                            <p><strong>Aantal meegekregen:</strong> ${data.aantal}</p>
+                        </div>
+                    `;
+
+                    document.getElementById('retour-materiaal-id').value = data.materiaal_id;
+                    document.getElementById('retour-technieker-naam').value = data.technieker;
+                    document.getElementById('retour-bestelling-id').value = data.bestelling_id;
+                    document.getElementById('retour-aantal').max = data.aantal;
+                    document.getElementById('retour-aantal').value = data.aantal;
+
+                    retourForm.style.display = 'block';
+                });
+        });
+
         function toonMeldingPopup(titel, bericht, datum) {
             document.getElementById('melding-popup-titel').innerText = titel;
             document.getElementById('melding-popup-bericht').innerText = bericht;
@@ -587,27 +630,6 @@
                 div.onclick = function() {
                     voegArtikelToeAanLijst(item.id, item.tekst, 'artikelen-lijst');
                     document.getElementById('zoek-uitgifte').value = '';
-                    suggesties.style.display = 'none';
-                };
-                suggesties.appendChild(div);
-            });
-            suggesties.style.display = 'block';
-        }
-
-        function filterRetour() {
-            var zoekterm = document.getElementById('zoek-retour').value.toLowerCase();
-            var suggesties = document.getElementById('zoek-suggesties-retour');
-            if (zoekterm.length < 1) { suggesties.style.display = 'none'; return; }
-            var resultaten = alleMateriaal.filter(function(item) { return item.tekst.toLowerCase().includes(zoekterm); });
-            suggesties.innerHTML = '';
-            if (resultaten.length === 0) { suggesties.style.display = 'none'; return; }
-            resultaten.forEach(function(item) {
-                var div = document.createElement('div');
-                div.className = 'suggestie-item';
-                div.innerText = item.tekst;
-                div.onclick = function() {
-                    voegArtikelToeAanLijst(item.id, item.tekst, 'retour-artikelen-lijst');
-                    document.getElementById('zoek-retour').value = '';
                     suggesties.style.display = 'none';
                 };
                 suggesties.appendChild(div);
@@ -659,9 +681,6 @@
         document.addEventListener('click', function(e) {
             if (!e.target.closest('#zoek-uitgifte') && !e.target.closest('#zoek-suggesties')) {
                 document.getElementById('zoek-suggesties').style.display = 'none';
-            }
-            if (!e.target.closest('#zoek-retour') && !e.target.closest('#zoek-suggesties-retour')) {
-                document.getElementById('zoek-suggesties-retour').style.display = 'none';
             }
             if (!e.target.closest('#magazijn-zoek') && !e.target.closest('#magazijn-suggesties')) {
                 magazijnSuggesties.style.display = 'none';

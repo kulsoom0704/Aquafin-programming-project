@@ -126,28 +126,36 @@ class MateriaalController extends Controller
     }
 
     public function retourStore(Request $request)
-    {
-        $request->validate([
-            'technieker_naam' => 'required',
-            'materiaal_id'    => 'required|array',
-            'aantal'          => 'required|array',
+{
+    $request->validate([
+        'technieker_naam' => 'required',
+        'materiaal_id'    => 'required|array',
+        'aantal'          => 'required|array',
+    ]);
+
+    foreach ($request->materiaal_id as $index => $id) {
+        if (!$id) continue;
+        $aantal = $request->aantal[$index] ?? 1;
+        Retour::create([
+            'materiaal_id'    => $id,
+            'aantal'          => $aantal,
+            'technieker_naam' => $request->technieker_naam,
         ]);
-
-        foreach ($request->materiaal_id as $index => $id) {
-            if (!$id) continue;
-            $aantal = $request->aantal[$index] ?? 1;
-            Retour::create([
-                'materiaal_id'    => $id,
-                'aantal'          => $aantal,
-                'technieker_naam' => $request->technieker_naam,
-            ]);
-            $materiaal = Materiaal::find($id);
-            $materiaal->beschikbaar += $aantal;
-            $materiaal->save();
-        }
-
-        return redirect('/materiaal?sectie=retours')->with('succes', 'Retour geregistreerd!');
+        $materiaal = Materiaal::find($id);
+        $materiaal->beschikbaar += $aantal;
+        $materiaal->save();
     }
+
+    if ($request->bestelling_id) {
+        $bestelling = Bestelling::find($request->bestelling_id);
+        if ($bestelling) {
+            $bestelling->status = 'geretourneerd';
+            $bestelling->save();
+        }
+    }
+
+    return redirect('/materiaal?sectie=retours')->with('succes', 'Retour geregistreerd!');
+}
 
     public function fotoUpload(Request $request, $id)
     {
@@ -257,6 +265,29 @@ class MateriaalController extends Controller
         });
 
         return response()->json(['artikelen' => $resultaten->values()]);
+    }
+
+    public function bestellingOpzoeken(Request $request)
+    {
+        $nummer = $request->query('nummer');
+
+        $bestelling = Bestelling::with(['materiaal', 'user'])
+            ->where('id', $nummer)
+            ->where('status', 'klaargezet')
+            ->first();
+
+        if (!$bestelling) {
+            return response()->json(['gevonden' => false]);
+        }
+
+        return response()->json([
+            'gevonden' => true,
+            'bestelling_id' => $bestelling->id,
+            'materiaal_id' => $bestelling->materiaal->id ?? null,
+            'omschrijving' => $bestelling->materiaal->omschrijving ?? '-',
+            'aantal' => $bestelling->aantal,
+            'technieker' => $bestelling->user->name ?? '-',
+        ]);
     }
 
     public function bestellingOpslaan(Request $request)
