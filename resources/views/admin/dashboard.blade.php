@@ -52,13 +52,16 @@
 
 <div class="glass-card rounded-3xl p-6 border-t-4 border-green-500 shadow-sm">
     <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Installaties</p>
-    <h2 class="text-4xl font-extrabold mt-2 text-slate-800">85%</h2>
+    <h2 class="text-4xl font-extrabold mt-2 text-slate-800">
+    {{ $installatieCount }}
+</h2>
 </div>
 
 <div class="glass-card rounded-3xl p-6 border-t-4 border-yellow-500 shadow-sm">
     <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Onderhoud</p>
-    <h2 class="text-4xl font-extrabold mt-2 text-slate-800">10%</h2>
-</div>
+    <h2 class="text-4xl font-extrabold mt-2 text-slate-800">
+    {{ $geslotenTickets }}
+</h2>
 
 <a href="/admin/storingen">
     <div class="glass-card rounded-3xl p-6 border-t-4 border-red-500 shadow-sm hover:scale-105 transition cursor-pointer">

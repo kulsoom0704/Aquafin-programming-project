@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Noodoproep;
 use Illuminate\Support\Facades\Hash;
 use App\Models\ChatBericht;
+use App\Models\Installatie;
 class AdminController extends Controller
 {
     public function dashboard()
@@ -20,15 +21,22 @@ class AdminController extends Controller
         ];
 
         $userCount = User::count();
+
         $helpdeskCount = Noodoproep::where('status', 'open')->count();
+
+        $installatieCount = Installatie::count();
+
+        $geslotenTickets = Noodoproep::where('status', 'gesloten')->count();
 
         return view(
     'admin.dashboard',
     compact(
-        'rainfall',
-        'userCount',
-        'helpdeskCount'
-    )
+    'rainfall',
+    'userCount',
+    'helpdeskCount',
+    'installatieCount',
+    'geslotenTickets'
+)
 );
     }
 
