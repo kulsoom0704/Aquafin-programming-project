@@ -113,6 +113,7 @@
         </div>
     </main>
 
+    <!-- 🛠️ BOUTON FLOTTANT DE CHAT AVEC PASTILLE -->
     <div class="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50">
         <button onclick="toggleSupportTicket()" class="w-14 h-14 bg-gradient-to-r from-[#005b96] to-cyan-500 rounded-2xl flex items-center justify-center text-white shadow-2xl hover:scale-105 active:scale-95 transition-all relative border border-cyan-400/20 group">
             
@@ -130,6 +131,7 @@
         </button>
     </div>
 
+    <!-- 💬 COULISSANT DU CHAT LIVE -->
     <div id="supportTicketWindow" class="fixed bottom-36 right-4 md:bottom-24 md:right-6 w-[calc(100vw-32px)] sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-200 z-50 translate-y-10 opacity-0 pointer-events-none transition-all duration-300 flex flex-col overflow-hidden h-[500px]">
         
         <div class="p-4 bg-[#001e33] text-white flex justify-between items-center border-b border-white/5 shrink-0">
@@ -156,13 +158,30 @@
                 
                 <?php $__currentLoopData = $actieveChat->berichten; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $msg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php if($msg->afzender_rol === 'Technieker'): ?>
+                        <!-- Message du Technicien avec les "V" -->
                         <div class="flex justify-end">
                             <div class="bg-[#005b96] text-white p-3 rounded-2xl rounded-tr-sm max-w-[85%] shadow-sm">
                                 <p class="text-xs font-medium"><?php echo e($msg->bericht); ?></p>
-                                <span class="text-[9px] text-blue-200 mt-1 block text-right"><?php echo e($msg->created_at->format('H:i')); ?></span>
+                                
+                                <div class="flex justify-end items-center gap-1 mt-1.5">
+                                    <span class="text-[9px] text-blue-200"><?php echo e($msg->created_at->format('H:i')); ?></span>
+                                    
+                                    <?php if($msg->gelezen): ?>
+                                        <!-- Double Check (Lu par l'Admin) -->
+                                        <svg class="w-3 h-3 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7M5 18l4 4L19 12"></path>
+                                        </svg>
+                                    <?php else: ?>
+                                        <!-- Single Check (Envoyé, en attente) -->
+                                        <svg class="w-3 h-3 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     <?php else: ?>
+                        <!-- Réponse de l'Admin / Magazijnier -->
                         <div class="flex justify-start">
                             <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-sm max-w-[85%] shadow-sm">
                                 <p class="text-[10px] font-black text-cyan-600 mb-1"><?php echo e($msg->afzender_rol); ?></p>
@@ -192,6 +211,7 @@
 
         <?php else: ?>
 
+            <!-- ÉTAT 1 : NOUVELLE DEMANDE -->
             <form action="<?php echo e(route('chat.start')); ?>" method="POST" class="flex-1 flex flex-col p-5 bg-slate-50 overflow-y-auto">
                 <?php echo csrf_field(); ?>
                 <div class="bg-blue-50 border border-blue-100 text-[#005b96] p-3 rounded-xl mb-4 text-xs font-medium">
@@ -231,6 +251,7 @@
         <?php endif; ?>
     </div>
 
+    <!-- 📱 BOTTOM NAV MOBILE -->
     <div class="md:hidden fixed bottom-0 inset-x-0 bg-[#001e33] border-t border-white/5 pb-safe z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.3)]">
         <div class="flex justify-around items-center h-16">
             <a href="<?php echo e(route('materiaal.bestellen')); ?>" class="flex flex-col items-center justify-center w-full h-full space-y-1 <?php echo e(request()->routeIs('materiaal.bestellen') ? 'text-cyan-400' : 'text-slate-400'); ?>">
@@ -248,35 +269,41 @@
         </div>
     </div>
 
-    <script>
+    <!-- LOGIQUE LOGICIELLE DE L'AFFICHAGE -->
+    
+   <script>
+        function openChat() {
+            const windowDiv = document.getElementById('supportTicketWindow');
+            if (windowDiv) {
+                windowDiv.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-10');
+                
+                // Auto-scroll vers le bas
+                const chatContainer = document.getElementById('chatContainer');
+                if(chatContainer) {
+                    setTimeout(() => {
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }, 50); // Léger délai pour l'animation CSS
+                }
+            }
+        }
+
         function toggleSupportTicket() {
             const windowDiv = document.getElementById('supportTicketWindow');
             if(windowDiv.classList.contains('pointer-events-none')) {
-                windowDiv.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-10');
-                
-                // L'auto-scroll
-                const chatContainer = document.getElementById('chatContainer');
-                if(chatContainer) {
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                }
+                openChat();
             } else {
                 windowDiv.classList.add('pointer-events-none', 'opacity-0', 'translate-y-10');
             }
         }
-    </script>
 
-    <?php if(session('success') == 'Je gesprek is gestart!'): ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // 🔴 EXÉCUTION IMMÉDIATE SANS ATTENDRE DOMContentLoaded
+        <?php if(session()->has('chat_open') || session()->has('success')): ?>
+            // On lance la fonction directement après le chargement de la balise
             setTimeout(() => {
-                const windowDiv = document.getElementById('supportTicketWindow');
-                windowDiv.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-10');
-                const chatContainer = document.getElementById('chatContainer');
-                if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 300);
-        });
+                openChat();
+            }, 150);
+        <?php endif; ?>
     </script>
-    <?php endif; ?>
 
     <?php echo $__env->yieldContent('scripts'); ?>
 </body>

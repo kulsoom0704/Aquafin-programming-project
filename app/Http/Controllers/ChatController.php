@@ -21,7 +21,6 @@ class ChatController extends Controller
             $userId = 1;
         }
 
-        
         $ticket = \App\Models\Noodoproep::create([
             'user_id' => $userId,
             'type' => $request->doelgroep,
@@ -29,17 +28,20 @@ class ChatController extends Controller
             'status' => 'open'
         ]);
 
-        
         \App\Models\ChatBericht::create([
             'noodoproep_id' => $ticket->id,
             'afzender_rol' => 'Technieker',
             'bericht' => $request->bericht,
-            'gelezen' => true
+            'gelezen' => false 
         ]);
 
-        // Le fameux message flash dynamique !
-        return redirect()->back()->with('success', 'Je bericht is succesvol verzonden naar de ' . $request->doelgroep . '!');
+        // 🔴 Ajout de 'chat_open'
+        return redirect()->back()->with('success', 'Je gesprek is gestart!')->with('chat_open', true);
     }
+
+    // Wanneer de technieker in een bestaand gesprek reageert
+    
+
     // Wanneer de technieker in een bestaand gesprek reageert
     public function reply(Request $request, $id)
     {
@@ -49,7 +51,7 @@ class ChatController extends Controller
             'noodoproep_id' => $id,
             'afzender_rol' => 'Technieker',
             'bericht' => $request->reply,
-            'gelezen' => true
+            'gelezen' => false // 🔴 ICI AUSSI : La réponse n'est pas encore lue !
         ]);
 
         return redirect()->back();

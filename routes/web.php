@@ -75,3 +75,7 @@ Route::patch('/magazijnier/bestellingen/{id}/klaarzetten', [MateriaalController:
 
 Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
 Route::post('/chat/reply/{id}', [ChatController::class, 'reply'])->name('chat.reply');
+
+
+Route::post('/chat/admin/reply/{id}', [ChatController::class, 'replyAdmin'])->name('chat.reply.admin');
+Route::patch('/chat/sluiten/{id}', [ChatController::class, 'closeChat'])->name('chat.close');
