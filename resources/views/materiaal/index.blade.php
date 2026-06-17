@@ -268,7 +268,7 @@
         <div class="sidebar-nav">
             <button onclick="toonSectie('voorraad')" id="btn-voorraad" class="actief">Voorraad</button>
             <button onclick="toonSectie('meldingen')" id="btn-meldingen">Bestellingen</button>
-            <button onclick="toonSectie('leveringen')" id="btn-leveringen">Uitgifte</button>
+            {{-- <button onclick="toonSectie('leveringen')" id="btn-leveringen">Uitgifte</button> --}}
             <button onclick="toonSectie('retours')" id="btn-retours">Retours</button>
             <button onclick="toonSectie('archief')" id="btn-archief">Archief</button>
         </div>
@@ -305,10 +305,10 @@
         <div class="sectie actief" id="sectie-voorraad">
             <h1>Voorraad overzicht</h1>
             <br>
-            <form method="GET" action="/materiaal" class="zoekbalk" style="display: flex; align-items: center; gap: 8px;">
-                <input type="text" id="zoekterm" name="zoekterm" placeholder="Zoek op artikelnummer, omschrijving of locatie..." value="{{ $zoekterm ?? '' }}" style="width: 25%;">
-                <button type="submit">Zoeken</button>
-            </form>
+            <div style="position: relative; width: 25%; margin-bottom: 20px;">
+                <input type="text" id="magazijn-zoek" placeholder="Zoek op artikelnummer, omschrijving of locatie..." autocomplete="off" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <div class="suggesties-lijst" id="magazijn-suggesties"></div>
+            </div>
 
             <table>
                 <thead>
@@ -352,8 +352,7 @@
             <h1>Bestellingen</h1>
             <br>
 
-            @php $bestellingen = \App\Models\Bestelling::with(['onderdeel','user','materiaal'])->latest()->get(); @endphp
-
+            @php $bestellingen = \App\Models\Bestelling::with(['onderdeel','user','materiaal'])->whereIn('status', ['In behandeling', 'in afwachting'])->latest()->get(); @endphp
             @if($bestellingen->isEmpty())
                 <p style="color: #999;">Geen bestellingen.</p>
             @else
@@ -458,26 +457,43 @@
         <div class="sectie" id="sectie-archief">
             <h1>Archief</h1>
             <br>
-            @if($meldingen->where('gearchiveerd', true)->isEmpty())
+
+            @php $gearchiveerdeBestellingen = \App\Models\Bestelling::with(['onderdeel','user','materiaal'])->where('status', 'klaargezet')->orWhere('status', 'Goedgekeurd')->latest()->get(); @endphp
+
+            @if($gearchiveerdeBestellingen->isEmpty())
                 <p style="color: #999;">Geen gearchiveerde bestellingen.</p>
             @else
-                @foreach($meldingen->where('gearchiveerd', true) as $melding)
-                <div class="melding" style="opacity: 1; border-left: 5px solid #0a5a8a; cursor: pointer;"
-                    onclick="toonMeldingPopup(
-                        '{{ addslashes($melding->titel) }}',
-                        '{{ addslashes($melding->bericht) }}',
-                        '{{ $melding->created_at->format('d/m/Y H:i') }}'
-                    )">
-                    <h3>{{ $melding->titel }}</h3>
-                    <p>{{ $melding->bericht }}</p>
-                    <small>{{ $melding->created_at->format('d/m/Y H:i') }}</small>
-                    <br>
-                    <form method="POST" action="/meldingen/{{ $melding->id }}/terugzetten" style="display:inline;" onclick="event.stopPropagation()">
-                        @csrf
-                        <button type="submit" class="btn-melding" style="background: linear-gradient(to right, #0a5a8a, #00b4d8);">Terugzetten naar bestellingen</button>
-                    </form>
-                </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nummer</th>
+                        <th>Technieker</th>
+                        <th>Onderdeel</th>
+                        <th>Aantal</th>
+                        <th>Datum</th>
+                        <th>Status</th>
+                        <th>Actie</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach($gearchiveerdeBestellingen as $bestelling)
+                <tr>
+                    <td>#{{ $bestelling->id }}</td>
+                    <td>{{ $bestelling->user->name ?? '-' }}</td>
+                    <td>{{ $bestelling->materiaal->omschrijving ?? ($bestelling->onderdeel->naam ?? '-') }}</td>
+                    <td>{{ $bestelling->aantal }}</td>
+                    <td>{{ $bestelling->created_at->format('d/m/Y') }}</td>
+                    <td><span class="badge badge-goedgekeurd">Klaargezet</span></td>
+                    <td>
+                        <form method="POST" action="/bestellingen/{{ $bestelling->id }}/terugzetten" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn-melding" style="background: linear-gradient(to right, #0a5a8a, #00b4d8);">Terugzetten naar bestellingen</button>
+                        </form>
+                    </td>
+                </tr>
                 @endforeach
+                </tbody>
+            </table>
             @endif
         </div>
 
@@ -514,6 +530,41 @@
             { id: {{ $item->id }}, tekst: '{{ addslashes($item->artikelnummer) }} - {{ addslashes($item->omschrijving) }}' },
             @endforeach
         ];
+
+        var magazijnZoekInput = document.getElementById('magazijn-zoek');
+        var magazijnSuggesties = document.getElementById('magazijn-suggesties');
+        var voorraadTabelRijen = document.querySelectorAll('#sectie-voorraad tbody tr');
+
+        magazijnZoekInput.addEventListener('input', function() {
+            var query = this.value.trim();
+
+            if (query.length === 0) {
+                magazijnSuggesties.style.display = 'none';
+                voorraadTabelRijen.forEach(function(rij) { rij.style.display = ''; });
+                return;
+            }
+
+            fetch('/api/magazijn/search?q=' + encodeURIComponent(query))
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    var geldigeIds = data.artikelen.map(function(item) { return item.id.toString(); });
+
+                    voorraadTabelRijen.forEach(function(rij) {
+                        var btn = rij.querySelector('.btn-details');
+                        if (!btn) return;
+                        var onclickAttr = btn.getAttribute('onclick');
+                        var idMatch = onclickAttr.match(/toonPopup\(\s*'(\d+)'/);
+                        var rijId = idMatch ? idMatch[1] : null;
+
+                        if (rijId && geldigeIds.includes(rijId)) {
+                            rij.style.display = '';
+                        } else {
+                            rij.style.display = 'none';
+                        }
+                    });
+
+                });
+        });
 
         function toonMeldingPopup(titel, bericht, datum) {
             document.getElementById('melding-popup-titel').innerText = titel;
@@ -605,20 +656,15 @@
             window.location.href = '/materiaal/' + id + '/wijzigen';
         }
 
-        document.getElementById('zoekterm').addEventListener('keyup', function() {
-            var zoekterm = this.value.toLowerCase();
-            var rijen = document.querySelectorAll('tbody tr');
-            rijen.forEach(function(rij) {
-                rij.style.display = rij.innerText.toLowerCase().includes(zoekterm) ? '' : 'none';
-            });
-        });
-
         document.addEventListener('click', function(e) {
             if (!e.target.closest('#zoek-uitgifte') && !e.target.closest('#zoek-suggesties')) {
                 document.getElementById('zoek-suggesties').style.display = 'none';
             }
             if (!e.target.closest('#zoek-retour') && !e.target.closest('#zoek-suggesties-retour')) {
                 document.getElementById('zoek-suggesties-retour').style.display = 'none';
+            }
+            if (!e.target.closest('#magazijn-zoek') && !e.target.closest('#magazijn-suggesties')) {
+                magazijnSuggesties.style.display = 'none';
             }
         });
     </script>

@@ -59,3 +59,4 @@ Route::post('/meldingen/{id}/gelezen', [MeldingController::class, 'gelezen']);
 Route::post('/meldingen/{id}/ongelezen', [MeldingController::class, 'ongelezen']);
 Route::post('/meldingen/{id}/archiveren', [MeldingController::class, 'archiveren']);
 Route::post('/meldingen/{id}/terugzetten', [MeldingController::class, 'terugzetten']);
+Route::get('/api/magazijn/search', [MateriaalController::class, 'magazijnSearchLogic']);

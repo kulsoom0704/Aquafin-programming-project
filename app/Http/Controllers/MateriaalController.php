@@ -17,10 +17,28 @@ class MateriaalController extends Controller
         $zoekterm = $request->zoekterm;
 
         if ($zoekterm) {
-            $materialen = Materiaal::where('artikelnummer', 'like', '%' . $zoekterm . '%')
-                ->orWhere('omschrijving', 'like', '%' . $zoekterm . '%')
-                ->orWhere('locatie', 'like', '%' . $zoekterm . '%')
-                ->get();
+            $zoektermLower = strtolower(trim($zoekterm));
+
+            $materialen = Materiaal::all()->filter(function($item) use ($zoektermLower) {
+                $artikelnummer = strtolower($item->artikelnummer);
+                $omschrijving = strtolower($item->omschrijving);
+                $locatie = strtolower($item->locatie);
+
+                if (str_contains($artikelnummer, $zoektermLower) ||
+                    str_contains($omschrijving, $zoektermLower) ||
+                    str_contains($locatie, $zoektermLower)) {
+                    return true;
+                }
+
+                $woorden = explode(' ', $omschrijving);
+                foreach ($woorden as $woord) {
+                    if (strlen($woord) > 2 && levenshtein($zoektermLower, $woord) <= 3) {
+                            return true;
+                    }
+                }
+
+                return false;
+            })->values();
         } else {
             $materialen = Materiaal::all();
         }
@@ -210,6 +228,37 @@ class MateriaalController extends Controller
         ]);
     }
 
+    public function magazijnSearchLogic(Request $request)
+    {
+        $query = strtolower(trim($request->query('q', '')));
+
+        if (strlen($query) < 1) {
+            return response()->json(['artikelen' => Materiaal::all()]);
+        }
+
+        $materialen = Materiaal::all();
+
+        $resultaten = $materialen->filter(function($item) use ($query) {
+            $naam = strtolower($item->omschrijving);
+            $ref = strtolower($item->artikelnummer);
+
+            if (str_contains($naam, $query) || str_contains($ref, $query)) {
+                return true;
+            }
+
+            $woorden = explode(' ', $naam);
+            foreach ($woorden as $woord) {
+                if (strlen($woord) > 2 && levenshtein($query, $woord) <= 2) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        return response()->json(['artikelen' => $resultaten->values()]);
+    }
+
     public function bestellingOpslaan(Request $request)
     {
         $cart = json_decode($request->cart_data, true);
@@ -263,6 +312,15 @@ class MateriaalController extends Controller
         $bestelling->save();
 
         return redirect()->back()->with('success', 'Bestelling succesvol klaargezet!');
+    }
+
+    public function bestellingTerugzetten($id)
+    {
+        $bestelling = Bestelling::findOrFail($id);
+        $bestelling->status = 'in afwachting';
+        $bestelling->save();
+
+        return redirect('/materiaal?sectie=meldingen')->with('succes', 'Bestelling teruggezet naar bestellingen!');
     }
 
     public function techniekerHistoriek()
