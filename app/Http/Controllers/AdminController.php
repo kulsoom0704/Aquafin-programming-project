@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Noodoproep;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -65,34 +66,44 @@ class AdminController extends Controller
     }
 
     public function toggleStatus(User $user)
-{
-    $user->active = !$user->active;
-    $user->save();
+    {
+        $user->active = !$user->active;
+        $user->save();
 
-    return redirect('/admin/users');
-}
+        return redirect('/admin/users');
+    }
 
-public function storingen()
-{
-    $storingen = [
-        [
-            'locatie' => 'Brussel Noord',
-            'type' => 'Overstroming',
-            'status' => 'Kritiek'
-        ],
-        [
-            'locatie' => 'Antwerpen Centrum',
-            'type' => 'Waterlek',
-            'status' => 'Gemiddeld'
-        ],
-        [
-            'locatie' => 'Gent Zuid',
-            'type' => 'Rioolprobleem',
-            'status' => 'Laag'
-        ]
-    ];
+    public function storingen()
+    {
+        $storingen = [
+            [
+                'locatie' => 'Brussel Noord',
+                'type' => 'Overstroming',
+                'status' => 'Kritiek'
+            ],
+            [
+                'locatie' => 'Antwerpen Centrum',
+                'type' => 'Waterlek',
+                'status' => 'Gemiddeld'
+            ],
+            [
+                'locatie' => 'Gent Zuid',
+                'type' => 'Rioolprobleem',
+                'status' => 'Laag'
+            ]
+        ];
 
-    return view('admin.storingen', compact('storingen'));
-}
+        return view('admin.storingen', compact('storingen'));
+    }
 
+    public function helpdesk()
+    {
+        
+        $oproepen = Noodoproep::with('technieker')
+            ->where('type', 'Admin') 
+            ->latest()
+            ->get();
+
+        return view('admin.helpdesk', compact('oproepen'));
+    }
 }

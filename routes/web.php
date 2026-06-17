@@ -7,6 +7,7 @@ use App\Http\Controllers\MeldingController;
 use App\Http\Controllers\WijzigingsverzoekController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstallatieController;
+use App\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,3 +74,8 @@ Route::get('/technieker/historiek', [MateriaalController::class, 'techniekerHist
 // Magazijnier dashboard
 Route::get('/magazijnier/bestellingen', [MateriaalController::class, 'magazijnierIndex'])->name('magazijnier.bestellingen');
 Route::patch('/magazijnier/bestellingen/{id}/klaarzetten', [MateriaalController::class, 'klaarzetten'])->name('magazijnier.klaarzetten');
+
+
+
+Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
+Route::post('/chat/reply/{id}', [ChatController::class, 'reply'])->name('chat.reply');
