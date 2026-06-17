@@ -111,8 +111,6 @@ class AdminController extends Controller
     return view('admin.helpdesk', compact('oproepen'));
     }
 
-        return view('admin.helpdesk', compact('oproepen'));
-    }
    public function showHelpdesk($id)
 {
     $oproep = Noodoproep::with([
@@ -146,4 +144,14 @@ public function verstuurBericht(Request $request, $id)
 
     return redirect()->back();
 }
+public function geslotenTickets()
+{
+    $oproepen = Noodoproep::with('technieker')
+        ->where('status', 'gesloten')
+        ->latest()
+        ->get();
+
+    return view('admin.gesloten-tickets', compact('oproepen'));
+}
+
 }
