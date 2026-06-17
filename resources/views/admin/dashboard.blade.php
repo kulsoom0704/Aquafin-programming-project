@@ -73,7 +73,7 @@
             Helpdesk
         </p>
         <h2 class="text-4xl font-extrabold mt-2 text-slate-800">
-            3
+            {{ $helpdeskCount }}
         </h2>
     </div>
 </a>

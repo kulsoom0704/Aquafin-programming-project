@@ -20,11 +20,16 @@ class AdminController extends Controller
         ];
 
         $userCount = User::count();
+        $helpdeskCount = Noodoproep::where('status', 'open')->count();
 
         return view(
-            'admin.dashboard',
-            compact('rainfall', 'userCount')
-        );
+    'admin.dashboard',
+    compact(
+        'rainfall',
+        'userCount',
+        'helpdeskCount'
+    )
+);
     }
 
     public function users()
@@ -104,4 +109,19 @@ class AdminController extends Controller
 
         return view('admin.helpdesk', compact('oproepen'));
     }
+    public function showHelpdesk($id)
+{
+    $oproep = Noodoproep::with('technieker')->findOrFail($id);
+
+    return view('admin.gesprek', compact('oproep'));
+}
+public function sluitGesprek($id)
+{
+    $oproep = Noodoproep::findOrFail($id);
+
+    $oproep->status = 'gesloten';
+    $oproep->save();
+
+    return redirect('/admin/helpdesk');
+}
 }

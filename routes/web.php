@@ -7,6 +7,7 @@ use App\Http\Controllers\MeldingController;
 use App\Http\Controllers\WijzigingsverzoekController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstallatieController;
+use App\Http\Controllers\ChatController;
 
 
 Route::get('/', function () {
@@ -17,6 +18,11 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 Route::get('/admin/users', [AdminController::class, 'users']);
@@ -25,13 +31,10 @@ Route::delete('/admin/users/{user}', [AdminController::class, 'destroy']);
 Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatus']);
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
-
-
 Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
-Route::get(
-    '/admin/helpdesk',
-    [AdminController::class, 'helpdesk']
-);
+Route::get('/admin/helpdesk/{id}', [AdminController::class, 'showHelpdesk']);
+Route::patch('/admin/helpdesk/{id}/sluiten', [AdminController::class, 'sluitGesprek']);
+
 /*
 |--------------------------------------------------------------------------
 | Installaties, Logboek & Meldingen (Technieker)
@@ -67,3 +70,8 @@ Route::get('/technieker/historiek', [MateriaalController::class, 'techniekerHist
 // Magazijnier dashboard
 Route::get('/magazijnier/bestellingen', [MateriaalController::class, 'magazijnierIndex'])->name('magazijnier.bestellingen');
 Route::patch('/magazijnier/bestellingen/{id}/klaarzetten', [MateriaalController::class, 'klaarzetten'])->name('magazijnier.klaarzetten');
+
+
+
+Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
+Route::post('/chat/reply/{id}', [ChatController::class, 'reply'])->name('chat.reply');
