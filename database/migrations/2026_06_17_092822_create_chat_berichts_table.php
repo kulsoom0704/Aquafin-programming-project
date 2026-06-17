@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chat_berichts');
+        Schema::dropIfExists('chat_berichten');
     }
 };
