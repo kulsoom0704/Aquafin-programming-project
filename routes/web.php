@@ -9,13 +9,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstallatieController;
 use App\Http\Controllers\ChatController;
 
-/*
-|--------------------------------------------------------------------------
-| Portal & Auth Routes (Nieuw en beveiligd)
-|--------------------------------------------------------------------------
-*/
+
 Route::get('/', function () {
-    return view('portal');
+    return view('auth.login');
 })->name('home');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -24,9 +20,10 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| Admin
+| Admin Routes
 |--------------------------------------------------------------------------
 */
+
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 Route::get('/admin/users', [AdminController::class, 'users']);
 Route::post('/admin/users', [AdminController::class, 'store']);
@@ -34,6 +31,8 @@ Route::delete('/admin/users/{user}', [AdminController::class, 'destroy']);
 Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatus']);
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
+Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
+Route::get('/admin/helpdesk/{id}', [AdminController::class, 'showHelpdesk']);
 
 /*
 |--------------------------------------------------------------------------
@@ -57,11 +56,7 @@ Route::controller(InstallatieController::class)->group(function () {
     Route::post('/support/noodoproep', 'storeNoodoproep')->name('support.noodoproep');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Webshop & Magazijnier (MateriaalController)
-|--------------------------------------------------------------------------
-*/
+
 // API voor slimme zoekbalk
 Route::get('/api/materiaal/search', [MateriaalController::class, 'searchLogic'])->name('materiaal.search');
 
