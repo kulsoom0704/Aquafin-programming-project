@@ -17,6 +17,11 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 Route::get('/admin/users', [AdminController::class, 'users']);
@@ -26,10 +31,8 @@ Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatu
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
 Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
-Route::get(
-    '/admin/helpdesk',
-    [AdminController::class, 'helpdesk']
-);
+Route::get('/admin/helpdesk/{id}', [AdminController::class, 'showHelpdesk']);
+
 /*
 |--------------------------------------------------------------------------
 | Installaties, Logboek & Meldingen (Technieker)
