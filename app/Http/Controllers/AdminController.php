@@ -101,4 +101,18 @@ class AdminController extends Controller
         return view('admin.storingen', compact('storingen'));
     }
 
+    public function helpdesk()
+    {
+        $oproepen = Noodoproep::with('technieker')
+            ->latest()
+            ->get();
+
+        return view('admin.helpdesk', compact('oproepen'));
+    }
+    public function showHelpdesk($id)
+{
+    $oproep = Noodoproep::with('technieker')->findOrFail($id);
+
+    return view('admin.gesprek', compact('oproep'));
+}
 }
