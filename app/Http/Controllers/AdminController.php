@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Noodoproep;
 use Illuminate\Support\Facades\Hash;
 use App\Models\ChatBericht;
+use App\Models\Installatie;
 class AdminController extends Controller
 {
     public function dashboard()
@@ -20,15 +21,22 @@ class AdminController extends Controller
         ];
 
         $userCount = User::count();
+
         $helpdeskCount = Noodoproep::where('status', 'open')->count();
+
+        $installatieCount = Installatie::count();
+
+        $geslotenTickets = Noodoproep::where('status', 'gesloten')->count();
 
         return view(
     'admin.dashboard',
     compact(
-        'rainfall',
-        'userCount',
-        'helpdeskCount'
-    )
+    'rainfall',
+    'userCount',
+    'helpdeskCount',
+    'installatieCount',
+    'geslotenTickets'
+)
 );
     }
 
@@ -103,12 +111,14 @@ class AdminController extends Controller
 
     public function helpdesk()
     {
-        $oproepen = Noodoproep::with('technieker')
-            ->latest()
-            ->get();
+      $oproepen = Noodoproep::with('technieker')
+    ->where('status', 'open')
+    ->latest()
+    ->get();
 
-        return view('admin.helpdesk', compact('oproepen'));
+    return view('admin.helpdesk', compact('oproepen'));
     }
+
    public function showHelpdesk($id)
 {
     $oproep = Noodoproep::with([
@@ -142,4 +152,14 @@ public function verstuurBericht(Request $request, $id)
 
     return redirect()->back();
 }
+public function geslotenTickets()
+{
+    $oproepen = Noodoproep::with('technieker')
+        ->where('status', 'gesloten')
+        ->latest()
+        ->get();
+
+    return view('admin.gesloten-tickets', compact('oproepen'));
+}
+
 }

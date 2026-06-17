@@ -76,25 +76,19 @@
         Versturen
     </button>
 
+    </form>
+    
+    <form action="/admin/helpdesk/{{ $oproep->id }}/sluiten" method="POST">
+    @csrf
+    @method('PATCH')
+
+    <button
+        type="submit"
+        class="bg-red-600 text-white px-6 py-3 rounded-xl mt-4">
+        Gesprek afsluiten
+    </button>
 </form>
 
-            <div class="flex gap-4 mt-4">
-
-                <button
-                    class="bg-blue-600 text-white px-6 py-3 rounded-xl">
-                    Versturen
-                </button>
-
-                <form action="/admin/helpdesk/{{ $oproep->id }}/sluiten" method="POST">
-                 @csrf
-                 @method('PATCH')
-
-                <button
-                    type="submit"
-                    class="bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700">
-                    Gesprek afsluiten
-                </button>
-            </form>
 
             </div>
 
