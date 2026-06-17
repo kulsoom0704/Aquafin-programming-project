@@ -108,6 +108,9 @@ class AdminController extends Controller
     ->latest()
     ->get();
 
+    return view('admin.helpdesk', compact('oproepen'));
+    }
+
         return view('admin.helpdesk', compact('oproepen'));
     }
    public function showHelpdesk($id)
