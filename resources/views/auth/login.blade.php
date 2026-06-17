@@ -23,7 +23,6 @@
             border: 1px solid rgba(255, 255, 255, 1);
             box-shadow: 0 25px 70px rgba(1, 124, 191, 0.12);
         }
-        
         /* Zachte geanimeerde achtergrond */
         .bg-soft {
             background: linear-gradient(-45deg, #f0f7ff, #e6f0fa, #f5faff, #eef6fc);
@@ -36,7 +35,6 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        
         /* Zachte cirkels */
         .circle-blur {
             position: absolute;
@@ -55,8 +53,7 @@
     </style>
 </head>
 <body class="bg-soft min-h-screen flex justify-center items-center p-4 relative overflow-hidden">
-
-    <!-- Zachte achtergrondcirkels -->
+    <!--Zachte achtergrondcirkels -->
     <div class="circle-blur w-[40%] h-[40%] top-[-10%] left-[-10%]" style="background: radial-gradient(circle, #b3d9ff, transparent 70%);"></div>
     <div class="circle-blur w-[35%] h-[35%] bottom-[-5%] right-[-5%]" style="background: radial-gradient(circle, #c7e6ff, transparent 70%);"></div>
     <div class="circle-blur w-[25%] h-[25%] top-[40%] right-[20%]" style="background: radial-gradient(circle, #d4ecff, transparent 70%);"></div>
