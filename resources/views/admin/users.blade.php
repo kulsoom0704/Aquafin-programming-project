@@ -12,7 +12,7 @@
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.8);
-        }
+}
     </style>
 </head>
 

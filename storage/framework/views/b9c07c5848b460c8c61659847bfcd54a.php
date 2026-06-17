@@ -1,6 +1,7 @@
 <?php $__env->startSection('title', 'Mijn Bestelhistoriek'); ?>
 
 <?php $__env->startSection('content'); ?>
+
 <div class="mb-10 flex flex-col md:flex-row justify-between md:items-end gap-6">
     <div>
         <div class="flex items-center gap-3 mb-2">
@@ -21,6 +22,7 @@
 </div>
 
 <div class="grid grid-cols-1 gap-4">
+    
     <?php $__empty_1 = true; $__currentLoopData = $bestellingen; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
         <?php
             $prefix = strtoupper(substr($order->materiaal->artikelnummer ?? '', 0, 3));
@@ -96,8 +98,9 @@
     <?php endif; ?>
 </div>
 
+
 <script>
-    // SNIPER : Nettoyage automatique du panier dès qu'on arrive ici avec un succès
+    // Wis het winkelwagentje automatisch bij succesvol bestellen
     <?php if(session('success')): ?>
         localStorage.removeItem('aquafin_cart');
     <?php endif; ?>
