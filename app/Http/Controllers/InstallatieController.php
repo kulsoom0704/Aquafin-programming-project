@@ -18,9 +18,6 @@ class InstallatieController extends Controller
         return session('gebruiker_id', 1);
     }
 
-    // =======================================================
-    // De slimme weerengine (demo-drempels)
-    // =======================================================
     private function getWeerData() {
         try {
             $response = Http::withoutVerifying()
@@ -43,30 +40,21 @@ class InstallatieController extends Controller
             $temp = $data['current_weather']['temperature'] ?? 15;
             $code = $data['current_weather']['weathercode'] ?? 0;
 
-            // Risicoanalyse
             $gevaar = 'Laag';
             if ($totaalNeerslag >= 20) $gevaar = 'Kritiek';
             elseif ($totaalNeerslag >= 10) $gevaar = 'Gemiddeld';
 
-            // Dynamische artikelselectie op basis van weer
             $aanbevolen_refs = [];
             
-            // 🟢 Drempels aangepast voor veilige weergave
-            // Bij regen wordt extra beschermingsmateriaal aanbevolen
             if ($gevaar == 'Kritiek' || $gevaar == 'Gemiddeld' || $totaalNeerslag > 0) {
-                // Regen/overstroming: pompen, regenuitrusting, slangen
                 $aanbevolen_refs = array_merge($aanbevolen_refs, ['AQF-006', 'PBM-008', 'TEC-005', 'PBM-007']);
             }
             
-            // Bij warm en zonnig weer: veiligheidsbril
             if ($temp > 15 && $code <= 3) {
-                // Hitte/Zon: bril
                 $aanbevolen_refs = array_merge($aanbevolen_refs, ['PBM-003']);
             }
             
-            // Bij koude of sneeuw aanpassen
             if ($temp < 5 || $code >= 71) {
-                // Koude/sneeuw: thermische handschoenen, warme kleding
                 $aanbevolen_refs = array_merge($aanbevolen_refs, ['PBM-005', 'PBM-010']);
             }
 
@@ -120,8 +108,6 @@ class InstallatieController extends Controller
             $meldingen = $meldingenLijst->sortByDesc('dagen_te_laat');
             $user = User::find($actieveTechniekerId);
             $huidigeTechnieker = $user ? $user->name : 'Technieker';
-
-            // On capte la météo pour le Dashboard des meldingen
             $weer = $this->getWeerData();
 
             return view('technieker.meldingen', compact('meldingen', 'huidigeTechnieker', 'weer'));
@@ -138,7 +124,6 @@ class InstallatieController extends Controller
     public function showBestelformulier()
     {
         $materialen = Materiaal::all();
-        // Haal weerdata op voor webshopaanbevelingen
         $weer = $this->getWeerData();
         return view('technieker.bestellen', compact('materialen', 'weer'));
     }
@@ -187,6 +172,7 @@ class InstallatieController extends Controller
             $installatie->update([
                 'laatste_onderhoud_datum' => \Carbon\Carbon::now()
             ]);
+
             Melding::where('installatie_id', $id)->update(['status' => 'gelezen']);
             
             Notitie::create([

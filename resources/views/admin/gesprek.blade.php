@@ -34,24 +34,61 @@
             <label class="font-bold">
                 Antwoord Admin
             </label>
+<div class="space-y-4 mb-6">
 
-            <textarea
-                class="w-full border rounded-xl p-4 mt-2"
-                rows="5"
-                placeholder="Typ hier je antwoord..."
-            ></textarea>
+    @foreach($oproep->berichten as $bericht)
 
-            <div class="flex gap-4 mt-4">
+        @if($bericht->afzender_rol == 'Admin')
 
-                <button
-                    class="bg-blue-600 text-white px-6 py-3 rounded-xl">
-                    Versturen
-                </button>
+            <div class="flex justify-end">
+                <div class="bg-blue-600 text-white p-4 rounded-2xl max-w-md">
+                    {{ $bericht->bericht }}
+                </div>
+            </div>
 
-                <button
-                    class="bg-red-600 text-white px-6 py-3 rounded-xl">
-                    Gesprek afsluiten
-                </button>
+        @else
+
+            <div class="flex justify-start">
+                <div class="bg-slate-200 p-4 rounded-2xl max-w-md">
+                    {{ $bericht->bericht }}
+                </div>
+            </div>
+
+        @endif
+
+    @endforeach
+
+</div>
+            <form method="POST" action="/admin/helpdesk/{{ $oproep->id }}/bericht">
+
+    @csrf
+
+    <textarea
+        name="bericht"
+        rows="4"
+        class="w-full border rounded-xl p-4"
+        placeholder="Typ hier je antwoord..."
+        required></textarea>
+
+    <button
+        type="submit"
+        class="bg-blue-600 text-white px-6 py-3 rounded-xl mt-4">
+        Versturen
+    </button>
+
+    </form>
+    
+    <form action="/admin/helpdesk/{{ $oproep->id }}/sluiten" method="POST">
+    @csrf
+    @method('PATCH')
+
+    <button
+        type="submit"
+        class="bg-red-600 text-white px-6 py-3 rounded-xl mt-4">
+        Gesprek afsluiten
+    </button>
+</form>
+
 
             </div>
 
