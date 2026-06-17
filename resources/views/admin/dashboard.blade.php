@@ -27,7 +27,8 @@
             <a href="/admin/users" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Gebruikers</a>
             <a href="/admin/reports" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Rapporten</a>
             <a href="/admin/storingen" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Storingen</a>
-        </nav>
+            <a href="/admin/helpdesk"   class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium"> Helpdesk</a>
+            </nav>
     </aside>
 
     <main class="flex-1 p-10 bg-slate-50">
@@ -37,10 +38,17 @@
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-           <div class="glass-card rounded-3xl p-6 border-t-4 border-blue-500 shadow-sm">
-    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Gebruikers</p>
-    <h2 class="text-4xl font-extrabold mt-2 text-slate-800">{{ $userCount }}</h2>
-</div>
+           <a href="/admin/users">
+    <div class="glass-card rounded-3xl p-6 border-t-4 border-blue-500 shadow-sm hover:scale-105 transition cursor-pointer">
+        <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">
+            Gebruikers
+        </p>
+
+        <h2 class="text-4xl font-extrabold mt-2 text-slate-800">
+            {{ $userCount }}
+        </h2>
+    </div>
+</a>
 
 <div class="glass-card rounded-3xl p-6 border-t-4 border-green-500 shadow-sm">
     <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Installaties</p>
@@ -57,6 +65,20 @@
         <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Storingen</p>
         <h2 class="text-4xl font-extrabold mt-2 text-slate-800">5%</h2>
     </div>
+</a>
+
+<a href="/admin/helpdesk">
+    <div class="glass-card rounded-3xl p-6 border-t-4 border-cyan-500 shadow-sm hover:scale-105 transition cursor-pointer">
+        <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">
+            Helpdesk
+        </p>
+        <h2 class="text-4xl font-extrabold mt-2 text-slate-800">
+            3
+        </h2>
+    </div>
+</a>
+
+</div>
 </a>
         </div>
 
