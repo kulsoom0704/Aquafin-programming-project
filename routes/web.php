@@ -34,7 +34,7 @@ Route::get('/admin/storingen', [AdminController::class, 'storingen']);
 Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
 Route::get('/admin/helpdesk/{id}', [AdminController::class, 'showHelpdesk']);
 Route::patch('/admin/helpdesk/{id}/sluiten', [AdminController::class, 'sluitGesprek']);
-
+Route::post('/admin/helpdesk/{id}/bericht', [AdminController::class, 'verstuurBericht']);
 /*
 |--------------------------------------------------------------------------
 | Installaties, Logboek & Meldingen (Technieker)

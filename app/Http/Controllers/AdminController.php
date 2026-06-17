@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Noodoproep;
 use Illuminate\Support\Facades\Hash;
-
+use App\Models\ChatBericht;
 class AdminController extends Controller
 {
     public function dashboard()
@@ -109,9 +109,12 @@ class AdminController extends Controller
 
         return view('admin.helpdesk', compact('oproepen'));
     }
-    public function showHelpdesk($id)
+   public function showHelpdesk($id)
 {
-    $oproep = Noodoproep::with('technieker')->findOrFail($id);
+    $oproep = Noodoproep::with([
+        'technieker',
+        'berichten'
+    ])->findOrFail($id);
 
     return view('admin.gesprek', compact('oproep'));
 }
@@ -123,5 +126,20 @@ public function sluitGesprek($id)
     $oproep->save();
 
     return redirect('/admin/helpdesk');
+}
+public function verstuurBericht(Request $request, $id)
+{
+    $request->validate([
+        'bericht' => 'required'
+    ]);
+
+    ChatBericht::create([
+        'noodoproep_id' => $id,
+        'afzender_rol' => 'Admin',
+        'bericht' => $request->bericht,
+        'gelezen' => false
+    ]);
+
+    return redirect()->back();
 }
 }
