@@ -34,7 +34,10 @@ Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatu
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
 Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
-
+Route::get(
+    '/admin/helpdesk',
+    [AdminController::class, 'helpdesk']
+);
 /*
 |--------------------------------------------------------------------------
 | Installaties, Logboek & Meldingen (Technieker)

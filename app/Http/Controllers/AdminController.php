@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Noodoproep;
 
 class AdminController extends Controller
 {
@@ -97,5 +98,16 @@ public function storingen()
 public function helpdesk()
 {
     return view('admin.helpdesk');
+}
+public function helpdesk()
+{
+    $oproepen = Noodoproep::with('technieker')
+        ->latest()
+        ->get();
+
+    return view(
+        'admin.helpdesk',
+        compact('oproepen')
+    );
 }
 }
