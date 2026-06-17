@@ -94,5 +94,8 @@ public function storingen()
 
     return view('admin.storingen', compact('storingen'));
 }
-
+public function helpdesk()
+{
+    return view('admin.helpdesk');
+}
 }

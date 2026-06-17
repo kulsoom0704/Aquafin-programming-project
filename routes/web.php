@@ -33,6 +33,7 @@ Route::delete('/admin/users/{user}', [AdminController::class, 'destroy']);
 Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatus']);
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
+Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
 
 /*
 |--------------------------------------------------------------------------
