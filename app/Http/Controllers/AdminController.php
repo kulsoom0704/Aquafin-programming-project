@@ -115,4 +115,13 @@ class AdminController extends Controller
 
     return view('admin.gesprek', compact('oproep'));
 }
+public function sluitGesprek($id)
+{
+    $oproep = Noodoproep::findOrFail($id);
+
+    $oproep->status = 'gesloten';
+    $oproep->save();
+
+    return redirect('/admin/helpdesk');
+}
 }
