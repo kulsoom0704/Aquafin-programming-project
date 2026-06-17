@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Noodoproep;
 use Illuminate\Support\Facades\Hash;
-
+use App\Models\ChatBericht;
+use App\Models\Installatie;
 class AdminController extends Controller
 {
     public function dashboard()
@@ -20,10 +22,22 @@ class AdminController extends Controller
 
         $userCount = User::count();
 
+        $helpdeskCount = Noodoproep::where('status', 'open')->count();
+
+        $installatieCount = Installatie::count();
+
+        $geslotenTickets = Noodoproep::where('status', 'gesloten')->count();
+
         return view(
-            'admin.dashboard',
-            compact('rainfall', 'userCount')
-        );
+    'admin.dashboard',
+    compact(
+    'rainfall',
+    'userCount',
+    'helpdeskCount',
+    'installatieCount',
+    'geslotenTickets'
+)
+);
     }
 
     public function users()
@@ -65,34 +79,87 @@ class AdminController extends Controller
     }
 
     public function toggleStatus(User $user)
-{
-    $user->active = !$user->active;
-    $user->save();
+    {
+        $user->active = !$user->active;
+        $user->save();
 
-    return redirect('/admin/users');
+        return redirect('/admin/users');
+    }
+
+    public function storingen()
+    {
+        $storingen = [
+            [
+                'locatie' => 'Brussel Noord',
+                'type' => 'Overstroming',
+                'status' => 'Kritiek'
+            ],
+            [
+                'locatie' => 'Antwerpen Centrum',
+                'type' => 'Waterlek',
+                'status' => 'Gemiddeld'
+            ],
+            [
+                'locatie' => 'Gent Zuid',
+                'type' => 'Rioolprobleem',
+                'status' => 'Laag'
+            ]
+        ];
+
+        return view('admin.storingen', compact('storingen'));
+    }
+
+    public function helpdesk()
+    {
+      $oproepen = Noodoproep::with('technieker')
+    ->where('status', 'open')
+    ->latest()
+    ->get();
+
+    return view('admin.helpdesk', compact('oproepen'));
+    }
+
+   public function showHelpdesk($id)
+{
+    $oproep = Noodoproep::with([
+        'technieker',
+        'berichten'
+    ])->findOrFail($id);
+
+    return view('admin.gesprek', compact('oproep'));
 }
-
-public function storingen()
+public function sluitGesprek($id)
 {
-    $storingen = [
-        [
-            'locatie' => 'Brussel Noord',
-            'type' => 'Overstroming',
-            'status' => 'Kritiek'
-        ],
-        [
-            'locatie' => 'Antwerpen Centrum',
-            'type' => 'Waterlek',
-            'status' => 'Gemiddeld'
-        ],
-        [
-            'locatie' => 'Gent Zuid',
-            'type' => 'Rioolprobleem',
-            'status' => 'Laag'
-        ]
-    ];
+    $oproep = Noodoproep::findOrFail($id);
 
-    return view('admin.storingen', compact('storingen'));
+    $oproep->status = 'gesloten';
+    $oproep->save();
+
+    return redirect('/admin/helpdesk');
+}
+public function verstuurBericht(Request $request, $id)
+{
+    $request->validate([
+        'bericht' => 'required'
+    ]);
+
+    ChatBericht::create([
+        'noodoproep_id' => $id,
+        'afzender_rol' => 'Admin',
+        'bericht' => $request->bericht,
+        'gelezen' => false
+    ]);
+
+    return redirect()->back();
+}
+public function geslotenTickets()
+{
+    $oproepen = Noodoproep::with('technieker')
+        ->where('status', 'gesloten')
+        ->latest()
+        ->get();
+
+    return view('admin.gesloten-tickets', compact('oproepen'));
 }
 
 }
