@@ -1,134 +1,372 @@
 @extends('layouts.app')
-
-@section('title', 'Materiaal Bestellen')
+@section('title', 'Materiaal Webshop')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+@php
+    $suggestedRefs = $weer['aanbevolen_refs'] ?? [];
+    $aanbevolenMaterialen = $materialen->filter(function($item) use ($suggestedRefs) {
+        return in_array(strtoupper($item->artikelnummer), $suggestedRefs);
+    });
+@endphp
+
+<div class="mb-8 flex flex-col lg:flex-row justify-between lg:items-end gap-4">
+    <div>
+        <span class="text-[10px] md:text-xs font-black tracking-[0.2em] text-[#005b96] uppercase mb-1 block">Aquafin Logistiek</span>
+        <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Centraal Magazijn</h1>
+    </div>
     
-    <div class="mb-8">
-        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight flex items-center">
-            <svg class="w-8 h-8 mr-3 text-[#005b96]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-            Materiaal Bestellen
-        </h1>
-        <p class="text-slate-500 mt-2 font-medium">Bestel nieuwe onderdelen voor je installaties vanuit het centrale magazijn.</p>
-    </div>
-
-    @if(session('success'))
-        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 font-medium">
-            {{ session('success') }}
+    <div class="flex flex-col sm:flex-row gap-3 relative z-30 w-full lg:w-auto">
+        <div class="w-full sm:w-80 relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <input type="text" id="searchInput" placeholder="Snel zoeken op naam of ref..." autocomplete="off" class="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:border-[#005b96] focus:ring-4 focus:ring-blue-500/5 transition-all text-sm font-medium">
+            <div id="searchSuggestions" class="absolute z-[60] w-full bg-white border border-slate-100 shadow-2xl rounded-2xl mt-2 hidden max-h-60 overflow-y-auto custom-scrollbar p-1"></div>
         </div>
-    @endif
 
-    @if(session('error'))
-        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 font-medium">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <div class="glass-card p-6 md:p-8 mb-10">
-        <h2 class="text-xl font-bold text-slate-800 mb-6 border-b border-slate-200 pb-4 flex items-center">
-            <svg class="w-5 h-5 mr-2 text-[#005b96]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Nieuwe Bestelling Plaatsen
-        </h2>
-
-        <form action="{{ route('materiaal.store') }}" method="POST" class="flex flex-col md:flex-row gap-4 items-end">
-            @csrf
-            
-            <div class="flex-grow w-full md:w-auto">
-                <label for="onderdeel_id" class="block text-sm font-bold text-slate-700 mb-2">Selecteer Onderdeel</label>
-                <div class="relative">
-                    <select name="onderdeel_id" id="onderdeel_id" required class="w-full appearance-none bg-white border-2 border-slate-200 text-slate-700 py-3 px-4 pr-10 rounded-xl focus:outline-none focus:border-[#005b96] focus:ring-0 transition-colors font-medium cursor-pointer shadow-sm">
-                        <option value="" disabled selected>Kies een onderdeel...</option>
-                        @foreach($onderdelen as $onderdeel)
-                            <option value="{{ $onderdeel->id }}">
-                                {{ $onderdeel->naam }} (Beschikbaar: {{ $onderdeel->voorraad }})
-                            </option>
-                        @endforeach
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                    </div>
-                </div>
-            </div>
-
-            <div class="w-full md:w-32 flex-shrink-0">
-                <label for="aantal" class="block text-sm font-bold text-slate-700 mb-2">Aantal</label>
-                <input type="number" name="aantal" id="aantal" min="1" value="1" required class="w-full bg-white border-2 border-slate-200 text-slate-700 py-3 px-4 rounded-xl focus:outline-none focus:border-[#005b96] transition-colors font-medium shadow-sm text-center">
-            </div>
-
-            <div class="w-full md:w-auto flex-shrink-0">
-                <button type="submit" class="w-full h-[52px] px-6 border border-transparent rounded-xl shadow-md text-sm font-bold text-white bg-[#005b96] hover:bg-blue-800 transition-all duration-200 focus:outline-none flex items-center justify-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    Bestellen
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <div class="glass-card p-6 md:p-8">
-        <h2 class="text-xl font-bold text-slate-800 mb-6 border-b border-slate-200 pb-4 flex items-center">
-            <svg class="w-5 h-5 mr-2 text-[#005b96]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-            Mijn Recente Bestellingen
-        </h2>
-
-        @if($bestellingen->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b-2 border-slate-200 text-sm uppercase tracking-wider text-slate-500">
-                            <th class="pb-3 font-bold px-2">Datum</th>
-                            <th class="pb-3 font-bold px-2">Onderdeel</th>
-                            <th class="pb-3 font-bold text-center px-2">Aantal</th>
-                            <th class="pb-3 font-bold text-right px-2">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm">
-                        @foreach($bestellingen as $bestelling)
-                            <tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                                <td class="py-4 px-2 font-medium text-slate-600">
-                                    {{ $bestelling->created_at->format('d/m/Y') }}
-                                </td>
-                                <td class="py-4 px-2 font-bold text-slate-800">
-                                    {{ $bestelling->onderdeel->naam ?? 'Onbekend' }}
-                                </td>
-                                <td class="py-4 px-2 font-mono font-bold text-center text-slate-600">
-                                    x{{ $bestelling->aantal }}
-                                </td>
-                                <td class="py-4 px-2 text-right">
-                                    @if($bestelling->status == 'In behandeling')
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200">
-                                            <span class="w-2 h-2 rounded-full bg-amber-500 mr-1.5 animate-pulse"></span>
-                                            In behandeling
-                                        </span>
-                                    @elseif($bestelling->status == 'Goedgekeurd')
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
-                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                            Goedgekeurd
-                                        </span>
-                                    @elseif($bestelling->status == 'Afgewezen')
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">
-                                            Afgewezen
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                                            {{ $bestelling->status }}
-                                        </span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @else
-            <div class="py-12 text-center flex flex-col items-center justify-center">
-                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                </div>
-                <h3 class="text-lg font-bold text-slate-700 mb-1">Geen bestellingen gevonden</h3>
-                <p class="text-slate-500 text-sm">Je hebt nog geen materialen besteld in het systeem.</p>
-            </div>
-        @endif
+        <button onclick="toggleCart()" class="w-full sm:w-auto bg-[#005b96] hover:bg-[#004a7c] text-white px-6 py-3 rounded-2xl font-bold shadow-md shadow-blue-500/10 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <span>Mijn selectie</span>
+            <span id="cartCount" class="bg-cyan-400 text-[#001e33] text-[10px] px-2 py-0.5 rounded-full font-black ml-1 scale-0 transition-transform">0</span>
+        </button>
     </div>
 </div>
+
+@if(isset($weer) && $weer['is_beschikbaar'])
+    <div id="weatherSection" class="mb-8">
+        <div class="bg-gradient-to-br from-[#001e33] to-[#00365c] rounded-3xl p-5 md:p-6 relative overflow-hidden shadow-lg border border-white/5">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-400/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-300 text-[9px] font-black tracking-widest uppercase border border-cyan-400/10 mb-1 inline-block">Weersadvies</span>
+                        <h2 class="text-xl font-black text-white tracking-tight">Geadviseerde uitrusting voor vandaag</h2>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5 w-full md:w-auto">
+                        <span class="text-xl font-black text-white leading-none">{{ $weer['temp'] }}°C</span>
+                        <div class="h-4 w-px bg-white/10"></div>
+                        <span class="text-xs font-bold {{ $weer['gevaar'] == 'Kritiek' ? 'text-rose-400' : ($weer['gevaar'] == 'Gemiddeld' ? 'text-amber-400' : 'text-emerald-400') }}">
+                            {{ $weer['gevaar'] == 'Kritiek' ? 'Zware Neerslag' : ($weer['gevaar'] == 'Gemiddeld' ? 'Lichte Regen' : 'Veilig klimaat') }}
+                        </span>
+                    </div>
+                </div>
+                @if($aanbevolenMaterialen->count() > 0)
+                    <div class="flex overflow-x-auto gap-4 pb-2 hide-scrollbar snap-x">
+                        @foreach($aanbevolenMaterialen as $item)
+                            <div class="shrink-0 w-[280px] snap-center bg-white/5 border border-white/5 rounded-2xl p-5 flex flex-col justify-between hover:bg-white/10 transition-all">
+                                <div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <span class="text-[10px] font-black text-cyan-300 tracking-wider bg-slate-900/50 px-2.5 py-1 rounded-lg">{{ $item->artikelnummer }}</span>
+                                        <div class="w-2 h-2 rounded-full {{ $item->beschikbaar > 0 ? 'bg-emerald-400' : 'bg-rose-400' }}"></div>
+                                    </div>
+                                    <h3 class="text-base font-bold text-white leading-tight mb-5 line-clamp-2 min-h-[2.5rem]">{{ $item->omschrijving }}</h3>
+                                </div>
+                                <div class="flex items-center gap-3 mt-auto">
+                                    <input type="number" id="qty-rec-{{ $item->id }}" min="1" max="{{ $item->beschikbaar > 0 ? $item->beschikbaar : 1 }}" value="1" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-14 h-11 bg-slate-900/60 border border-white/10 text-white rounded-xl text-center font-bold text-sm focus:outline-none">
+                                    <button onclick="addToCart({{ $item->id }}, '{{ addslashes($item->omschrijving) }}', '{{ $item->artikelnummer }}', {{ $item->beschikbaar }}, 'rec')" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="flex-grow h-11 bg-cyan-400 text-[#001e33] font-black rounded-xl text-sm active:scale-95 transition-transform flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                                        Toevoegen
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+@endif
+
+<div class="flex gap-2 overflow-x-auto pb-4 w-full hide-scrollbar border-b border-slate-200 mb-6">
+    <button class="cat-btn active bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs tracking-wide whitespace-nowrap shadow-sm shrink-0" data-prefix="ALL">Alles</button>
+    <button class="cat-btn bg-white text-slate-600 border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wide whitespace-nowrap shrink-0" data-prefix="BEV">Bevestiging</button>
+    <button class="cat-btn bg-white text-slate-600 border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wide whitespace-nowrap shrink-0" data-prefix="PBM">Veiligheid</button>
+    <button class="cat-btn bg-white text-slate-600 border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wide whitespace-nowrap shrink-0" data-prefix="GER">Gereedschap</button>
+    <button id="btnFavFilter" class="bg-white text-rose-500 border border-rose-100 px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 shrink-0 ml-auto">
+        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        Favorieten
+    </button>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" id="productGrid">
+    @foreach($materialen as $item)
+        <div class="product-card bg-white p-5 rounded-[1.5rem] border border-slate-200 shadow-sm flex flex-col justify-between group hover:border-[#005b96]/40 hover:shadow-xl transition-all duration-300" data-id="{{ $item->id }}" data-ref="{{ $item->artikelnummer }}" data-item-ref="{{ strtoupper($item->artikelnummer) }}">
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-16 h-16 shrink-0 rounded-2xl relative overflow-hidden flex items-center justify-center bg-slate-50 border border-slate-100 group-hover:bg-[#005b96]/5 transition-colors">
+                    @php
+                        $prefix = strtoupper(substr($item->artikelnummer, 0, 3));
+                        $iconPath = match($prefix) {
+                            'BEV' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>',
+                            'PBM' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>',
+                            'GER' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>',
+                            default => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>'
+                        };
+                    @endphp
+                    <svg class="w-8 h-8 text-slate-400 group-hover:text-[#005b96] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">{!! $iconPath !!}</svg>
+                </div>
+                <div class="flex flex-col items-end gap-1.5">
+                    <span class="text-[10px] font-black tracking-widest text-slate-500 uppercase bg-slate-100 px-2.5 py-1 rounded-lg">{{ $item->artikelnummer }}</span>
+                    <span class="text-[9px] font-black px-2 py-1 rounded-md {{ $item->beschikbaar > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
+                        {{ $item->beschikbaar > 0 ? 'IN STOCK' : 'UITGEPUT' }}
+                    </span>
+                </div>
+            </div>
+            <div class="flex-grow mb-5">
+                <h3 class="text-base font-black text-slate-800 leading-snug group-hover:text-[#005b96] transition-colors line-clamp-3">{{ $item->omschrijving }}</h3>
+            </div>
+            <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                <button class="btn-favorite p-2 rounded-full bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors" onclick="toggleFavorite({{ $item->id }}, this)">
+                    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                </button>
+                <div class="flex items-center gap-2">
+                    <input type="number" id="qty-main-{{ $item->id }}" min="1" max="{{ $item->beschikbaar > 0 ? $item->beschikbaar : 1 }}" value="1" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-14 h-11 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl text-center font-black text-sm focus:outline-none focus:border-[#005b96] focus:ring-2 focus:ring-blue-500/20 transition-all">
+                    <button onclick="addToCart({{ $item->id }}, '{{ addslashes($item->omschrijving) }}', '{{ $item->artikelnummer }}', {{ $item->beschikbaar }}, 'main')" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-11 h-11 bg-[#005b96] text-white disabled:bg-slate-100 disabled:text-slate-400 hover:bg-[#004a7c] rounded-xl flex items-center justify-center active:scale-95 transition-all shadow-md shadow-blue-900/10">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
+
+<div id="noResults" class="hidden py-16 text-center flex-col items-center justify-center bg-white rounded-2xl border border-dashed border-slate-200 mt-6 shadow-sm">
+    <div class="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center mb-3 text-slate-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+    </div>
+    <h3 class="text-base font-bold text-slate-800 mb-1">Geen resultaten</h3>
+</div>
+
+<div id="cartSidebar" class="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-slate-50 shadow-[-10px_0_40px_rgba(0,0,0,0.1)] transform translate-x-full transition-transform duration-300 z-[100] flex flex-col border-l border-slate-200">
+    <div class="p-5 bg-white flex justify-between items-center border-b border-slate-100 pt-safe">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-[#005b96]/10 flex items-center justify-center text-[#005b96]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
+            <h2 class="text-lg font-black text-slate-800">Winkelwagen</h2>
+        </div>
+        <button onclick="toggleCart()" class="w-9 h-9 flex items-center justify-center bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    </div>
+    <div id="cartItems" class="flex-grow overflow-y-auto p-4 space-y-3 custom-scrollbar pb-32"></div>
+    <div class="absolute bottom-0 inset-x-0 p-4 bg-white border-t border-slate-100 pb-safe">
+        <form action="{{ route('materiaal.bestellen.store') }}" method="POST" id="checkoutForm">
+            @csrf
+            <input type="hidden" name="cart_data" id="cartDataInput">
+            <button type="submit" id="btnCheckout" class="w-full h-13 bg-[#005b96] hover:bg-[#004a7c] text-white rounded-xl font-black shadow-lg disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                Bestelling Bevestigen
+            </button>
+        </form>
+    </div>
+</div>
+<div id="cartOverlay" onclick="toggleCart()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+@endsection
+
+@section('scripts')
+<script>
+    let cart = JSON.parse(localStorage.getItem('aquafin_cart')) || [];
+    let favorites = JSON.parse(localStorage.getItem('aquafin_favorites')) || [];
+    let currentCategory = 'ALL';
+    let showOnlyFavorites = false;
+    let serverValidIds = null;
+
+    function toggleCart() {
+        const sidebar = document.getElementById('cartSidebar');
+        const overlay = document.getElementById('cartOverlay');
+        if(sidebar.classList.contains('translate-x-full')) {
+            sidebar.classList.remove('translate-x-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            renderCart();
+        } else {
+            sidebar.classList.add('translate-x-full');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+    }
+
+    function addToCart(id, name, ref, maxStock, prefix) {
+        const qtyInput = document.getElementById(`qty-${prefix}-${id}`);
+        const qty = parseInt(qtyInput.value) || 1;
+        if(qty > maxStock || qty < 1) return alert('Ongeldig aantal of stock onvoldoende');
+        const existingItem = cart.find(i => i.id === id);
+        if(existingItem) {
+            if(existingItem.aantal + qty > maxStock) existingItem.aantal = maxStock;
+            else existingItem.aantal += qty;
+        } else {
+            cart.push({ id: id, naam: name, ref: ref, aantal: qty, max: maxStock });
+        }
+        localStorage.setItem('aquafin_cart', JSON.stringify(cart));
+        updateCartBadge();
+        const cartBtn = document.getElementById('cartCount').parentElement;
+        cartBtn.classList.add('scale-105');
+        setTimeout(() => cartBtn.classList.remove('scale-105'), 200);
+    }
+
+    function updateCartQty(id, delta) {
+        let item = cart.find(i => i.id === id);
+        if(item) {
+            item.aantal += delta;
+            if(item.aantal <= 0) { removeFromCart(id); return; }
+            else if(item.aantal > item.max) item.aantal = item.max;
+            localStorage.setItem('aquafin_cart', JSON.stringify(cart));
+            renderCart();
+            updateCartBadge();
+        }
+    }
+
+    function removeFromCart(id) {
+        cart = cart.filter(i => i.id !== id);
+        localStorage.setItem('aquafin_cart', JSON.stringify(cart));
+        renderCart();
+        updateCartBadge();
+    }
+
+    function updateCartBadge() {
+        const badge = document.getElementById('cartCount');
+        const total = cart.reduce((sum, item) => sum + item.aantal, 0);
+        badge.innerText = total;
+        if(total > 0) badge.classList.remove('scale-0');
+        else badge.classList.add('scale-0');
+        document.getElementById('cartDataInput').value = JSON.stringify(cart);
+        document.getElementById('btnCheckout').disabled = total === 0;
+    }
+
+    function renderCart() {
+        const container = document.getElementById('cartItems');
+        container.innerHTML = '';
+        if(cart.length === 0) {
+            container.innerHTML = `<div class="text-center text-slate-400 py-10"><p class="font-medium text-sm">Je winkelwagen is leeg.</p></div>`;
+            return;
+        }
+        cart.forEach(item => {
+            container.innerHTML += `
+                <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col group">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="pr-2">
+                            <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">${item.ref}</div>
+                            <div class="font-bold text-slate-800 text-sm leading-tight">${item.naam}</div>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-slate-300 hover:text-rose-500 p-1">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-50 p-1 rounded-lg">
+                        <button type="button" onclick="updateCartQty(${item.id}, -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-slate-600 font-bold">-</button>
+                        <span class="font-black text-sm text-[#005b96] w-10 text-center">${item.aantal}</span>
+                        <button type="button" onclick="updateCartQty(${item.id}, 1)" class="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-slate-600 font-bold">+</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsBox = document.getElementById('searchSuggestions');
+    const cards = document.querySelectorAll('#productGrid .product-card');
+
+    searchInput.addEventListener('input', function() {
+        let rechercheBrute = this.value.trim();
+        suggestionsBox.innerHTML = '';
+        if(rechercheBrute.length === 0) {
+            suggestionsBox.classList.add('hidden');
+            serverValidIds = null;
+            filtrerGrid('');
+            const weatherSec = document.getElementById('weatherSection');
+            if(weatherSec) weatherSec.style.display = '';
+            return;
+        }
+        const weatherSec = document.getElementById('weatherSection');
+        if(weatherSec) weatherSec.style.display = 'none';
+        fetch(`/api/materiaal/search?q=${encodeURIComponent(rechercheBrute)}`)
+            .then(response => response.json())
+            .then(data => {
+                suggestionsBox.innerHTML = '';
+                let aAfficher = false;
+                if (data.artikelen.length > 0) {
+                    data.artikelen.slice(0, 4).forEach(item => {
+                        suggestionsBox.innerHTML += `<div class="p-3 hover:bg-slate-50 cursor-pointer flex items-center text-sm text-slate-700 font-medium rounded-lg m-1" onclick="appliquerCorrection('${item.omschrijving.replace(/'/g, "\\'")}')">${item.omschrijving}</div>`;
+                    });
+                    aAfficher = true;
+                }
+                if(aAfficher) suggestionsBox.classList.remove('hidden');
+                serverValidIds = data.artikelen.map(i => i.id.toString());
+                filtrerGrid(data.bedoelde_je || rechercheBrute);
+            });
+    });
+
+    window.appliquerCorrection = function(correction) {
+        searchInput.value = correction;
+        suggestionsBox.classList.add('hidden');
+        searchInput.dispatchEvent(new Event('input'));
+    };
+
+    function filtrerGrid(recherche) {
+        let visibleCount = 0;
+        cards.forEach(card => {
+            let id = card.getAttribute('data-id');
+            let refPrefix = card.getAttribute('data-ref').toUpperCase().substring(0, 3);
+            let matchCategory = (currentCategory === 'ALL') || (refPrefix === currentCategory);
+            let matchFavorite = !showOnlyFavorites || favorites.includes(parseInt(id));
+            let matchSearch = (serverValidIds === null) || serverValidIds.includes(id);
+            if (matchCategory && matchSearch && matchFavorite) { card.style.display = ''; visibleCount++; }
+            else { card.style.display = 'none'; }
+        });
+        document.getElementById('noResults').style.display = visibleCount === 0 ? 'flex' : 'none';
+        document.getElementById('productGrid').style.display = visibleCount === 0 ? 'none' : 'grid';
+    }
+
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('bg-slate-900', 'text-white', 'shadow-md');
+                b.classList.add('bg-white', 'text-slate-600');
+            });
+            this.classList.remove('bg-white', 'text-slate-600');
+            this.classList.add('bg-slate-900', 'text-white', 'shadow-md');
+            currentCategory = this.getAttribute('data-prefix');
+            filtrerGrid(searchInput.value.trim());
+        });
+    });
+
+    document.getElementById('btnFavFilter').addEventListener('click', function() {
+        showOnlyFavorites = !showOnlyFavorites;
+        this.classList.toggle('bg-rose-50');
+        this.classList.toggle('text-rose-600');
+        this.classList.toggle('border-rose-100');
+        filtrerGrid(searchInput.value.trim());
+    });
+
+    function initFavorites() {
+        document.querySelectorAll('.product-card').forEach(card => {
+            const id = parseInt(card.getAttribute('data-id'));
+            const btn = card.querySelector('.btn-favorite');
+            if(btn && favorites.includes(id)) {
+                btn.classList.add('text-rose-500', 'bg-rose-50');
+                btn.classList.remove('text-slate-400', 'bg-slate-50');
+            }
+        });
+    }
+
+    function toggleFavorite(id, btnElement) {
+        const index = favorites.indexOf(id);
+        if(index > -1) {
+            favorites.splice(index, 1);
+            btnElement.classList.remove('text-rose-500', 'bg-rose-50');
+            btnElement.classList.add('text-slate-400', 'bg-slate-50');
+        } else {
+            favorites.push(id);
+            btnElement.classList.remove('text-slate-400', 'bg-slate-50');
+            btnElement.classList.add('text-rose-500', 'bg-rose-50');
+        }
+        localStorage.setItem('aquafin_favorites', JSON.stringify(favorites));
+        if(showOnlyFavorites) filtrerGrid(searchInput.value.trim());
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initFavorites();
+        updateCartBadge();
+    });
+</script>
 @endsection

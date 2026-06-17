@@ -289,8 +289,16 @@
         <p class="succes">{{ session('succes') }}</p>
         @endif
 
+        @if(session('success'))
+        <p class="succes">{{ session('success') }}</p>
+        @endif
+
         @if(session('fout'))
         <p class="fout">{{ session('fout') }}</p>
+        @endif
+
+        @if(session('error'))
+        <p class="fout">{{ session('error') }}</p>
         @endif
 
         <!-- Voorraad -->
@@ -344,7 +352,7 @@
             <h1>Bestellingen</h1>
             <br>
 
-            @php $bestellingen = \App\Models\Bestelling::with(['onderdeel','user'])->latest()->get(); @endphp
+            @php $bestellingen = \App\Models\Bestelling::with(['onderdeel','user','materiaal'])->latest()->get(); @endphp
 
             @if($bestellingen->isEmpty())
                 <p style="color: #999;">Geen bestellingen.</p>
@@ -366,12 +374,12 @@
                 <tr>
                     <td>#{{ $bestelling->id }}</td>
                     <td>{{ $bestelling->user->name ?? '-' }}</td>
-                    <td>{{ $bestelling->onderdeel->naam ?? '-' }}</td>
+                    <td>{{ $bestelling->materiaal->omschrijving ?? ($bestelling->onderdeel->naam ?? '-') }}</td>
                     <td>{{ $bestelling->aantal }}</td>
                     <td>{{ $bestelling->created_at->format('d/m/Y') }}</td>
                     <td>
-                        @if($bestelling->status === 'Goedgekeurd')
-                            <span class="badge badge-goedgekeurd">Goedgekeurd</span>
+                        @if($bestelling->status === 'klaargezet' || $bestelling->status === 'Goedgekeurd')
+                            <span class="badge badge-goedgekeurd">Klaargezet</span>
                         @elseif($bestelling->status === 'Afgewezen')
                             <span class="badge badge-afgewezen">Afgewezen</span>
                         @else
@@ -379,20 +387,11 @@
                         @endif
                     </td>
                     <td>
-                        @if($bestelling->status === 'In behandeling')
-                        <form method="POST" action="/bestellingen/{{ $bestelling->id }}/goedkeuren" style="display:inline;">
+                    @if($bestelling->status === 'In behandeling' || $bestelling->status === 'in afwachting')
+                        <form method="POST" action="/magazijnier/bestellingen/{{ $bestelling->id }}/klaarzetten" style="display:inline;">
                             @csrf
-                            <select name="materiaal_id" required style="padding:4px; border-radius:4px; border:1px solid #ccc; font-size:13px;">
-                                <option value="">-- Kies materiaal --</option>
-                                @foreach($materialen as $mat)
-                                    <option value="{{ $mat->id }}">{{ $mat->artikelnummer }} - {{ $mat->omschrijving }} ({{ $mat->beschikbaar }} beschikbaar)</option>
-                                @endforeach
-                            </select>
-                            <button type="submit" class="btn-details" style="margin-left:5px;">Goedkeuren</button>
-                        </form>
-                        <form method="POST" action="/bestellingen/{{ $bestelling->id }}/afwijzen" style="display:inline; margin-left:5px;">
-                            @csrf
-                            <button type="submit" style="padding:5px 12px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer;">Afwijzen</button>
+                            @method('PATCH')
+                            <button type="submit" class="btn-details">Goedkeuren</button>
                         </form>
                         @else
                             <span style="color:#999; font-size:13px;">Verwerkt</span>
@@ -583,19 +582,12 @@
             document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('actief'));
             document.getElementById('sectie-' + naam).classList.add('actief');
             document.getElementById('btn-' + naam).classList.add('actief');
+            localStorage.setItem('actieveSectie', naam);
         }
 
-       var urlParams = new URLSearchParams(window.location.search);
-var sectie = urlParams.get('sectie') || localStorage.getItem('actieveSectie') || 'voorraad';
-toonSectie(sectie);
-
-function toonSectie(naam) {
-    document.querySelectorAll('.sectie').forEach(s => s.classList.remove('actief'));
-    document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('actief'));
-    document.getElementById('sectie-' + naam).classList.add('actief');
-    document.getElementById('btn-' + naam).classList.add('actief');
-    localStorage.setItem('actieveSectie', naam);
-}
+        var urlParams = new URLSearchParams(window.location.search);
+        var sectie = urlParams.get('sectie') || localStorage.getItem('actieveSectie') || 'voorraad';
+        toonSectie(sectie);
 
         function toonPopup(id, artikelnummer, omschrijving, locatie, beschikbaar) {
             document.getElementById('popup-id').innerText = id;

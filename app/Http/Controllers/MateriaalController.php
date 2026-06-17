@@ -6,7 +6,9 @@ use App\Models\Materiaal;
 use App\Models\Levering;
 use App\Models\Retour;
 use App\Models\Melding;
+use App\Models\Bestelling;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MateriaalController extends Controller
 {
@@ -147,38 +149,131 @@ class MateriaalController extends Controller
         return redirect('/materiaal')->with('succes', 'Foto verwijderd!');
     }
 
-    public function bestellingGoedkeuren(Request $request, $id)
+    public function searchLogic(Request $request)
     {
-        $request->validate([
-            'materiaal_id' => 'required|exists:materiaal,id',
-        ]);
-
-        $bestelling = \App\Models\Bestelling::findOrFail($id);
-        $materiaal = Materiaal::findOrFail($request->materiaal_id);
-
-        if ($materiaal->beschikbaar < $bestelling->aantal) {
-            return redirect('/materiaal?sectie=meldingen')
-                ->with('fout', "Niet genoeg voorraad! Beschikbaar: {$materiaal->beschikbaar}, Gevraagd: {$bestelling->aantal}");
+        $query = strtolower(trim($request->query('q', '')));
+        
+        if (strlen($query) < 2) {
+            return response()->json([
+                'bedoelde_je' => null,
+                'artikelen' => Materiaal::all()
+            ]);
         }
 
-        $materiaal->beschikbaar -= $bestelling->aantal;
-        $materiaal->save();
+        $materialen = Materiaal::all();
+        
+        $thesaurus = [
+            'schroef' => ['vis', 'viss', 'screw', 'shroef', 'vijz', 'schroof'],
+            'bout' => ['boulon', 'boulons', 'bolt', 'bolts', 'bouten', 'boeten', 'bautton', 'button'],
+            'helm' => ['casque', 'helmet', 'kask', 'helme', 'veiligheidshelm'],
+            'handschoenen' => ['gant', 'gants', 'gloves', 'gans', 'handchoenen', 'handschoen'],
+            'gereedschap' => ['outil', 'outils', 'tool', 'tools', 'geredschap'],
+            'sleutel' => ['clef', 'clé', 'cle', 'key', 'slutel', 'moersleutel'],
+            'tang' => ['pince', 'pliers', 'tange', 'kniptang'],
+            'hamer' => ['marteau', 'hammer', 'amer'],
+            'boormachine' => ['machine', 'perceuse', 'drill', 'bormachine', 'boor'],
+            'pomp' => ['pompe', 'pump', 'pompen'],
+            'bril' => ['lunettes', 'glasses', 'veiligheidsbril'],
+            'pbm' => ['veiligheid', 'security', 'securite', 'bescherming']
+        ];
 
-        $bestelling->status = 'Goedgekeurd';
-        $bestelling->materiaal_id = $materiaal->id;
-        $bestelling->save();
+        $doelwit = $query;
+        $queryIsCorrected = false;
 
-        return redirect('/materiaal?sectie=meldingen')->with('succes', 'Bestelling goedgekeurd en voorraad bijgewerkt!');
+        foreach ($thesaurus as $officieel => $fouten) {
+            if (in_array($query, $fouten) || levenshtein($query, $officieel) <= 1) {
+                $doelwit = $officieel;
+                $queryIsCorrected = true;
+                break;
+            }
+        }
+
+        $resultaten = $materialen->filter(function($item) use ($doelwit) {
+            $naam = strtolower($item->omschrijving);
+            $ref = strtolower($item->artikelnummer);
+            
+            if (str_contains($naam, $doelwit) || str_contains($ref, $doelwit)) {
+                return true;
+            }
+
+            $woorden = explode(' ', $naam);
+            if (count($woorden) > 0 && levenshtein($doelwit, $woorden[0]) <= 2) {
+                return true;
+            }
+
+            return false;
+        });
+
+        return response()->json([
+            'bedoelde_je' => $queryIsCorrected ? $doelwit : null,
+            'artikelen' => $resultaten->values()
+        ]);
     }
 
-    public function bestellingAfwijzen($id)
+    public function bestellingOpslaan(Request $request)
     {
-        $bestelling = \App\Models\Bestelling::findOrFail($id);
-        $onderdeel = \App\Models\Onderdeel::findOrFail($bestelling->onderdeel_id);
-        $onderdeel->voorraad += $bestelling->aantal;
-        $onderdeel->save();
-        $bestelling->status = 'Afgewezen';
+        $cart = json_decode($request->cart_data, true);
+
+        if (!$cart || count($cart) === 0) {
+            return redirect()->back()->with('error', 'Winkelwagen is leeg.');
+        }
+
+        $userId = Auth::id();
+        if (!$userId) {
+            $eersteUser = \App\Models\User::first();
+            $userId = $eersteUser ? $eersteUser->id : 1;
+        }
+
+        foreach ($cart as $item) {
+            $materiaal = Materiaal::find($item['id']);
+
+            if (!$materiaal || $materiaal->beschikbaar < $item['aantal']) {
+                return redirect()->back()->with('error', "Niet genoeg voorraad voor {$item['naam']}!");
+            }
+
+            Bestelling::create([
+                'user_id'     => $userId,
+                'onderdeel_id' => null,
+                'materiaal_id' => $item['id'],
+                'aantal'      => $item['aantal'],
+                'status'      => 'in afwachting'
+            ]);
+
+            $materiaal->beschikbaar -= $item['aantal'];
+            $materiaal->save();
+        }
+
+        return redirect()->back()->with('success', 'Bestelling succesvol geplaatst! Voorraad is bijgewerkt.');
+    }
+
+    public function magazijnierIndex()
+    {
+        $bestellingen = Bestelling::with(['materiaal', 'user'])
+            ->where('status', 'in afwachting')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return view('materiaal.index', compact('bestellingen'));
+    }
+
+    public function klaarzetten($id)
+    {
+        $bestelling = Bestelling::findOrFail($id);
+        $bestelling->status = 'klaargezet';
         $bestelling->save();
-        return redirect('/materiaal?sectie=meldingen')->with('succes', 'Bestelling afgewezen.');
+
+        return redirect()->back()->with('success', 'Bestelling succesvol klaargezet!');
+    }
+
+    public function techniekerHistoriek()
+    {
+        $gebruiker_id = session('gebruiker_id', 1);
+
+        $bestellingen = Bestelling::with('materiaal')
+            ->where('user_id', $gebruiker_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('technieker.historiek', compact('bestellingen'));
     }
 }

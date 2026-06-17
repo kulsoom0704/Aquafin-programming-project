@@ -10,9 +10,9 @@ class Bestelling extends Model
 
     protected $fillable = ['user_id', 'onderdeel_id', 'aantal', 'status', 'materiaal_id'];
 
-    public function onderdeel()
+    public function materiaal()
     {
-        return $this->belongsTo(Onderdeel::class);
+        return $this->belongsTo(Materiaal::class, 'onderdeel_id');
     }
 
     public function user()
@@ -20,8 +20,8 @@ class Bestelling extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function technieker()
+    public function onderdeel()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Onderdeel::class);
     }
 }

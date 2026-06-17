@@ -30,20 +30,19 @@ class AuthController extends Controller
                 return redirect('/admin/dashboard');
             } elseif ($email === 'lukas@aquafin.be' || $email === 'technieker@aquafin.be') {
                 Session::put(['gebruiker_id' => 1, 'naam' => 'Lukas Peeters', 'rol' => 'Technieker']);
-                return redirect()->route('technieker.meldingen');
+                return redirect()->route('materiaal.bestellen'); // 🟢 Modifié ici
             } elseif ($email === 'emma@aquafin.be') {
                 Session::put(['gebruiker_id' => 2, 'naam' => 'Emma Claes', 'rol' => 'Technieker']);
-                return redirect()->route('technieker.meldingen');
+                return redirect()->route('materiaal.bestellen'); // 🟢 Modifié ici
             } elseif ($email === 'thomas@aquafin.be') {
                 Session::put(['gebruiker_id' => 3, 'naam' => 'Thomas Maes', 'rol' => 'Technieker']);
-                return redirect()->route('technieker.meldingen');
+                return redirect()->route('materiaal.bestellen'); // 🟢 Modifié ici
             } elseif ($email === 'magazijnier@aquafin.be') {
                 Session::put(['gebruiker_id' => 888, 'naam' => 'Marie Janssens', 'rol' => 'Magazijnier']);
                 return redirect('/materiaal'); 
             }
         }
 
-        
         return back()->with('error', 'Foutief emailadres of wachtwoord.');
     }
 
