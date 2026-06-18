@@ -8,15 +8,15 @@
 
 <body class="bg-slate-50 min-h-screen">
 
-<div class="max-w-5xl mx-auto p-10">
+<div class="max-w-5xl mx-auto p-4 md:p-10">
 
-    <div class="flex justify-between items-center mb-8">
+   <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
 
-        <h1 class="text-4xl font-black">
+        <h1 class="text-2xl md:text-4xl font-black">
             Helpdesk Gesprek
         </h1>
 
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
 
             <a href="/admin/helpdesk"
                class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-xl font-medium">
@@ -33,9 +33,8 @@
     </div>
 
     <!-- Gesprek detail -->
-    <div class="bg-white rounded-3xl shadow p-8">
-
-        <div class="flex justify-between items-center mb-4">
+  <div class="bg-white rounded-3xl shadow p-4 md:p-8">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-4">
 
             <h2 class="text-2xl font-bold">
                 {{ $oproep->technieker->name ?? 'Onbekend' }}
@@ -78,7 +77,7 @@
 
                         <div class="flex justify-end mb-4">
 
-                            <div class="bg-blue-600 text-white px-5 py-3 rounded-3xl rounded-br-md max-w-sm shadow">
+                        class="bg-blue-600 text-white px-5 py-3 rounded-3xl rounded-br-md max-w-[85%] md:max-w-sm shadow"
 
                                 <p>{{ $bericht->bericht }}</p>
 
@@ -118,7 +117,7 @@
 
                 @csrf
 
-                <div class="flex gap-3">
+                <div class="flex flex-col sm:flex-row gap-3">
 
                     <textarea
                         name="bericht"
@@ -129,8 +128,8 @@
 
                     <button
                         type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-8 rounded-2xl font-bold">
-                        ➤
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-2xl font-bold">
+                        Versturen
                     </button>
 
                 </div>
@@ -140,12 +139,12 @@
             <form
                 action="/admin/helpdesk/{{ $oproep->id }}/sluiten"
                 method="POST"
-                class="mt-6 flex justify-end">
+                class="mt-6 flex justify-center md:justify-end"
 
                 @csrf
                 @method('PATCH')
 
-                <button
+                <button>
                     type="submit"
                     class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl">
                     Gesprek afsluiten
