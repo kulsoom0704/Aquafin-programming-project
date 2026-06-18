@@ -303,14 +303,16 @@ class MateriaalController extends Controller
 
     public function magazijnSearchLogic(Request $request)
     {
+         // Haalt de zoekterm op voor de magazijnzoekfunctie.
         $query = strtolower(trim($request->query('q', '')));
-
+        // Geeft alle materialen terug indien geen zoekterm werd ingevoerd.
         if (strlen($query) < 1) {
             return response()->json(['artikelen' => Materiaal::all()]);
         }
 
         $materialen = Materiaal::all();
-
+    // Zoekt materialen op basis van omschrijving, artikelnummer
+    // en ondersteunt fouttolerant zoeken via Levenshtein.
         $resultaten = $materialen->filter(function($item) use ($query) {
             $naam = strtolower($item->omschrijving);
             $ref = strtolower($item->artikelnummer);
@@ -328,14 +330,16 @@ class MateriaalController extends Controller
 
             return false;
         });
-
+// Stuurt de gevonden materialen terug als JSON-respons.
         return response()->json(['artikelen' => $resultaten->values()]);
     }
 
     public function bestellingOpzoeken(Request $request)
     {
+        // Zoekt een bestelling op basis van het ingegeven bestelnummer.
         $nummer = $request->query('nummer');
 
+        // Controleert of de bestelling bestaat en reeds werd klaargezet.
         $bestelling = Bestelling::with(['materiaal', 'user'])
             ->where('id', $nummer)
             ->where('status', 'klaargezet')
@@ -344,7 +348,7 @@ class MateriaalController extends Controller
         if (!$bestelling) {
             return response()->json(['gevonden' => false]);
         }
-
+        // Geeft de bestelgegevens terug aan de interface.
         return response()->json([
             'gevonden' => true,
             'bestelling_id' => $bestelling->id,
@@ -357,8 +361,9 @@ class MateriaalController extends Controller
 
     public function bestellingOpslaan(Request $request)
     {
+        // Haalt de inhoud van de winkelwagen op.
         $cart = json_decode($request->cart_data, true);
-
+        // Controleert of de winkelwagen niet leeg is.
         if (!$cart || count($cart) === 0) {
             return redirect()->back()->with('error', 'Winkelwagen is leeg.');
         }
@@ -368,14 +373,14 @@ class MateriaalController extends Controller
             $eersteUser = \App\Models\User::first();
             $userId = $eersteUser ? $eersteUser->id : 1;
         }
-
+    // Controleert of voldoende voorraad beschikbaar is.
         foreach ($cart as $item) {
             $materiaal = Materiaal::find($item['id']);
 
             if (!$materiaal || $materiaal->beschikbaar < $item['aantal']) {
                 return redirect()->back()->with('error', "Niet genoeg voorraad voor {$item['naam']}!");
             }
-
+        // Maakt een nieuwe bestelling aan.
             Bestelling::create([
                 'user_id'     => $userId,
                 'onderdeel_id' => null,
@@ -383,11 +388,11 @@ class MateriaalController extends Controller
                 'aantal'      => $item['aantal'],
                 'status'      => 'in afwachting'
             ]);
-
+        // Vermindert automatisch de voorraad van het bestelde materiaal.
             $materiaal->beschikbaar -= $item['aantal'];
             $materiaal->save();
         }
-
+    // Bevestigt dat de bestelling succesvol werd geplaatst.
         return redirect()->back()->with('success', 'Bestelling succesvol geplaatst! Voorraad is bijgewerkt.');
     }
 
