@@ -7,7 +7,7 @@
 </head>
 <body class="bg-slate-50 min-h-screen">
 
-    <!-- Gesloten tickets pagina -->
+    <!-- Gesloten ticketen pagina -->
 <div class="max-w-7xl mx-auto p-10">
 
     <div class="flex justify-between items-center mb-8">
