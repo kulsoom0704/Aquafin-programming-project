@@ -255,7 +255,7 @@
 
 <body>
 
-    <!-- SIDEBAR -->
+    <!-- Zijbalk -->
     <div class="sidebar">
         <div class="sidebar-logo">
             <div class="sidebar-logo-icon">M</div>

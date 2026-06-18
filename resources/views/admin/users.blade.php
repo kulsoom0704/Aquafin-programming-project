@@ -18,6 +18,7 @@
 
 <body class="bg-slate-50 min-h-screen flex">
 
+    <!-- Zijbalk -->
     <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
         <div class="p-8">
             <h2 class="text-2xl font-black tracking-tight">AQUAFIN</h2>
@@ -38,6 +39,7 @@
 </div>
     </aside>
 
+    <!-- Main -->
     <main class="flex-1 p-10">
         <main class="flex-1 p-10 bg-slate-50">
 
@@ -64,6 +66,7 @@ setTimeout(() => {
             <p class="text-slate-500 font-medium mt-1">Beheer gebruikers, rollen en toegangsrechten.</p>
         </header>
 
+        <!-- Statistiek Kaarten -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             @php $stats = [
                 ['label' => 'Totaal', 'val' => $users->count(), 'color' => 'blue'],
@@ -78,6 +81,7 @@ setTimeout(() => {
             @endforeach
         </div>
 
+        <!-- Nieuwe gebruiker toevoegen -->
         <div class="glass-card rounded-3xl p-8 mb-10 shadow-sm">
             <h2 class="text-xl font-bold mb-6 text-slate-800">Nieuwe gebruiker toevoegen</h2>
             <form action="/admin/users" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -93,6 +97,7 @@ setTimeout(() => {
             </form>
         </div>
 
+        <!-- Gebruikerslijsten tabel -->
         <div class="glass-card rounded-3xl p-8 shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold text-slate-800">Gebruikerslijst</h2>

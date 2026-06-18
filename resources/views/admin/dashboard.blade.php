@@ -17,6 +17,7 @@
 </head>
 <body class="bg-slate-50 min-h-screen flex">
 
+    <!-- Zijbalk -->
     <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
         <div class="p-8">
             <h2 class="text-2xl font-black tracking-tight">AQUAFIN</h2>
@@ -37,6 +38,7 @@
 </div>
     </aside>
 
+        <!-- Main content --> 
    <main class="flex-1 p-10 bg-slate-50">
 
     <header class="mb-10">
@@ -49,6 +51,8 @@
         </p>
     </header>
 
+
+    <!-- Statistiek kaarten -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
         <a href="/admin/users">
@@ -63,6 +67,7 @@
             </div>
         </a>
 
+        <!-- Installaties kaarten -->
         <div class="glass-card rounded-3xl p-6 border-t-4 border-green-500 shadow-sm">
             <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">
                 Installaties
@@ -73,6 +78,7 @@
             </h2>
         </div>
 
+        <!-- Gesloten tickets kaart -->
         <a href="/admin/helpdesk/gesloten">
             <div class="glass-card rounded-3xl p-6 border-t-4 border-yellow-500 shadow-sm hover:scale-105 transition cursor-pointer">
                 <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">
@@ -85,6 +91,7 @@
             </div>
         </a>
 
+        <!-- Open tickets kaart -->
         <a href="/admin/helpdesk">
             <div class="glass-card rounded-3xl p-6 border-t-4 border-cyan-500 shadow-sm hover:scale-105 transition cursor-pointer">
                 <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">
@@ -99,6 +106,7 @@
 
     </div>
 
+    <!-- Overstromingsrisico tabel -->
     <div class="glass-card rounded-3xl p-8 mt-10 shadow-sm">
 
         <div class="flex justify-between items-center mb-6">

@@ -32,6 +32,7 @@
 
     </div>
 
+    <!-- Gesprek details -->
     <div class="bg-white rounded-3xl shadow p-8">
 
         <div class="flex justify-between items-center mb-4">
@@ -66,6 +67,7 @@
             {{ $oproep->bericht }}
         </p>
 
+        <!-- Berichten overzicht -->
         <div class="border-t pt-6">
 
             <div class="bg-slate-100 rounded-3xl p-6 h-[500px] overflow-y-auto mb-6">
