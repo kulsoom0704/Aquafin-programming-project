@@ -39,6 +39,30 @@
     </aside>
 
     <main class="flex-1 p-10">
+        <main class="flex-1 p-10 bg-slate-50">
+
+@if(session('success'))
+
+<div id="successPopup"
+     class="fixed top-5 right-5 bg-green-500 text-white px-6 py-4 rounded-xl shadow-xl z-50">
+
+    {{ session('success') }}
+
+</div>
+
+<script>
+setTimeout(() => {
+    document.getElementById('successPopup').remove();
+}, 3000);
+</script>
+
+@endif
+
+    <header class="mb-10">
+        <h1 class="text-4xl font-black text-slate-900">
+            Gebruikers
+        </h1>
+    </header>
         <header class="mb-10">
             <h1 class="text-4xl font-black text-slate-900">Gebruikersbeheer</h1>
             <p class="text-slate-500 font-medium mt-1">Beheer gebruikers, rollen en toegangsrechten.</p>

@@ -151,6 +151,7 @@ public function verstuurBericht(Request $request, $id)
     ]);
 
     return redirect()->back();
+
 }
 public function geslotenTickets()
 {
@@ -170,6 +171,9 @@ public function updateRole(Request $request, User $user)
     $user->role = $request->role;
     $user->save();
 
-    return redirect()->back();
+    return redirect()->back()->with(
+    'success',
+    $user->name . ' is nu ' . $request->role
+);
 }
 }
