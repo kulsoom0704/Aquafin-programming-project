@@ -88,22 +88,30 @@ class MateriaalController extends Controller
             'foto.image'             => 'Het bestand moet een afbeelding zijn.',
             'foto.max'               => 'De foto mag maximaal 2MB zijn.',
         ]);
-
+// Standaard wordt er geen foto opgeslagen.
         $fotopad = null;
+
+        // Controleert of de gebruiker een afbeelding heeft geüpload.
         if ($request->hasFile('foto')) {
+            // Slaat de afbeelding op in de map 'fotos' binnen de publieke opslag.
             $fotopad = $request->file('foto')->store('fotos', 'public');
         }
-
+        // Controleert of er reeds materiaal bestaat met hetzelfde artikelnummer.
         $materiaal = Materiaal::where('artikelnummer', $request->artikelnummer)->first();
 
         if ($materiaal) {
+            // Indien het materiaal al bestaat, wordt de voorraad verhoogd.
             $materiaal->beschikbaar += $request->beschikbaar;
+            // Werkt de foto bij indien een nieuwe afbeelding werd geüpload.
             if ($fotopad) {
                 $materiaal->foto = $fotopad;
             }
+            // Slaat de gewijzigde gegevens op.
             $materiaal->save();
         } else {
             Materiaal::create([
+                // Indien het materiaal nog niet bestaat,
+                // wordt een nieuw materiaalrecord aangemaakt.
                 'artikelnummer' => $request->artikelnummer,
                 'omschrijving'  => $request->omschrijving,
                 'locatie'       => $request->locatie,
@@ -111,7 +119,7 @@ class MateriaalController extends Controller
                 'foto'          => $fotopad,
             ]);
         }
-
+    // Keert terug naar het materiaaloverzicht.
         return redirect('/materiaal');
     }
 
