@@ -61,7 +61,7 @@
 
         </header>
 
-        <!-- Storingen tabel -->
+        <!-- Storingen tabelen -->
         <div class="glass-card rounded-3xl p-8 shadow-sm">
 
             <table class="w-full text-left">
