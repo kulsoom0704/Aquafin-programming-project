@@ -37,7 +37,7 @@
             100% { background-position: 0% 50%; }
         }
         
-        /*  Druppel animatie - donkerblauw */
+        /*  Druppel animaties - donkerblauw */
         .drop {
             position: absolute;
             border-radius: 50%;
