@@ -91,43 +91,48 @@
     @foreach($materialen as $item)
         <div class="product-card bg-white p-5 rounded-[1.5rem] border border-slate-200 shadow-sm flex flex-col justify-between group hover:border-[#005b96]/40 hover:shadow-xl transition-all duration-300" data-id="{{ $item->id }}" data-ref="{{ $item->artikelnummer }}" data-item-ref="{{ strtoupper($item->artikelnummer) }}">
             <div class="flex justify-between items-start mb-4">
-                <div class="w-16 h-16 shrink-0 rounded-2xl relative overflow-hidden flex items-center justify-center bg-slate-50 border border-slate-100 group-hover:bg-[#005b96]/5 transition-colors">
-                    @php
-                        $prefix = strtoupper(substr($item->artikelnummer, 0, 3));
-                        $iconPath = match($prefix) {
-                            'BEV' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>',
-                            'PBM' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>',
-                            'GER' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>',
-                            default => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>'
-                        };
-                    @endphp
-                    <svg class="w-8 h-8 text-slate-400 group-hover:text-[#005b96] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">{!! $iconPath !!}</svg>
-                </div>
-                <div class="flex flex-col items-end gap-1.5">
-                    <span class="text-[10px] font-black tracking-widest text-slate-500 uppercase bg-slate-100 px-2.5 py-1 rounded-lg">{{ $item->artikelnummer }}</span>
-                    <span class="text-[9px] font-black px-2 py-1 rounded-md {{ $item->beschikbaar > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
-                        {{ $item->beschikbaar > 0 ? 'IN STOCK' : 'UITGEPUT' }}
-                    </span>
-                </div>
-            </div>
-            <div class="flex-grow mb-5">
-                <h3 class="text-base font-black text-slate-800 leading-snug group-hover:text-[#005b96] transition-colors line-clamp-3">{{ $item->omschrijving }}</h3>
-            </div>
-            <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-                <button class="btn-favorite p-2 rounded-full bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors" onclick="toggleFavorite({{ $item->id }}, this)">
-                    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                </button>
-                <div class="flex items-center gap-2">
-                    <input type="number" id="qty-main-{{ $item->id }}" min="1" max="{{ $item->beschikbaar > 0 ? $item->beschikbaar : 1 }}" value="1" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-14 h-11 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl text-center font-black text-sm focus:outline-none focus:border-[#005b96] focus:ring-2 focus:ring-blue-500/20 transition-all">
-                    <button onclick="addToCart({{ $item->id }}, '{{ addslashes($item->omschrijving) }}', '{{ $item->artikelnummer }}', {{ $item->beschikbaar }}, 'main')" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-11 h-11 bg-[#005b96] text-white disabled:bg-slate-100 disabled:text-slate-400 hover:bg-[#004a7c] rounded-xl flex items-center justify-center active:scale-95 transition-all shadow-md shadow-blue-900/10">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-    @endforeach
-</div>
+                
 
+<div class="w-16 h-16 shrink-0 rounded-2xl relative overflow-hidden flex items-center justify-center bg-slate-50 border border-slate-100 group-hover:bg-[#005b96]/5 transition-colors">
+    @if($item->foto)
+<img src="{{ asset('storage/' . $item->foto) }}" class="w-full h-full object-cover rounded-2xl cursor-pointer" onclick="toonGroteFoto('{{ asset('storage/' . $item->foto) }}')">
+    @else
+        @php
+            $prefix = strtoupper(substr($item->artikelnummer, 0, 3));
+            $iconPath = match($prefix) {
+                'BEV' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>',
+                'PBM' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>',
+                'GER' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>',
+                default => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>'
+            };
+        @endphp
+        <svg class="w-8 h-8 text-slate-400 group-hover:text-[#005b96] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">{!! $iconPath !!}</svg>
+    @endif
+</div>
+<div class="flex flex-col items-end gap-1.5">
+    <span class="text-[10px] font-black tracking-widest text-slate-500 uppercase bg-slate-100 px-2.5 py-1 rounded-lg">{{ $item->artikelnummer }}</span>
+    <span class="text-[9px] font-black px-2 py-1 rounded-md {{ $item->beschikbaar > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
+        {{ $item->beschikbaar > 0 ? 'IN STOCK' : 'UITGEPUT' }}
+    </span>
+</div>
+</div>
+<div class="flex-grow mb-5">
+    <h3 class="text-base font-black text-slate-800 leading-snug group-hover:text-[#005b96] transition-colors line-clamp-3">{{ $item->omschrijving }}</h3>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-slate-100">
+    <button class="btn-favorite p-2 rounded-full bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors" onclick="toggleFavorite({{ $item->id }}, this)">
+        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+    </button>
+    <div class="flex items-center gap-2">
+        <input type="number" id="qty-main-{{ $item->id }}" min="1" max="{{ $item->beschikbaar > 0 ? $item->beschikbaar : 1 }}" value="1" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-14 h-11 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl text-center font-black text-sm focus:outline-none focus:border-[#005b96] focus:ring-2 focus:ring-blue-500/20 transition-all">
+        <button onclick="addToCart({{ $item->id }}, '{{ addslashes($item->omschrijving) }}', '{{ $item->artikelnummer }}', {{ $item->beschikbaar }}, 'main')" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-11 h-11 bg-[#005b96] text-white disabled:bg-slate-100 disabled:text-slate-400 hover:bg-[#004a7c] rounded-xl flex items-center justify-center active:scale-95 transition-all shadow-md shadow-blue-900/10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+        </button>
+    </div>
+</div>
+</div>
+@endforeach
+</div>
 <div id="noResults" class="hidden py-16 text-center flex-col items-center justify-center bg-white rounded-2xl border border-dashed border-slate-200 mt-6 shadow-sm">
     <div class="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center mb-3 text-slate-400">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -370,3 +375,17 @@
     });
 </script>
 @endsection
+
+<div id="grote-foto-popup" onclick="document.getElementById('grote-foto-popup').style.display='none'" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; cursor:pointer;">
+    <div style="margin: 5% auto; width: fit-content; max-width: 90%; text-align:center;">
+        <img id="grote-foto-img" src="" style="max-width:90vw; max-height:80vh; border-radius:10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+        <p style="color:white; margin-top:10px; font-size:13px;">Klik ergens om te sluiten</p>
+    </div>
+</div>
+
+<script>
+function toonGroteFoto(url) {
+    document.getElementById('grote-foto-img').src = url;
+    document.getElementById('grote-foto-popup').style.display = 'block';
+}
+</script>

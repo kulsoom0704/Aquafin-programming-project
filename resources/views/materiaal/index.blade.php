@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Magazijnier Portaal</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -11,9 +12,60 @@
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #dceefb 0%, #c8e6f5 50%, #d4eef7 100%);
             min-height: 100vh;
-            display: flex;
         }
 
+        /* MOBILE NAV */
+        .mobile-nav {
+            display: none;
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 12px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-nav-logo { font-weight: bold; color: #0a5a8a; font-size: 16px; }
+
+        .hamburger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #0a5a8a;
+        }
+
+        .mobile-menu {
+            display: none;
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            position: sticky;
+            top: 57px;
+            z-index: 99;
+        }
+
+        .mobile-menu button {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #555;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .mobile-menu button.actief {
+            color: #0a5a8a;
+            background: #f0f7ff;
+            font-weight: bold;
+        }
+
+        /* DESKTOP SIDEBAR */
         .sidebar {
             width: 220px;
             background: white;
@@ -91,17 +143,17 @@
             flex-shrink: 0;
         }
 
-        .hoofdinhoud { margin-left: 220px; padding: 30px; flex: 1; }
+        .hoofdinhoud { margin-left: 220px; padding: 30px; }
 
-        h1 { color: #2c3e50; margin-bottom: 20px; }
+        h1 { color: #2c3e50; margin-bottom: 20px; font-size: 24px; }
 
         .sectie { display: none; }
         .sectie.actief { display: block; }
 
         table { width: 100%; border-collapse: collapse; background-color: white; border-radius: 8px; overflow: hidden; }
         thead tr { background: linear-gradient(to right, #0a5a8a, #00b4d8); }
-        th { background: transparent; color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        th { background: transparent; color: white; padding: 12px; text-align: left; font-size: 13px; }
+        td { padding: 10px 12px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 13px; }
         tr:hover { background-color: #f9f9f9; }
 
         .kritiek { color: red; font-weight: bold; }
@@ -113,13 +165,16 @@
             border: none;
             cursor: pointer;
             border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
         }
 
         .formulier {
             background-color: white;
             padding: 25px;
             border-radius: 8px;
-            width: 600px;
+            width: 100%;
+            max-width: 600px;
             margin: 0 auto;
         }
 
@@ -150,8 +205,9 @@
             border: none;
             cursor: pointer;
             border-radius: 4px;
-            font-size: 13px;
+            font-size: 12px;
             margin-top: 8px;
+            white-space: nowrap;
         }
 
         .succes { color: green; margin-bottom: 10px; }
@@ -164,9 +220,18 @@
             width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 999;
+            overflow-y: auto;
         }
 
-        .popup { background: white; margin: 5% auto; padding: 25px; width: 450px; border-radius: 8px; }
+        .popup {
+            background: white;
+            margin: 5% auto;
+            padding: 25px;
+            width: 90%;
+            max-width: 450px;
+            border-radius: 8px;
+        }
+
         .popup h2 { margin-bottom: 15px; color: #2c3e50; }
         .popup p { margin: 8px 0; font-size: 15px; }
 
@@ -202,8 +267,8 @@
             font-size: 13px;
         }
 
-        .artikel-rij { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
-        .artikel-rij input { flex: 1; margin-bottom: 0; }
+        .artikel-rij { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
+        .artikel-rij input { flex: 1; margin-bottom: 0; min-width: 80px; }
 
         .btn-verwijder-rij {
             padding: 6px 10px;
@@ -232,16 +297,17 @@
         .badge {
             padding: 3px 10px;
             border-radius: 12px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
+            white-space: nowrap;
         }
         .badge-nieuw { background: #fff3cd; color: #856404; }
         .badge-goedgekeurd { background: #d4edda; color: #155724; }
         .badge-afgewezen { background: #f8d7da; color: #721c24; }
 
         .foto-thumbnail {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             object-fit: cover;
             border-radius: 6px;
             border: 1px solid #ddd;
@@ -249,36 +315,58 @@
         }
 
         .foto-placeholder {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: #f0f0f0;
             border-radius: 6px;
             border: 1px solid #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             color: #ccc;
             cursor: pointer;
         }
 
-        .btn-foto-upload {
-            padding: 4px 8px;
-            background: #f0f7ff;
-            color: #0a5a8a;
-            border: 1px solid #0a5a8a;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-top: 4px;
-            display: block;
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .mobile-nav { display: flex; }
+            .hoofdinhoud { margin-left: 0; padding: 15px; }
+            h1 { font-size: 20px; }
+
+            .formulier { padding: 15px; }
+
+            /* Tabel scrollbaar op gsm */
+            .tabel-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+            th, td { padding: 8px 6px; font-size: 11px; }
+
+            .btn-details { padding: 4px 8px; font-size: 11px; }
+            .btn-melding { padding: 4px 8px; font-size: 11px; }
+
+            .popup { margin: 10% auto; padding: 15px; }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- SIDEBAR -->
+    <!-- MOBILE NAV -->
+    <div class="mobile-nav">
+        <div class="mobile-nav-logo">AQUAFIN MAGAZIJNIER</div>
+        <button class="hamburger" onclick="toggleMobileMenu()">☰</button>
+    </div>
+
+    <div class="mobile-menu" id="mobile-menu">
+        <button onclick="toonSectie('voorraad'); sluitMobileMenu()" id="mob-btn-voorraad" class="actief">Voorraad</button>
+        <button onclick="toonSectie('meldingen'); sluitMobileMenu()" id="mob-btn-meldingen">Bestellingen</button>
+        <button onclick="toonSectie('retours'); sluitMobileMenu()" id="mob-btn-retours">Retours</button>
+        <button onclick="toonSectie('archief'); sluitMobileMenu()" id="mob-btn-archief">Archief</button>
+        <a href="/logout" style="display:block; padding:12px 20px; color:#e74c3c; font-size:14px; text-decoration:none;">Uitloggen</a>
+    </div>
+
+    <!-- DESKTOP SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-logo">
             <div class="sidebar-logo-icon">M</div>
@@ -328,11 +416,12 @@
         <div class="sectie actief" id="sectie-voorraad">
             <h1>Voorraad overzicht</h1>
             <br>
-            <div style="position: relative; width: 25%; margin-bottom: 20px;">
+            <div style="position: relative; width: 100%; max-width: 400px; margin-bottom: 20px;">
                 <input type="text" id="magazijn-zoek" placeholder="Zoek op artikelnummer, omschrijving of locatie..." autocomplete="off" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                 <div class="suggesties-lijst" id="magazijn-suggesties"></div>
             </div>
 
+            <div class="tabel-wrapper">
             <table>
                 <thead>
                     <tr>
@@ -358,7 +447,6 @@
                                 @csrf
                                 <input type="file" id="foto-upload-{{ $item->id }}" name="foto" accept="image/*" onchange="document.getElementById('foto-form-{{ $item->id }}').submit()">
                             </form>
-                        
                         </td>
                         <td>{{ $item->artikelnummer }}</td>
                         <td>{{ $item->omschrijving }}</td>
@@ -383,6 +471,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         </div>
 
         <!-- Bestellingen -->
@@ -394,6 +483,7 @@
             @if($bestellingen->isEmpty())
                 <p style="color: #999;">Geen bestellingen.</p>
             @else
+            <div class="tabel-wrapper">
             <table>
                 <thead>
                     <tr>
@@ -431,21 +521,22 @@
                             <button type="submit" class="btn-details">Goedkeuren</button>
                         </form>
                         @else
-                            <span style="color:#999; font-size:13px;">Verwerkt</span>
+                            <span style="color:#999; font-size:12px;">Verwerkt</span>
                         @endif
                     </td>
                 </tr>
                 @endforeach
                 </tbody>
             </table>
+            </div>
             @endif
         </div>
 
         <!-- Uitgifte -->
-        <div class="sectie" id="sectie-leveringen" style="text-align: center;">
+        <div class="sectie" id="sectie-leveringen">
             <h1>Materiaal uitgifte</h1>
             <br>
-            <div class="formulier" style="text-align: left;">
+            <div class="formulier">
                 <form method="POST" action="/levering">
                     @csrf
                     <label>Naam technieker</label>
@@ -467,10 +558,10 @@
         </div>
 
         <!-- Retours -->
-        <div class="sectie" id="sectie-retours" style="text-align: center;">
+        <div class="sectie" id="sectie-retours">
             <h1>Retour registreren</h1>
             <br>
-            <div class="formulier" style="text-align: left;">
+            <div class="formulier">
                 <label>Bestelnummer</label>
                 <input type="text" id="bestelnummer-input" placeholder="Bv. 8" autocomplete="off">
                 <div id="bestelling-resultaat" style="margin-top: 10px;"></div>
@@ -498,6 +589,7 @@
             @if($gearchiveerdeBestellingen->isEmpty())
                 <p style="color: #999;">Geen gearchiveerde bestellingen.</p>
             @else
+            <div class="tabel-wrapper">
             <table>
                 <thead>
                     <tr>
@@ -528,13 +620,14 @@
                     <td>
                         <form method="POST" action="/bestellingen/{{ $bestelling->id }}/terugzetten" style="display:inline;">
                             @csrf
-                            <button type="submit" class="btn-melding" style="background: linear-gradient(to right, #0a5a8a, #00b4d8);">Terugzetten naar bestellingen</button>
+                            <button type="submit" class="btn-melding" style="background: linear-gradient(to right, #0a5a8a, #00b4d8);">Terugzetten</button>
                         </form>
                     </td>
                 </tr>
                 @endforeach
                 </tbody>
             </table>
+            </div>
             @endif
         </div>
 
@@ -553,7 +646,7 @@
             <div style="margin-top:15px; display:flex; gap:8px; flex-wrap:wrap;">
                 <button class="btn-sluiten" onclick="sluitPopup()">Sluiten</button>
                 <button class="btn-wijzigen" onclick="wijzigen()">Wijzigen</button>
-                <button class="btn-foto-wijzigen" onclick="document.getElementById('popup-foto-input').click()"> Foto wijzigen</button>
+                <button class="btn-foto-wijzigen" onclick="document.getElementById('popup-foto-input').click()">📷 Foto wijzigen</button>
             </div>
             <form id="popup-foto-form" method="POST" enctype="multipart/form-data" style="display:none;">
                 @csrf
@@ -576,6 +669,15 @@
             { id: {{ $item->id }}, tekst: '{{ addslashes($item->artikelnummer) }} - {{ addslashes($item->omschrijving) }}' },
             @endforeach
         ];
+
+        function toggleMobileMenu() {
+            var menu = document.getElementById('mobile-menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function sluitMobileMenu() {
+            document.getElementById('mobile-menu').style.display = 'none';
+        }
 
         var magazijnZoekInput = document.getElementById('magazijn-zoek');
         var magazijnSuggesties = document.getElementById('magazijn-suggesties');
@@ -688,8 +790,15 @@
         function toonSectie(naam) {
             document.querySelectorAll('.sectie').forEach(s => s.classList.remove('actief'));
             document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('actief'));
+            document.querySelectorAll('.mobile-menu button').forEach(b => b.classList.remove('actief'));
             document.getElementById('sectie-' + naam).classList.add('actief');
-            document.getElementById('btn-' + naam).classList.add('actief');
+
+            var desktopBtn = document.getElementById('btn-' + naam);
+            if (desktopBtn) desktopBtn.classList.add('actief');
+
+            var mobileBtn = document.getElementById('mob-btn-' + naam);
+            if (mobileBtn) mobileBtn.classList.add('actief');
+
             localStorage.setItem('actieveSectie', naam);
         }
 
