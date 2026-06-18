@@ -34,10 +34,11 @@ class AdminController extends Controller
 
 // Telt het aantal installaties dat in de databank geregistreerd staat.
         $installatieCount = Installatie::count();
-        
+
 // Telt het aantal reeds afgesloten helpdesktickets.
         $geslotenTickets = Noodoproep::where('status', 'gesloten')->count();
 
+// Stuurt alle dashboardgegevens door naar de dashboardpagina.
         return view(
     'admin.dashboard',
     compact(
@@ -52,11 +53,13 @@ class AdminController extends Controller
 
     public function users()
     {
+// Haalt alle gebruikers op en sorteert deze alfabetisch op naam.
         $users = User::orderBy('name')->get();
 
+// Stuurt de gebruikerslijst door naar de gebruikerspagina.
         return view('admin.users', compact('users'));
     }
-
+// Opent de rapportenpagina voor de administrator.
     public function reports()
     {
         return view('admin.reports');
@@ -64,12 +67,13 @@ class AdminController extends Controller
 
     public function store(Request $request)
     {
+// Controleert of alle verplichte velden correct zijn ingevuld.
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'role' => 'required'
         ]);
-
+// Maakt een nieuwe gebruiker aan met een standaard wachtwoord.
         User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -78,11 +82,13 @@ class AdminController extends Controller
             'active' => true
         ]);
 
+// Keert terug naar het gebruikersoverzicht.
         return redirect('/admin/users');
     }
 
     public function destroy(User $user)
     {
+// Verwijdert een geselecteerde gebruiker uit de databank.
         $user->delete();
 
         return redirect('/admin/users');
@@ -90,6 +96,7 @@ class AdminController extends Controller
 
     public function toggleStatus(User $user)
     {
+// Activeert of deactiveert een gebruiker.
         $user->active = !$user->active;
         $user->save();
 
@@ -98,6 +105,8 @@ class AdminController extends Controller
 
     public function storingen()
     {
+
+// Voorbeeldgegevens van storingen met locatie, type en prioriteit.
         $storingen = [
             [
                 'locatie' => 'Brussel Noord',
@@ -115,60 +124,68 @@ class AdminController extends Controller
                 'status' => 'Laag'
             ]
         ];
-
+// Stuurt de storingsgegevens naar de storingenpagina.
         return view('admin.storingen', compact('storingen'));
     }
 
     public function helpdesk()
     {
+// Haalt alle openstaande noodoproepen op inclusief gekoppelde technieker.
       $oproepen = Noodoproep::with('technieker')
     ->where('status', 'open')
     ->latest()
     ->get();
 
+// Toont het overzicht van openstaande helpdeskoproepen.
     return view('admin.helpdesk', compact('oproepen'));
     }
 
    public function showHelpdesk($id)
 {
+// Haalt één specifieke noodoproep op inclusief technieker en chatberichten.
     $oproep = Noodoproep::with([
         'technieker',
         'berichten'
     ])->findOrFail($id);
 
+// Opent het detailgesprek van de geselecteerde oproep.
     return view('admin.gesprek', compact('oproep'));
 }
 public function sluitGesprek($id)
 {
+// Zoekt de geselecteerde noodoproep op.
     $oproep = Noodoproep::findOrFail($id);
 
+// Wijzigt de status naar gesloten.
     $oproep->status = 'gesloten';
     $oproep->save();
-
+// Keert terug naar het helpdeskoverzicht.
     return redirect('/admin/helpdesk');
 }
 public function verstuurBericht(Request $request, $id)
 {
+// Controleert of een bericht werd ingevoerd.
     $request->validate([
         'bericht' => 'required'
     ]);
-
+// Slaat een nieuw chatbericht op in de databank.
     ChatBericht::create([
         'noodoproep_id' => $id,
         'afzender_rol' => 'Admin',
         'bericht' => $request->bericht,
         'gelezen' => false
     ]);
-
+// Vernieuwt het gesprek zodat het nieuwe bericht zichtbaar wordt.
     return redirect()->back();
 }
 public function geslotenTickets()
 {
+// Haalt alle afgesloten noodoproepen op inclusief gekoppelde technieker.
     $oproepen = Noodoproep::with('technieker')
         ->where('status', 'gesloten')
         ->latest()
         ->get();
-
+// Toont het overzicht van afgesloten helpdesktickets.
     return view('admin.gesloten-tickets', compact('oproepen'));
 }
 
