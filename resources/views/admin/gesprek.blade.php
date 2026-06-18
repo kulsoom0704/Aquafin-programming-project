@@ -92,6 +92,7 @@
 
                     @else
 
+                        <!-- Technieker bericht -->
                         <div class="flex justify-start mb-4">
 
                             <div class="bg-white px-5 py-3 rounded-3xl rounded-bl-md max-w-sm shadow">
