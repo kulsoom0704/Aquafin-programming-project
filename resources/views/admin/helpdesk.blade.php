@@ -29,7 +29,7 @@
 </div>
     </aside>
 
-    <!-- Main content -->
+    <!-- Main -->
     <main class="flex-1 p-10">
 
         <div class="mb-8">
