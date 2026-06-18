@@ -10,9 +10,9 @@
 @endphp
 
 <div class="mb-8 flex flex-col lg:flex-row justify-between lg:items-end gap-4">
-    <div>
-        <span class="text-[10px] md:text-xs font-black tracking-[0.2em] text-[#005b96] uppercase mb-1 block">Aquafin Logistiek</span>
-        <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Centraal Magazijn</h1>
+   <div>
+        <span class="text-[10px] md:text-xs font-black tracking-[0.2em] text-[#005b96] uppercase mb-1 block">Aquafin Logistiek — Depot {{ session('depot', 'Antwerpen') }}</span>
+        <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Lokaal Magazijn</h1>
     </div>
     
     <div class="flex flex-col sm:flex-row gap-3 relative z-30 w-full lg:w-auto">
@@ -106,7 +106,7 @@
                 <div class="flex flex-col items-end gap-1.5">
                     <span class="text-[10px] font-black tracking-widest text-slate-500 uppercase bg-slate-100 px-2.5 py-1 rounded-lg">{{ $item->artikelnummer }}</span>
                     <span class="text-[9px] font-black px-2 py-1 rounded-md {{ $item->beschikbaar > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
-                        {{ $item->beschikbaar > 0 ? 'IN STOCK' : 'UITGEPUT' }}
+                        {{ $item->beschikbaar > 0 ? $item->beschikbaar . ' IN STOCK' : 'UITGEPUT' }}
                     </span>
                 </div>
             </div>

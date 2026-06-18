@@ -120,14 +120,18 @@ class AdminController extends Controller
     }
 
    public function showHelpdesk($id)
-{
-    $oproep = Noodoproep::with([
-        'technieker',
-        'berichten'
-    ])->findOrFail($id);
+    {
+        $oproep = Noodoproep::with(['technieker', 'berichten'])->findOrFail($id);
+        
+        
+        ChatBericht::where('noodoproep_id', $id)
+            ->where('afzender_rol', 'Technieker')
+            ->update(['gelezen' => true]);
 
-    return view('admin.gesprek', compact('oproep'));
-}
+        return view('admin.gesprek', compact('oproep'));
+    }
+
+   
 public function sluitGesprek($id)
 {
     $oproep = Noodoproep::findOrFail($id);
@@ -138,21 +142,22 @@ public function sluitGesprek($id)
     return redirect('/admin/helpdesk');
 }
 public function verstuurBericht(Request $request, $id)
-{
-    $request->validate([
-        'bericht' => 'required'
-    ]);
+    {
+        $request->validate(['bericht' => 'required']);
+        
+        ChatBericht::create([
+            'noodoproep_id' => $id,
+            'afzender_rol' => 'Admin',
+            'bericht' => $request->bericht,
+            'gelezen' => false
+        ]);
 
-    ChatBericht::create([
-        'noodoproep_id' => $id,
-        'afzender_rol' => 'Admin',
-        'bericht' => $request->bericht,
-        'gelezen' => false
-    ]);
-
-    return redirect()->back();
-
-}
+        
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        return redirect()->back();
+    }
 public function geslotenTickets()
 {
     $oproepen = Noodoproep::with('technieker')

@@ -41,16 +41,19 @@ class ChatController extends Controller
     }
 
     
-    public function reply(Request $request, string $id)
+   public function reply(Request $request, string $id)
     {
         $request->validate(['reply' => 'required']);
 
-        ChatBericht::create([
+        \App\Models\ChatBericht::create([
             'noodoproep_id' => $id,
-            'afzender_rol' => 'Technieker',
-            'bericht' => $request->reply,
-            'gelezen' => false 
+            'afzender_rol'  => 'Technieker',
+            'bericht'       => $request->reply,
+            'gelezen'       => false 
         ]);
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
 
         return redirect()->back()->with('chat_open', true);
     }
@@ -74,6 +77,14 @@ class ChatController extends Controller
         return redirect()->back();
     }
 
+    public function markeerGelezen($id)
+    {
+        \App\Models\ChatBericht::where('noodoproep_id', $id)
+            ->where('afzender_rol', '!=', 'Technieker')
+            ->update(['gelezen' => true]);
+
+        return response()->json(['success' => true]);
+    }
    
     public function closeChat(string $id)
     {

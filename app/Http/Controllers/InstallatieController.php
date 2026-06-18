@@ -123,7 +123,16 @@ class InstallatieController extends Controller
 
     public function showBestelformulier()
     {
-        $materialen = Materiaal::all();
+        $mijnDepot = session('depot', 'Antwerpen');
+
+        $materialen = Materiaal::with(['voorraden' => function($query) use ($mijnDepot) {
+            $query->where('depot_naam', $mijnDepot);
+        }])->get()->map(function($item) {
+            $voorraad = $item->voorraden->first();
+            $item->beschikbaar = $voorraad ? $voorraad->beschikbaar : 0;
+            return $item;
+        });
+
         $weer = $this->getWeerData();
         return view('technieker.bestellen', compact('materialen', 'weer'));
     }

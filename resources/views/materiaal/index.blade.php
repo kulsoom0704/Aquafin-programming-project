@@ -268,9 +268,20 @@
         <div class="sidebar-nav">
             <button onclick="toonSectie('voorraad')" id="btn-voorraad" class="actief">Voorraad</button>
             <button onclick="toonSectie('meldingen')" id="btn-meldingen">Bestellingen</button>
-            {{-- <button onclick="toonSectie('leveringen')" id="btn-leveringen">Uitgifte</button> --}}
             <button onclick="toonSectie('retours')" id="btn-retours">Retours</button>
             <button onclick="toonSectie('archief')" id="btn-archief">Archief</button>
+            
+            @php
+                $unread = \App\Models\ChatBericht::whereHas('noodoproep', function($q) {
+                    $q->where('type', 'Magazijnier')->where('status', 'open');
+                })->where('afzender_rol', 'Technieker')->where('gelezen', false)->count();
+            @endphp
+            <a href="/materiaal/helpdesk" style="display: block; width: 100%; padding: 12px 20px; color: #555; text-decoration: none; font-size: 14px; border-left: 3px solid transparent; margin-top: 10px; border-top: 1px solid #eee;">
+                💬 Helpdesk Chat
+                @if($unread > 0)
+                    <span style="background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; margin-left: 5px; font-weight: bold; animation: pulse 2s infinite;">{{ $unread }}</span>
+                @endif
+            </a>
         </div>
 
         <div class="sidebar-gebruiker">

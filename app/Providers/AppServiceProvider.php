@@ -17,26 +17,35 @@ class AppServiceProvider extends ServiceProvider
             $userId = session('gebruiker_id'); 
             
             if ($userId) {
-                
                 if (!User::where('id', $userId)->exists()) {
-                    $userId = 1;
+                    $userId = 1; 
                 }
 
-                $actieveChat = Noodoproep::with('berichten')
+                
+                $openChats = Noodoproep::with('berichten')
                     ->where('user_id', $userId)
-                    ->where('status', '!=', 'gesloten')
+                    ->where('status', 'open')
                     ->latest()
-                    ->first();
+                    ->get();
 
+                // On récupère l'historique
+                $geslotenChats = Noodoproep::where('user_id', $userId)
+                    ->where('status', 'gesloten')
+                    ->latest()
+                    ->take(5)
+                    ->get();
+
+                
                 $aantalOngelezen = 0;
-                if ($actieveChat) {
-                    $aantalOngelezen = $actieveChat->berichten()
+                if ($openChats->isNotEmpty()) {
+                    $aantalOngelezen = \App\Models\ChatBericht::whereIn('noodoproep_id', $openChats->pluck('id'))
                         ->where('afzender_rol', '!=', 'Technieker')
                         ->where('gelezen', false)
                         ->count();
                 }
 
-                $view->with('actieveChat', $actieveChat)
+                $view->with('openChats', $openChats)
+                     ->with('geslotenChats', $geslotenChats)
                      ->with('aantalOngelezen', $aantalOngelezen);
             }
         });

@@ -97,6 +97,12 @@ Route::post('/meldingen/{id}/ongelezen', [MeldingController::class, 'ongelezen']
 Route::post('/meldingen/{id}/archiveren', [MeldingController::class, 'archiveren']);
 Route::post('/meldingen/{id}/terugzetten', [MeldingController::class, 'terugzetten']);
 
+Route::get('/materiaal/helpdesk', [\App\Http\Controllers\MateriaalController::class, 'helpdesk']);
+Route::get('/materiaal/helpdesk/{id}', [\App\Http\Controllers\MateriaalController::class, 'showHelpdesk']);
+Route::post('/materiaal/helpdesk/{id}/bericht', [\App\Http\Controllers\MateriaalController::class, 'verstuurBericht']);
+Route::patch('/materiaal/helpdesk/{id}/sluiten', [\App\Http\Controllers\MateriaalController::class, 'sluitGesprek']);
+Route::post('/chat/{id}/gelezen', [App\Http\Controllers\ChatController::class, 'markeerGelezen']);
+
 /*
 |--------------------------------------------------------------------------
 | Live Chat Routes

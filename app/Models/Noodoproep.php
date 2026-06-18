@@ -24,4 +24,13 @@ class Noodoproep extends Model
     {
         return $this->hasMany(ChatBericht::class);
     }
+
+    public function markeerGelezen($id)
+    {
+        \App\Models\ChatBericht::where('noodoproep_id', $id)
+            ->where('afzender_rol', '!=', 'Technieker')
+            ->update(['gelezen' => true]);
+
+        return response()->json(['success' => true]);
+    }
 }
