@@ -47,23 +47,29 @@ class MateriaalController extends Controller
                 return false;
             })->values();
         } else {
+            // Indien geen zoekterm werd ingegeven,
+    // worden alle materialen uit de databank opgehaald.
             $materialen = Materiaal::all();
         }
-
+    // Haalt alle meldingen op en sorteert deze eerst op gelezen status
+// en vervolgens van nieuwste naar oudste.
         $meldingen = Melding::orderBy('gelezen', 'asc')
             ->orderBy('created_at', 'desc')
             ->get();
-
+    // Stuurt materialen, zoekterm en meldingen door naar de overzichtspagina.
         return view('materiaal.index', compact('materialen', 'zoekterm', 'meldingen'));
     }
 
     public function create()
     {
+        // Opent het formulier voor het toevoegen van nieuw materiaal.
         return view('materiaal.create');
     }
 
     public function store(Request $request)
     {
+        // Controleert of alle verplichte velden correct zijn ingevuld
+    // voordat het materiaal wordt opgeslagen.
         $request->validate([
             'artikelnummer' => 'required',
             'omschrijving'  => 'required',
@@ -71,6 +77,8 @@ class MateriaalController extends Controller
             'beschikbaar'   => 'required|integer|min:1',
             'foto'          => 'nullable|image|max:2048',
         ], [
+            // Aangepaste foutmeldingen die aan de gebruiker worden getoond
+        // wanneer een validatieregel niet wordt nageleefd.
             'artikelnummer.required' => 'Artikelnummer is verplicht.',
             'omschrijving.required'  => 'Omschrijving is verplicht.',
             'locatie.required'       => 'Locatie is verplicht.',
