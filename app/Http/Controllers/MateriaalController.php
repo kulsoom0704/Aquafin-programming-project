@@ -163,6 +163,7 @@ class MateriaalController extends Controller
 
     public function retourCreate()
     {
+        // Haalt alle beschikbare materialen op voor het retourformulier.
         $materialen = Materiaal::all();
         return view('materiaal.retour', compact('materialen'));
     }
