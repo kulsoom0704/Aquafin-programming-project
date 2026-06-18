@@ -18,4 +18,10 @@ class Noodoproep extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    // Relatie toevoegen: een noodoproep heeft meerdere chatberichten
+    public function berichten()
+    {
+        return $this->hasMany(ChatBericht::class);
+    }
 }
