@@ -10,15 +10,19 @@ use App\Models\Bestelling;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+// MateriaalController beheert het magazijnsysteem,
+// waaronder materialen, leveringen, retours, bestellingen en zoekfunctionaliteiten.
+
 class MateriaalController extends Controller
 {
     public function index(Request $request)
     {
+        // Haalt de ingevoerde zoekterm op.
         $zoekterm = $request->zoekterm;
 
         if ($zoekterm) {
             $zoektermLower = strtolower(trim($zoekterm));
-
+        // Zoekt materialen op basis van artikelnummer, omschrijving of locatie.
             $materialen = Materiaal::all()->filter(function($item) use ($zoektermLower) {
                 $artikelnummer = strtolower($item->artikelnummer);
                 $omschrijving = strtolower($item->omschrijving);
@@ -29,14 +33,17 @@ class MateriaalController extends Controller
                     str_contains($locatie, $zoektermLower)) {
                     return true;
                 }
-
+            // Splitst de omschrijving op in afzonderlijke woorden.
                 $woorden = explode(' ', $omschrijving);
+
+            // Ondersteunt fouttolerant zoeken via Levenshtein-afstand.
+            // Hierdoor worden kleine typfouten van de gebruiker opgevangen.
                 foreach ($woorden as $woord) {
                     if (strlen($woord) > 2 && levenshtein($zoektermLower, $woord) <= 3) {
                             return true;
                     }
                 }
-
+            // Geen overeenkomst gevonden.
                 return false;
             })->values();
         } else {
