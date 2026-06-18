@@ -12,16 +12,33 @@ use Illuminate\Support\Facades\Auth;
 
 class MateriaalController extends Controller
 {
-    // Toon alle materialen
     public function index(Request $request)
     {
         $zoekterm = $request->zoekterm;
 
         if ($zoekterm) {
-            $materialen = Materiaal::where('artikelnummer', 'like', '%' . $zoekterm . '%')
-                ->orWhere('omschrijving', 'like', '%' . $zoekterm . '%')
-                ->orWhere('locatie', 'like', '%' . $zoekterm . '%')
-                ->get();
+            $zoektermLower = strtolower(trim($zoekterm));
+
+            $materialen = Materiaal::all()->filter(function($item) use ($zoektermLower) {
+                $artikelnummer = strtolower($item->artikelnummer);
+                $omschrijving = strtolower($item->omschrijving);
+                $locatie = strtolower($item->locatie);
+
+                if (str_contains($artikelnummer, $zoektermLower) ||
+                    str_contains($omschrijving, $zoektermLower) ||
+                    str_contains($locatie, $zoektermLower)) {
+                    return true;
+                }
+
+                $woorden = explode(' ', $omschrijving);
+                foreach ($woorden as $woord) {
+                    if (strlen($woord) > 2 && levenshtein($zoektermLower, $woord) <= 3) {
+                            return true;
+                    }
+                }
+
+                return false;
+            })->values();
         } else {
             $materialen = Materiaal::all();
         }
@@ -33,13 +50,11 @@ class MateriaalController extends Controller
         return view('materiaal.index', compact('materialen', 'zoekterm', 'meldingen'));
     }
 
-    // Toon het formulier om een nieuw artikel toe te voegen
     public function create()
     {
         return view('materiaal.create');
     }
 
-    // Sla het nieuwe artikel op of verhoog de voorraad
     public function store(Request $request)
     {
         $request->validate([
@@ -85,14 +100,12 @@ class MateriaalController extends Controller
         return redirect('/materiaal');
     }
 
-    // Toon het formulier voor een nieuwe levering
     public function leveringCreate()
     {
         $materialen = Materiaal::all();
         return view('materiaal.levering', compact('materialen'));
     }
 
-    // Sla de uitgifte op en verminder de voorraad
     public function leveringStore(Request $request)
     {
         $request->validate([
@@ -123,14 +136,12 @@ class MateriaalController extends Controller
         return redirect('/materiaal?sectie=leveringen')->with('succes', 'Uitgifte geregistreerd!');
     }
 
-    // Toon het formulier voor een retour
     public function retourCreate()
     {
         $materialen = Materiaal::all();
         return view('materiaal.retour', compact('materialen'));
     }
 
-    // Sla de retour op en verhoog de voorraad
     public function retourStore(Request $request)
     {
         $request->validate([
@@ -158,10 +169,17 @@ class MateriaalController extends Controller
             $materiaal->save();
         }
 
+        if ($request->bestelling_id) {
+            $bestelling = Bestelling::find($request->bestelling_id);
+            if ($bestelling) {
+                $bestelling->status = 'geretourneerd';
+                $bestelling->save();
+            }
+        }
+
         return redirect('/materiaal?sectie=retours')->with('succes', 'Retour geregistreerd!');
     }
 
-    // Upload foto voor een artikel
     public function fotoUpload(Request $request, $id)
     {
         $request->validate([
@@ -180,7 +198,6 @@ class MateriaalController extends Controller
         return redirect('/materiaal')->with('succes', 'Foto opgeslagen!');
     }
 
-    // Verwijder foto van een artikel
     public function fotoVerwijderen($id)
     {
         $materiaal = Materiaal::find($id);
@@ -190,7 +207,6 @@ class MateriaalController extends Controller
         return redirect('/materiaal')->with('succes', 'Foto verwijderd!');
     }
 
-    // API voor slimme zoekbalk - Aangeroepen via AJAX
     public function searchLogic(Request $request)
     {
         $query = strtolower(trim($request->query('q', '')));
@@ -252,9 +268,60 @@ class MateriaalController extends Controller
         ]);
     }
 
-    // Bestellingsfuncties
+    public function magazijnSearchLogic(Request $request)
+    {
+        $query = strtolower(trim($request->query('q', '')));
 
-    // 1. Technicus bevestigt de bestelling
+        if (strlen($query) < 1) {
+            return response()->json(['artikelen' => Materiaal::all()]);
+        }
+
+        $materialen = Materiaal::all();
+
+        $resultaten = $materialen->filter(function($item) use ($query) {
+            $naam = strtolower($item->omschrijving);
+            $ref = strtolower($item->artikelnummer);
+
+            if (str_contains($naam, $query) || str_contains($ref, $query)) {
+                return true;
+            }
+
+            $woorden = explode(' ', $naam);
+            foreach ($woorden as $woord) {
+                if (strlen($woord) > 2 && levenshtein($query, $woord) <= 2) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        return response()->json(['artikelen' => $resultaten->values()]);
+    }
+
+    public function bestellingOpzoeken(Request $request)
+    {
+        $nummer = $request->query('nummer');
+
+        $bestelling = Bestelling::with(['materiaal', 'user'])
+            ->where('id', $nummer)
+            ->where('status', 'klaargezet')
+            ->first();
+
+        if (!$bestelling) {
+            return response()->json(['gevonden' => false]);
+        }
+
+        return response()->json([
+            'gevonden' => true,
+            'bestelling_id' => $bestelling->id,
+            'materiaal_id' => $bestelling->materiaal->id ?? null,
+            'omschrijving' => $bestelling->materiaal->omschrijving ?? '-',
+            'aantal' => $bestelling->aantal,
+            'technieker' => $bestelling->user->name ?? '-',
+        ]);
+    }
+
     public function bestellingOpslaan(Request $request)
     {
         $cart = json_decode($request->cart_data, true);
@@ -263,70 +330,71 @@ class MateriaalController extends Controller
             return redirect()->back()->with('error', 'Winkelwagen is leeg.');
         }
 
-        // Schakel sleutelconstraints tijdelijk uit
-        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
-
-        // Controleer gebruiker-ID
-        $userId = \Illuminate\Support\Facades\Auth::id();
+        $userId = Auth::id();
         if (!$userId) {
             $eersteUser = \App\Models\User::first();
             $userId = $eersteUser ? $eersteUser->id : 1;
         }
 
         foreach ($cart as $item) {
-            \App\Models\Bestelling::create([
-                'user_id' => $userId, 
-                'onderdeel_id' => $item['id'],
-                'aantal' => $item['aantal'],
-                'status' => 'in afwachting'
+            $materiaal = Materiaal::find($item['id']);
+
+            if (!$materiaal || $materiaal->beschikbaar < $item['aantal']) {
+                return redirect()->back()->with('error', "Niet genoeg voorraad voor {$item['naam']}!");
+            }
+
+            Bestelling::create([
+                'user_id'     => $userId,
+                'onderdeel_id' => null,
+                'materiaal_id' => $item['id'],
+                'aantal'      => $item['aantal'],
+                'status'      => 'in afwachting'
             ]);
+
+            $materiaal->beschikbaar -= $item['aantal'];
+            $materiaal->save();
         }
 
-        // Herstellen sleutelconstraints
-        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
-
-        return redirect()->back()->with('success', 'Bestelling succesvol geplaatst! Je kan de status volgen in je historiek.');
+        return redirect()->back()->with('success', 'Bestelling succesvol geplaatst! Voorraad is bijgewerkt.');
     }
-    // 2. Magazijnier bekijkt lopende bestellingen
+
     public function magazijnierIndex()
     {
-        // Haal alleen bestellingen op met status 'in afwachting'
-        $bestellingen = Bestelling::with(['materiaal'])
+        $bestellingen = Bestelling::with(['materiaal', 'user'])
             ->where('status', 'in afwachting')
             ->orderBy('created_at', 'asc')
             ->get();
 
-        return view('magazijnier.bestellingen', compact('bestellingen'));
+        return view('materiaal.index', compact('bestellingen'));
     }
 
-    // 3. Magazijnier markeert bestelling als klaar
     public function klaarzetten($id)
     {
         $bestelling = Bestelling::findOrFail($id);
         $bestelling->status = 'klaargezet';
         $bestelling->save();
 
-        // Verminder voorraad bij klaarzetten
-        if($bestelling->materiaal) {
-            $bestelling->materiaal->beschikbaar -= $bestelling->aantal;
-            $bestelling->materiaal->save();
-        }
-
         return redirect()->back()->with('success', 'Bestelling succesvol klaargezet!');
     }
 
-    // 4. Technicus bekijkt zijn bestelhistorie
+    public function bestellingTerugzetten($id)
+    {
+        $bestelling = Bestelling::findOrFail($id);
+        $bestelling->status = 'in afwachting';
+        $bestelling->save();
+
+        return redirect('/materiaal?sectie=meldingen')->with('succes', 'Bestelling teruggezet naar bestellingen!');
+    }
+
     public function techniekerHistoriek()
     {
         $gebruiker_id = session('gebruiker_id', 1);
 
-        $bestellingen = \App\Models\Bestelling::with('materiaal')
+        $bestellingen = Bestelling::with('materiaal')
             ->where('user_id', $gebruiker_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('technieker.historiek', compact('bestellingen'));
     }
-
-    
 }

@@ -72,7 +72,31 @@ Route::get('/technieker/historiek', [MateriaalController::class, 'techniekerHist
 Route::get('/magazijnier/bestellingen', [MateriaalController::class, 'magazijnierIndex'])->name('magazijnier.bestellingen');
 Route::patch('/magazijnier/bestellingen/{id}/klaarzetten', [MateriaalController::class, 'klaarzetten'])->name('magazijnier.klaarzetten');
 
-
-
 Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
 Route::post('/chat/reply/{id}', [ChatController::class, 'reply'])->name('chat.reply');
+
+/*
+|--------------------------------------------------------------------------
+| Magazijnier - Voorraadbeheer
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/materiaal', [MateriaalController::class, 'index']);
+Route::get('/materiaal/create', [MateriaalController::class, 'create']);
+Route::post('/materiaal', [MateriaalController::class, 'store']);
+Route::get('/materiaal/{id}/wijzigen', [WijzigingsverzoekController::class, 'create']);
+Route::post('/materiaal/{id}/wijzigen', [WijzigingsverzoekController::class, 'store']);
+Route::post('/materiaal/{id}/foto', [MateriaalController::class, 'fotoUpload']);
+Route::post('/materiaal/{id}/foto-verwijderen', [MateriaalController::class, 'fotoVerwijderen']);
+Route::get('/levering', [MateriaalController::class, 'leveringCreate']);
+Route::post('/levering', [MateriaalController::class, 'leveringStore']);
+Route::get('/retour', [MateriaalController::class, 'retourCreate']);
+Route::post('/retour', [MateriaalController::class, 'retourStore']);
+Route::get('/meldingen', [MeldingController::class, 'index']);
+Route::post('/meldingen/{id}/gelezen', [MeldingController::class, 'gelezen']);
+Route::post('/meldingen/{id}/ongelezen', [MeldingController::class, 'ongelezen']);
+Route::post('/meldingen/{id}/archiveren', [MeldingController::class, 'archiveren']);
+Route::post('/meldingen/{id}/terugzetten', [MeldingController::class, 'terugzetten']);
+Route::get('/api/magazijn/search', [MateriaalController::class, 'magazijnSearchLogic']);
+Route::get('/api/bestelling/opzoeken', [MateriaalController::class, 'bestellingOpzoeken']);
+Route::post('/bestellingen/{id}/terugzetten', [MateriaalController::class, 'bestellingTerugzetten']);
