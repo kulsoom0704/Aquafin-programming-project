@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Noodoproep;
 use App\Models\ChatBericht;
+use App\Models\User;
 
 class ChatController extends Controller
 {
-    // Wanneer de technieker een nieuw gesprek start
-   public function start(Request $request)
+    public function start(Request $request)
     {
         $request->validate([
             'doelgroep' => 'required',
@@ -17,33 +17,31 @@ class ChatController extends Controller
         ]);
 
         $userId = session('gebruiker_id', 1);
-        if (!\App\Models\User::where('id', $userId)->exists()) {
+        
+      
+        if (!User::where('id', $userId)->exists()) {
             $userId = 1;
         }
 
-        $ticket = \App\Models\Noodoproep::create([
+        $ticket = Noodoproep::create([
             'user_id' => $userId,
             'type' => $request->doelgroep,
             'bericht' => $request->bericht, 
             'status' => 'open'
         ]);
 
-        \App\Models\ChatBericht::create([
+        ChatBericht::create([
             'noodoproep_id' => $ticket->id,
             'afzender_rol' => 'Technieker',
             'bericht' => $request->bericht,
             'gelezen' => false 
         ]);
 
-        // 🔴 Ajout de 'chat_open'
-        return redirect()->back()->with('success', 'Je gesprek is gestart!')->with('chat_open', true);
+        return redirect()->back()->with('chat_open', true);
     }
 
-    // Wanneer de technieker in een bestaand gesprek reageert
     
-
-    // Wanneer de technieker in een bestaand gesprek reageert
-    public function reply(Request $request, $id)
+    public function reply(Request $request, string $id)
     {
         $request->validate(['reply' => 'required']);
 
@@ -51,9 +49,38 @@ class ChatController extends Controller
             'noodoproep_id' => $id,
             'afzender_rol' => 'Technieker',
             'bericht' => $request->reply,
-            'gelezen' => false // 🔴 ICI AUSSI : La réponse n'est pas encore lue !
+            'gelezen' => false 
         ]);
 
+        return redirect()->back()->with('chat_open', true);
+    }
+
+    
+    public function replyAdmin(Request $request, string $id)
+    {
+        $request->validate(['reply' => 'required']);
+
+        $ticket = Noodoproep::findOrFail($id);
+        
+        if($ticket->status !== 'gesloten') {
+            ChatBericht::create([
+                'noodoproep_id' => $id,
+                'afzender_rol' => session('rol', 'Beheerder'),
+                'bericht' => $request->reply,
+                'gelezen' => false 
+            ]);
+        }
+
         return redirect()->back();
+    }
+
+   
+    public function closeChat(string $id)
+    {
+        $ticket = Noodoproep::findOrFail($id);
+        $ticket->status = 'gesloten';
+        $ticket->save();
+
+        return redirect()->back()->with('success', 'De conversatie is succesvol afgesloten.');
     }
 }
