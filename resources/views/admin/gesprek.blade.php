@@ -32,7 +32,7 @@
 
     </div>
 
-    <!-- Gesprek details -->
+    <!-- Gesprek detail -->
     <div class="bg-white rounded-3xl shadow p-8">
 
         <div class="flex justify-between items-center mb-4">
