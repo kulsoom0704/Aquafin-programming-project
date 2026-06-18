@@ -15,15 +15,15 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row">
+<body class="bg-slate-50 min-h-screen flex">
 
     <!-- Zijbalk -->
-    <aside class="w-full md:w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
+    <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
         <div class="p-8">
             <h2 class="text-2xl font-black tracking-tight">AQUAFIN</h2>
             <p class="text-blue-200 text-xs font-bold uppercase tracking-widest mt-1">Admin Portaal</p>
         </div>
-        <nav class="flex flex-wrap md:flex-col px-4 gap-2 md:space-y-2">
+        <nav class="flex-grow px-4 space-y-2">
             <a href="/admin/dashboard" class="flex items-center px-4 py-3 rounded-xl bg-white/10 font-bold"> Dashboard</a>
             <a href="/admin/users" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Gebruikers</a>
             <a href="/admin/reports" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Rapporten</a>
@@ -38,11 +38,11 @@
 </div>
     </aside>
 
-        <!-- Main content --> 
-   <main class="flex-1 p-4 md:p-10 bg-slate-50">
+        <!-- Main --> 
+   <main class="flex-1 p-10 bg-slate-50">
 
     <header class="mb-10">
-       <h1 class="text-2xl md:text-4xl font-black text-slate-900">
+        <h1 class="text-4xl font-black text-slate-900">
             Dashboard
         </h1>
 
@@ -61,7 +61,7 @@
                     Gebruikers
                 </p>
 
-                <h2 class="text-3xl md:text-4xl font-extrabold mt-2 text-slate-800">
+                <h2 class="text-4xl font-extrabold mt-2 text-slate-800">
                     {{ $userCount }}
                 </h2>
             </div>
@@ -109,8 +109,8 @@
     <!-- Overstromingsrisico tabel -->
     <div class="glass-card rounded-3xl p-8 mt-10 shadow-sm">
 
-        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
-           <h2 class="text-xl md:text-2xl font-bold text-slate-800">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-slate-800">
                 Overstromingsrisico
             </h2>
 
