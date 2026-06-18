@@ -170,6 +170,7 @@ class MateriaalController extends Controller
 
     public function retourStore(Request $request)
     {
+        // Controleert of alle verplichte gegevens correct werden ingevuld.
         $request->validate([
             'technieker_naam' => 'required',
             'materiaal_id'    => 'required|array',
@@ -178,7 +179,7 @@ class MateriaalController extends Controller
             'technieker_naam.required' => 'Naam technieker is verplicht.',
             'materiaal_id.required'    => 'Kies minstens één artikel.',
         ]);
-
+// Registreert de retour van materialen door een technieker.    
         foreach ($request->materiaal_id as $index => $id) {
             if (!$id) continue;
 
@@ -189,12 +190,12 @@ class MateriaalController extends Controller
                 'aantal'          => $aantal,
                 'technieker_naam' => $request->technieker_naam,
             ]);
-
+    // Verhoogt automatisch de voorraad van het geretourneerde materiaal.   
             $materiaal = Materiaal::find($id);
             $materiaal->beschikbaar += $aantal;
             $materiaal->save();
         }
-
+    // Wijzigt de status van de bestelling naar 'geretourneerd'.
         if ($request->bestelling_id) {
             $bestelling = Bestelling::find($request->bestelling_id);
             if ($bestelling) {
@@ -202,7 +203,7 @@ class MateriaalController extends Controller
                 $bestelling->save();
             }
         }
-
+    // Keert terug naar het retouroverzicht met een succesmelding.
         return redirect('/materiaal?sectie=retours')->with('succes', 'Retour geregistreerd!');
     }
 
