@@ -40,7 +40,7 @@
 </div>
     </aside>
 
-    <!-- Main content -->
+    <!-- Main -->
     <main class="flex-1 p-10">
         <div class="flex justify-between items-center mb-10">
             <div>
