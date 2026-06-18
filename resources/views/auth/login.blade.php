@@ -99,7 +99,7 @@
 </head>
 <body class="bg-darkblue min-h-screen flex justify-center items-center p-4 relative overflow-hidden">
 
-    <!-- 💧 Waterdruppels donkerblauw -->
+    <!-- Waterdruppels donkerblauw -->
     <div class="drop"></div>
     <div class="drop"></div>
     <div class="drop"></div>
