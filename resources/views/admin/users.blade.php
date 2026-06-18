@@ -101,7 +101,7 @@ setTimeout(() => {
             </form>
         </div>
 
-        <!-- Gebruikerslijst tabel -->
+        <!-- Gebruikerslijsten tabel -->
         <div class="glass-card rounded-3xl p-8 shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold text-slate-800">Gebruikerslijst</h2>
