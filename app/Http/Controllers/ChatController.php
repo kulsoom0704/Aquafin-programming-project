@@ -19,7 +19,7 @@ class ChatController extends Controller
         $userId = session('gebruiker_id', 1);
         
       
-        if (!User::where('id', $userId)->exists()) {
+        if (!User::find($userId)) {
             $userId = 1;
         }
 
