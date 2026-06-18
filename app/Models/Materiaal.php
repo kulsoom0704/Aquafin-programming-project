@@ -15,4 +15,9 @@ class Materiaal extends Model
         'beschikbaar',
         'foto',
     ];
+
+    public function voorraden()
+    {
+        return $this->hasMany(Voorraad::class);
+    }
 }
