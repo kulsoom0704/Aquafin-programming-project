@@ -133,26 +133,21 @@ class MateriaalController extends Controller
         'aantal'          => 'required|array',
     ]);
 
-    foreach ($request->materiaal_id as $index => $id) {
-        if (!$id) continue;
-        $aantal = $request->aantal[$index] ?? 1;
-        Retour::create([
-            'materiaal_id'    => $id,
-            'aantal'          => $aantal,
-            'technieker_naam' => $request->technieker_naam,
-        ]);
-        $materiaal = Materiaal::find($id);
-        $materiaal->beschikbaar += $aantal;
-        $materiaal->save();
-    }
+        foreach ($request->materiaal_id as $index => $id) {
+            if (!$id) continue;
 
-    if ($request->bestelling_id) {
-        $bestelling = Bestelling::find($request->bestelling_id);
-        if ($bestelling) {
-            $bestelling->status = 'geretourneerd';
-            $bestelling->save();
+            $aantal = $request->aantal[$index] ?? 1;
+
+            Retour::create([
+                'materiaal_id'    => $id,
+                'aantal'          => $aantal,
+                'technieker_naam' => $request->technieker_naam,
+            ]);
+
+            $materiaal = Materiaal::find($id);
+            $materiaal->beschikbaar += $aantal;
+            $materiaal->save();
         }
-    }
 
     return redirect('/materiaal?sectie=retours')->with('succes', 'Retour geregistreerd!');
 }
