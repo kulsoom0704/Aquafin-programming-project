@@ -77,20 +77,30 @@
                     <span class="text-lg font-black text-slate-900">{{ $order->aantal }}</span>
                 </div>
 
-                @if($order->status == 'klaargezet')
-                    <div class="flex-grow md:w-48 h-12 flex justify-center items-center gap-2 px-4 rounded-2xl text-[10px] font-black bg-emerald-500/10 text-emerald-600 border border-emerald-500/10 uppercase tracking-wider shadow-sm">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                        Klaar voor afhaal
-                    </div>
-                @else
-                    <div class="flex-grow md:w-48 h-12 flex justify-center items-center gap-2 px-4 rounded-2xl text-[10px] font-black bg-amber-500/10 text-amber-600 border border-amber-500/10 uppercase tracking-wider shadow-sm">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                        </span>
-                        In verwerking
-                    </div>
-                @endif
+                <div class="flex flex-col gap-2 flex-grow md:w-48">
+                    @if($order->status == 'klaargezet' || $order->status == 'Goedgekeurd')
+                        <div class="w-full h-10 flex justify-center items-center gap-2 px-4 rounded-xl text-[10px] font-black bg-emerald-500/10 text-emerald-600 border border-emerald-500/10 uppercase tracking-wider shadow-sm">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                            Klaar voor afhaal
+                        </div>
+                        
+                        <div class="w-full flex justify-center items-center gap-1.5 text-[10px] font-bold text-slate-500 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-100">
+                            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Depot {{ $order->depot ?? 'Antwerpen' }}
+                        </div>
+                    @else
+                        <div class="w-full h-12 flex justify-center items-center gap-2 px-4 rounded-2xl text-[10px] font-black bg-amber-500/10 text-amber-600 border border-amber-500/10 uppercase tracking-wider shadow-sm">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                            </span>
+                            In verwerking
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
     @empty

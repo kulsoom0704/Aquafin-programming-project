@@ -285,7 +285,7 @@ class MateriaalController extends Controller
         ]);
     }
 
-    public function bestellingOpslaan(Request $request)
+   public function bestellingOpslaan(Request $request)
     {
         $cart = json_decode($request->cart_data, true);
 
@@ -293,11 +293,8 @@ class MateriaalController extends Controller
             return redirect()->back()->with('error', 'Winkelwagen is leeg.');
         }
 
-        $userId = Auth::id();
-        if (!$userId) {
-            $eersteUser = \App\Models\User::first();
-            $userId = $eersteUser ? $eersteUser->id : 1;
-        }
+        
+        $userId = session('gebruiker_id', 1);
 
         foreach ($cart as $item) {
             $materiaal = Materiaal::find($item['id']);
@@ -307,24 +304,29 @@ class MateriaalController extends Controller
             }
 
             Bestelling::create([
-                'user_id'     => $userId,
+                'user_id'      => $userId,
                 'onderdeel_id' => null,
                 'materiaal_id' => $item['id'],
-                'aantal'      => $item['aantal'],
-                'status'      => 'in afwachting'
+                'aantal'       => $item['aantal'],
+                'status'       => 'in afwachting',
+                'depot'        => session('depot', 'Antwerpen') 
             ]);
 
             $materiaal->beschikbaar -= $item['aantal'];
             $materiaal->save();
         }
 
-        return redirect()->back()->with('success', 'Bestelling succesvol geplaatst! Voorraad is bijgewerkt.');
+        
+        return redirect()->route('technieker.historiek')->with('success', 'Bestelling succesvol geplaatst!');
     }
 
     public function magazijnierIndex()
     {
+        $mijnDepot = session('depot', 'Antwerpen'); 
+
         $bestellingen = Bestelling::with(['materiaal', 'user'])
             ->where('status', 'in afwachting')
+            ->where('depot', $mijnDepot) 
             ->orderBy('created_at', 'asc')
             ->get();
 

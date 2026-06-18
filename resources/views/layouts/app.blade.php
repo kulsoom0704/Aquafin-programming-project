@@ -295,9 +295,9 @@
             }
         }
 
-        // 🔴 EXÉCUTION IMMÉDIATE SANS ATTENDRE DOMContentLoaded
-        @if(session()->has('chat_open') || session()->has('success'))
-            // On lance la fonction directement après le chargement de la balise
+        
+        @if(session()->has('chat_open'))
+            
             setTimeout(() => {
                 openChat();
             }, 150);
