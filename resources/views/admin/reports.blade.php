@@ -47,9 +47,13 @@
                 <h1 class="text-4xl font-black text-slate-900">Rapporten</h1>
                 <p class="text-slate-500 font-medium mt-1">Analyse van regenval en overstromingsrisico.</p>
             </div>
-            <button onclick="generateReport()" class="bg-[#005b96] hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all hover:-translate-y-0.5">
-                Rapport genereren
-            </button>
+            <a
+    href="/admin/reports/pdf"
+    class="bg-[#005b96] hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-bold shadow">
+
+    Download PDF
+
+</a>
         </div>
 
         <!-- Statistiek kaarten -->
