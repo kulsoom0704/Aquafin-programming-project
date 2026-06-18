@@ -398,6 +398,7 @@ class MateriaalController extends Controller
 
     public function magazijnierIndex()
     {
+        // Haalt alle openstaande bestellingen op voor de magazijnier.
         $bestellingen = Bestelling::with(['materiaal', 'user'])
             ->where('status', 'in afwachting')
             ->orderBy('created_at', 'asc')
@@ -408,6 +409,7 @@ class MateriaalController extends Controller
 
     public function klaarzetten($id)
     {
+        // Wijzigt de status van een bestelling naar 'klaargezet'.
         $bestelling = Bestelling::findOrFail($id);
         $bestelling->status = 'klaargezet';
         $bestelling->save();
@@ -417,6 +419,7 @@ class MateriaalController extends Controller
 
     public function bestellingTerugzetten($id)
     {
+        // Zet een klaargezette bestelling terug naar 'in afwachting'.
         $bestelling = Bestelling::findOrFail($id);
         $bestelling->status = 'in afwachting';
         $bestelling->save();
@@ -426,13 +429,14 @@ class MateriaalController extends Controller
 
     public function techniekerHistoriek()
     {
+        // Haalt alle bestellingen van de ingelogde technieker op.
         $gebruiker_id = session('gebruiker_id', 1);
 
         $bestellingen = Bestelling::with('materiaal')
             ->where('user_id', $gebruiker_id)
             ->orderBy('created_at', 'desc')
             ->get();
-
+        // Toont de bestelhistoriek van de technieker.
         return view('technieker.historiek', compact('bestellingen'));
     }
 }
