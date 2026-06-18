@@ -116,7 +116,7 @@
         </div> 
     </main>
 
-    <!--  BOUTON FLOTTANT DE CHAT AVEC PASTILLE -->
+      <!-- ZWEVENDE CHAT KNOP MET NOTIFICATIE -->
     <div class="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50">
         <button onclick="toggleSupportTicket()" class="w-14 h-14 bg-gradient-to-r from-[#005b96] to-cyan-500 rounded-2xl flex items-center justify-center text-white shadow-2xl hover:scale-105 active:scale-95 transition-all relative border border-cyan-400/20 group">
             
