@@ -8,10 +8,17 @@ use App\Models\Noodoproep;
 use Illuminate\Support\Facades\Hash;
 use App\Models\ChatBericht;
 use App\Models\Installatie;
+
+// AdminController beheert alle functionaliteiten voor de administrator,
+// waaronder dashboardstatistieken, gebruikersbeheer, storingen en helpdeskbeheer.
+
 class AdminController extends Controller
 {
     public function dashboard()
     {
+// Simulatiegegevens van jaarlijkse neerslag en bijhorend overstromingsrisico.
+// Wordt gebruikt voor de grafiek of statistieken op het dashboard.
+
         $rainfall = [
             ['year' => 2026, 'rainfall' => 950, 'risk' => 'Laag'],
             ['year' => 2027, 'rainfall' => 1010, 'risk' => 'Gemiddeld'],
@@ -19,13 +26,16 @@ class AdminController extends Controller
             ['year' => 2029, 'rainfall' => 1150, 'risk' => 'Hoog'],
             ['year' => 2030, 'rainfall' => 1050, 'risk' => 'Gemiddeld'],
         ];
-
+// Telt het totale aantal geregistreerde gebruikers.
         $userCount = User::count();
 
+// Telt alle openstaande noodoproepen die nog behandeld moeten worden.
         $helpdeskCount = Noodoproep::where('status', 'open')->count();
 
+// Telt het aantal installaties dat in de databank geregistreerd staat.
         $installatieCount = Installatie::count();
-
+        
+// Telt het aantal reeds afgesloten helpdesktickets.
         $geslotenTickets = Noodoproep::where('status', 'gesloten')->count();
 
         return view(
