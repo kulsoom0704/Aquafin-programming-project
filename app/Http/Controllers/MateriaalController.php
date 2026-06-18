@@ -125,12 +125,14 @@ class MateriaalController extends Controller
 
     public function leveringCreate()
     {
+        // Haalt alle beschikbare materialen op voor het uitgifteformulier.
         $materialen = Materiaal::all();
         return view('materiaal.levering', compact('materialen'));
     }
 
     public function leveringStore(Request $request)
     {
+        // Controleert of alle verplichte gegevens correct werden ingevuld.
         $request->validate([
             'technieker_naam' => 'required',
             'materiaal_id'    => 'required|array',
@@ -139,7 +141,7 @@ class MateriaalController extends Controller
             'technieker_naam.required' => 'Naam technieker is verplicht.',
             'materiaal_id.required'    => 'Kies minstens één artikel.',
         ]);
-
+// Registreert de uitgifte van materialen aan een technieker.
         foreach ($request->materiaal_id as $index => $id) {
             if (!$id) continue;
 
@@ -150,12 +152,12 @@ class MateriaalController extends Controller
                 'aantal'          => $aantal,
                 'technieker_naam' => $request->technieker_naam,
             ]);
-
+    // Vermindert automatisch de voorraad van het uitgegeven materiaal.
             $materiaal = Materiaal::find($id);
             $materiaal->beschikbaar -= $aantal;
             $materiaal->save();
         }
-
+// Keert terug naar het leveringenoverzicht met een succesmelding.
         return redirect('/materiaal?sectie=leveringen')->with('succes', 'Uitgifte geregistreerd!');
     }
 
