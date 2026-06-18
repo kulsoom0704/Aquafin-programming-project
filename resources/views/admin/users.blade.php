@@ -39,7 +39,7 @@
 </div>
     </aside>
 
-    <!-- Main content -->
+    <!-- Main -->
     <main class="flex-1 p-10">
         <main class="flex-1 p-10 bg-slate-50">
 
