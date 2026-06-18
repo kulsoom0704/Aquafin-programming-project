@@ -8,7 +8,7 @@
 </head>
 
 <body class="bg-slate-50 min-h-screen flex">
-
+    <!-- Zijbalk -->
    <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
         <div class="p-8">
             <h2 class="text-2xl font-black tracking-tight">AQUAFIN</h2>
@@ -42,7 +42,7 @@
             </p>
         </div>
 
-        <!-- Statistiek kaartsen -->
+        <!-- Statistiek kaarten -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
             <div class="bg-white rounded-3xl p-6 shadow">

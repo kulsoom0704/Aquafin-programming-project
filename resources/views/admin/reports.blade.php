@@ -71,7 +71,7 @@
             @endforeach
         </div>
 
-        <!-- Seizoensrapport tabel -->
+        <!-- Seizoensrapporten tabel -->
         <div class="glass-card rounded-3xl p-8 mb-10 shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold text-slate-800">Seizoensrapport</h2>
