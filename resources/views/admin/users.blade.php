@@ -21,14 +21,21 @@
     <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
         <div class="p-8">
             <h2 class="text-2xl font-black tracking-tight">AQUAFIN</h2>
-            <p class="text-blue-200 text-xs font-bold uppercase tracking-widest mt-1">Beheerplatform</p>
+            <p class="text-blue-200 text-xs font-bold uppercase tracking-widest mt-1">Admin Portaal</p>
         </div>
         <nav class="flex-grow px-4 space-y-2">
-            <a href="/admin/dashboard" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Dashboard</a>
+            <a href="/admin/dashboard" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium"> Dashboard</a>
             <a href="/admin/users" class="flex items-center px-4 py-3 rounded-xl bg-white/10 font-bold">Gebruikers</a>
             <a href="/admin/reports" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Rapporten</a>
             <a href="/admin/storingen" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Storingen</a>
-        </nav>
+            <a href="/admin/helpdesk"   class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium"> Helpdesk</a>
+            </nav>
+            <div class="p-4">
+    <a href="/logout"
+       class="block text-center bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition">
+         Uitloggen
+    </a>
+</div>
     </aside>
 
     <main class="flex-1 p-10">
@@ -88,7 +95,38 @@
                         <tr class="border-t border-slate-100 hover:bg-slate-50/50 transition">
                             <td class="py-5">{{ $user->name }}</td>
                             <td class="py-5">{{ $user->email }}</td>
-                            <td class="py-5">{{ $user->role }}</td>
+                            <td>
+
+<form method="POST" action="/admin/users/{{ $user->id }}/role">
+
+    @csrf
+    @method('PATCH')
+
+    <select
+        name="role"
+        onchange="this.form.submit()"
+        class="border rounded-lg px-3 py-1">
+
+        <option value="Admin"
+            {{ $user->role == 'Admin' ? 'selected' : '' }}>
+            Admin
+        </option>
+
+        <option value="Technieker"
+            {{ $user->role == 'Technieker' ? 'selected' : '' }}>
+            Technieker
+        </option>
+
+        <option value="Magazijnier"
+            {{ $user->role == 'Magazijnier' ? 'selected' : '' }}>
+            Magazijnier
+        </option>
+
+    </select>
+
+</form>
+
+</td>
                             <td class="py-5">
                                 <span class="px-3 py-1 rounded-full text-xs font-bold {{ $user->active ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' }}">
                                     {{ $user->active ? 'Actief' : 'Gedeactiveerd' }}

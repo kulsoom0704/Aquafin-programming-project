@@ -28,20 +28,23 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 |--------------------------------------------------------------------------
 */
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+
 Route::get('/admin/users', [AdminController::class, 'users']);
+Route::patch('/admin/users/{user}/role', [AdminController::class, 'updateRole']);
+
 Route::post('/admin/users', [AdminController::class, 'store']);
 Route::delete('/admin/users/{user}', [AdminController::class, 'destroy']);
 Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatus']);
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
 
-// 🔴 LES ROUTES DU HELPDESK QUI MANQUAIENT :
 Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
 Route::get('/admin/helpdesk/gesloten', [AdminController::class, 'geslotenTickets']);
 Route::get('/admin/helpdesk/{id}', [AdminController::class, 'showHelpdesk']);
 Route::patch('/admin/helpdesk/{id}/sluiten', [AdminController::class, 'sluitGesprek']);
 Route::post('/admin/helpdesk/{id}/bericht', [AdminController::class, 'verstuurBericht']);
 
+Route::get('/admin/logout', [AuthController::class, 'logout']);
 /*
 |--------------------------------------------------------------------------
 | Installaties, Logboek & Meldingen (Technieker)
