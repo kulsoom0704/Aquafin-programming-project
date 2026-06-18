@@ -19,6 +19,7 @@
 
 <body class="bg-slate-50 min-h-screen flex">
 
+    <!-- Zijbalk -->
     <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
         <div class="p-8">
             <h2 class="text-2xl font-black tracking-tight">AQUAFIN</h2>
@@ -39,17 +40,23 @@
 </div>
     </aside>
 
+    <!-- Main -->
     <main class="flex-1 p-10">
         <div class="flex justify-between items-center mb-10">
             <div>
                 <h1 class="text-4xl font-black text-slate-900">Rapporten</h1>
                 <p class="text-slate-500 font-medium mt-1">Analyse van regenval en overstromingsrisico.</p>
             </div>
-            <button onclick="generateReport()" class="bg-[#005b96] hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all hover:-translate-y-0.5">
-                Rapport genereren
-            </button>
+            <a
+    href="/admin/reports/pdf"
+    class="bg-[#005b96] hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-bold shadow">
+
+    Download PDF
+
+</a>
         </div>
 
+        <!-- Statistiek kaarten -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             @php $stats = [
                 ['label' => 'Totaal rapporten', 'val' => '24', 'color' => 'blue'],
@@ -64,6 +71,7 @@
             @endforeach
         </div>
 
+        <!-- Seizoensrapporten tabel -->
         <div class="glass-card rounded-3xl p-8 mb-10 shadow-sm">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold text-slate-800">Seizoensrapport</h2>
@@ -92,12 +100,14 @@
             </table>
         </div>
 
+        <!-- Regenvalanalyse grafiek -->
         <div class="glass-card rounded-3xl p-8 shadow-sm">
             <h2 class="text-xl font-bold mb-6 text-slate-800">Regenvalanalyse</h2>
             <canvas id="rainChart" class="max-h-[300px]"></canvas>
         </div>
     </main>
 
+    <!-- Javascript -->
     <script>
         function generateReport() { alert("Rapport succesvol gegenereerd."); }
 

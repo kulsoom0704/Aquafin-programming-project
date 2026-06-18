@@ -37,7 +37,7 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* 💧 Druppel animatie - donkerblauw */
+        /*  Druppel animaties - donkerblauw */
         .drop {
             position: absolute;
             border-radius: 50%;
@@ -99,7 +99,7 @@
 </head>
 <body class="bg-darkblue min-h-screen flex justify-center items-center p-4 relative overflow-hidden">
 
-    <!-- 💧 Waterdruppels donkerblauw -->
+    <!-- Waterdruppels donkerblauw -->
     <div class="drop"></div>
     <div class="drop"></div>
     <div class="drop"></div>

@@ -8,6 +8,7 @@ use App\Models\Noodoproep;
 use Illuminate\Support\Facades\Hash;
 use App\Models\ChatBericht;
 use App\Models\Installatie;
+use Barryvdh\DomPDF\Facade\Pdf;
 class AdminController extends Controller
 {
     public function dashboard()
@@ -180,5 +181,37 @@ public function updateRole(Request $request, User $user)
     'success',
     $user->name . ' is nu ' . $request->role
 );
+}
+public function downloadPdf()
+{
+    $rapporten = [
+        [
+            'seizoen' => 'Winter',
+            'regenval' => '242 mm',
+            'risico' => 'Laag'
+        ],
+        [
+            'seizoen' => 'Lente',
+            'regenval' => '193 mm',
+            'risico' => 'Laag'
+        ],
+        [
+            'seizoen' => 'Zomer',
+            'regenval' => '238 mm',
+            'risico' => 'Gemiddeld'
+        ],
+        [
+            'seizoen' => 'Herfst',
+            'regenval' => '255 mm',
+            'risico' => 'Gemiddeld'
+        ]
+    ];
+
+    $pdf = Pdf::loadView(
+        'admin.pdf-rapport',
+        compact('rapporten')
+    );
+
+    return $pdf->download('aquafin-rapport.pdf');
 }
 }

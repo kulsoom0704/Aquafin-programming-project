@@ -25,6 +25,7 @@
 
 <body class="bg-slate-50 min-h-screen flex">
 
+    <!-- Zijbalk -->
     <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
         <div class="p-8">
             <h2 class="text-2xl font-black tracking-tight">AQUAFIN</h2>
@@ -45,6 +46,7 @@
 </div>
     </aside>
 
+    <!-- Main content -->
     <main class="flex-1 p-10">
 
         <header class="mb-10">
@@ -59,6 +61,7 @@
 
         </header>
 
+        <!-- Storingen tabelen -->
         <div class="glass-card rounded-3xl p-8 shadow-sm">
 
             <table class="w-full text-left">
