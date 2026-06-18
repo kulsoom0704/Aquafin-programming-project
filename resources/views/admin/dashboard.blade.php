@@ -30,6 +30,12 @@
             <a href="/admin/storingen" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Storingen</a>
             <a href="/admin/helpdesk"   class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium"> Helpdesk</a>
             </nav>
+            <div class="p-4">
+    <a href="/logout"
+       class="block text-center bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition">
+         Uitloggen
+    </a>
+</div>
     </aside>
 
         <!-- Main content --> 
@@ -164,7 +170,6 @@
 
             </table>
         </div>
-
-    </div>
+    
 
 </main>

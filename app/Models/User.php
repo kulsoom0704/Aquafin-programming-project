@@ -15,7 +15,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'active'
+        'active',
+        'depot'
     ];
 
     protected $hidden = [
@@ -31,6 +32,8 @@ class User extends Authenticatable
             'active' => 'boolean',
         ];
     }
+
+    
 
     public function notities()
     {

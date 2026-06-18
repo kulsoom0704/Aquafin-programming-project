@@ -151,6 +151,7 @@ public function verstuurBericht(Request $request, $id)
     ]);
 
     return redirect()->back();
+
 }
 public function geslotenTickets()
 {
@@ -161,5 +162,18 @@ public function geslotenTickets()
 
     return view('admin.gesloten-tickets', compact('oproepen'));
 }
+public function updateRole(Request $request, User $user)
+{
+    $request->validate([
+        'role' => 'required'
+    ]);
 
+    $user->role = $request->role;
+    $user->save();
+
+    return redirect()->back()->with(
+    'success',
+    $user->name . ' is nu ' . $request->role
+);
+}
 }

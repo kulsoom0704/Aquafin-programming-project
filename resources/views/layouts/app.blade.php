@@ -113,7 +113,7 @@
 
             @yield('content')
             
-        </div>
+        </div> 
     </main>
 
     <!--  BOUTON FLOTTANT DE CHAT AVEC PASTILLE -->
@@ -297,8 +297,8 @@
             }
         }
 
-    
-        @if(session()->has('chat_open') || session()->has('success'))
+        
+        @if(session()->has('chat_open'))
             
             setTimeout(() => {
                 openChat();

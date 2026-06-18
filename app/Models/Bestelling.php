@@ -8,11 +8,12 @@ class Bestelling extends Model
 {
     protected $table = 'bestellingen';
 
-    protected $fillable = ['user_id', 'onderdeel_id', 'aantal', 'status', 'materiaal_id'];
+    protected $fillable = ['user_id', 'onderdeel_id', 'aantal', 'status', 'materiaal_id', 'depot'];
 
     public function materiaal()
     {
-        return $this->belongsTo(Materiaal::class, 'onderdeel_id');
+        
+        return $this->belongsTo(Materiaal::class, 'materiaal_id');
     }
 
     public function user()

@@ -23,14 +23,21 @@
     <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
         <div class="p-8">
             <h2 class="text-2xl font-black tracking-tight">AQUAFIN</h2>
-            <p class="text-blue-200 text-xs font-bold uppercase tracking-widest mt-1">Beheerplatform</p>
+            <p class="text-blue-200 text-xs font-bold uppercase tracking-widest mt-1">Admin Portaal</p>
         </div>
         <nav class="flex-grow px-4 space-y-2">
             <a href="/admin/dashboard" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium"> Dashboard</a>
             <a href="/admin/users" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Gebruikers</a>
             <a href="/admin/reports" class="flex items-center px-4 py-3 rounded-xl bg-white/10 font-bold">Rapporten</a>
             <a href="/admin/storingen" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium">Storingen</a>
-        </nav>
+            <a href="/admin/helpdesk"   class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition font-medium"> Helpdesk</a>
+            </nav>
+            <div class="p-4">
+    <a href="/logout"
+       class="block text-center bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition">
+         Uitloggen
+    </a>
+</div>
     </aside>
 
     <!-- Main content -->
