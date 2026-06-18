@@ -7,6 +7,7 @@
 </head>
 <body class="bg-slate-50 min-h-screen">
 
+    <!-- Gesloten tickets pagina -->
 <div class="max-w-7xl mx-auto p-10">
 
     <div class="flex justify-between items-center mb-8">
@@ -20,6 +21,7 @@
         </a>
     </div>
 
+    <!-- Tickets lijst -->
     <div class="bg-white rounded-3xl shadow p-6">
 
         @forelse($oproepen as $oproep)

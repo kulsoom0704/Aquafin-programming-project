@@ -7,12 +7,14 @@
 </head>
 <body class="bg-slate-50 min-h-screen">
 
+    <!-- Helpdesk gesprek pagina -->
 <div class="max-w-4xl mx-auto p-10">
 
     <h1 class="text-4xl font-black mb-8">
         Helpdesk Gesprek
     </h1>
 
+    <!-- Gesprek details -->
     <div class="bg-white rounded-3xl shadow p-8">
 
         <h2 class="text-2xl font-bold mb-4">
@@ -29,6 +31,7 @@
             {{ $oproep->bericht }}
         </p>
 
+        <!-- Berichten overzicht -->
         <div class="border-t pt-6">
 
             <label class="font-bold">
@@ -59,6 +62,8 @@
     @endforeach
 
 </div>
+
+            <!-- Antwoord formumier -->
             <form method="POST" action="/admin/helpdesk/{{ $oproep->id }}/bericht">
 
     @csrf
@@ -78,6 +83,7 @@
 
     </form>
     
+    <!-- Gesprek afsluiten -->
     <form action="/admin/helpdesk/{{ $oproep->id }}/sluiten" method="POST">
     @csrf
     @method('PATCH')

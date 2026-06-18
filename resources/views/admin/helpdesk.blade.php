@@ -9,6 +9,7 @@
 
 <body class="bg-slate-50 min-h-screen flex">
 
+    <!-- Zijbalk -->
     <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
         <div class="p-8">
             <h2 class="text-2xl font-black">AQUAFIN</h2>
@@ -24,6 +25,7 @@
         </nav>
     </aside>
 
+    <!-- Main content -->
     <main class="flex-1 p-10">
 
         <div class="mb-8">
@@ -36,6 +38,7 @@
             </p>
         </div>
 
+        <!-- Statistiek kaartsen -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
             <div class="bg-white rounded-3xl p-6 shadow">
@@ -70,6 +73,7 @@
 
         </div>
 
+        <!-- Tickets Tabel -->
         <div class="bg-white rounded-3xl shadow overflow-hidden">
 
             <div class="p-6 border-b">

@@ -39,6 +39,7 @@
 
 <body class="bg-animated text-slate-800 antialiased h-[100dvh] flex overflow-hidden pb-16 md:pb-0">
 
+    <!-- Zijbalk -->
     <aside class="hidden md:flex flex-col w-72 bg-[#001e33] h-full z-40 relative shadow-[4px_0_30px_rgba(0,0,0,0.15)]">
         
         <div class="p-8 pb-8 flex items-center gap-4 border-b border-white/5">
@@ -81,6 +82,7 @@
         </div>
     </aside>
 
+    <!-- Mobiele -->
     <div class="md:hidden fixed top-0 inset-x-0 h-16 bg-[#001e33] border-b border-white/5 z-40 flex items-center justify-between px-4 shadow-md">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#005b96] to-cyan-400 flex items-center justify-center">
@@ -93,6 +95,7 @@
         </a>
     </div>
 
+    <!-- Main content -->
     <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-transparent relative z-10 custom-scrollbar pt-16 md:pt-0">
         <div class="px-4 sm:px-6 lg:px-10 py-8 max-w-[1600px] w-full mx-auto pb-28 md:pb-10">
             
@@ -113,7 +116,7 @@
         </div>
     </main>
 
-    <!-- 🛠️ BOUTON FLOTTANT DE CHAT AVEC PASTILLE -->
+    <!--  BOUTON FLOTTANT DE CHAT AVEC PASTILLE -->
     <div class="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50">
         <button onclick="toggleSupportTicket()" class="w-14 h-14 bg-gradient-to-r from-[#005b96] to-cyan-500 rounded-2xl flex items-center justify-center text-white shadow-2xl hover:scale-105 active:scale-95 transition-all relative border border-cyan-400/20 group">
             
@@ -130,7 +133,7 @@
         </button>
     </div>
 
-    <!-- 💬 COULISSANT DU CHAT LIVE -->
+    <!-- COULISSANT DU CHAT LIVE -->
     <div id="supportTicketWindow" class="fixed bottom-36 right-4 md:bottom-24 md:right-6 w-[calc(100vw-32px)] sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-200 z-50 translate-y-10 opacity-0 pointer-events-none transition-all duration-300 flex flex-col overflow-hidden h-[500px]">
         
         <div class="p-4 bg-[#001e33] text-white flex justify-between items-center border-b border-white/5 shrink-0">
@@ -204,13 +207,13 @@
                 </div>
             @else
                 <div class="p-3 bg-slate-100 border-t border-slate-200 shrink-0 text-center">
-                    <span class="text-xs font-bold text-slate-500">🔒 Deze conversatie is gesloten.</span>
+                    <span class="text-xs font-bold text-slate-500"> Deze conversatie is gesloten.</span>
                 </div>
             @endif
 
         @else
 
-            <!-- ÉTAT 1 : NOUVELLE DEMANDE -->
+            <!-- Nieuwe chat starten -->
             <form action="{{ route('chat.start') }}" method="POST" class="flex-1 flex flex-col p-5 bg-slate-50 overflow-y-auto">
                 @csrf
                 <div class="bg-blue-50 border border-blue-100 text-[#005b96] p-3 rounded-xl mb-4 text-xs font-medium">
@@ -223,14 +226,14 @@
                         <label class="cursor-pointer">
                             <input type="radio" name="doelgroep" value="Magazijnier" class="peer sr-only" required>
                             <div class="p-3 rounded-xl border border-slate-200 bg-white text-center peer-checked:bg-cyan-50 peer-checked:border-cyan-400 peer-checked:text-cyan-700 transition-all">
-                                <span class="text-xl block mb-1">📦</span>
+                                <span class="text-xl block mb-1"></span>
                                 <span class="text-[10px] font-black uppercase">Magazijn</span>
                             </div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="doelgroep" value="Admin" class="peer sr-only">
                             <div class="p-3 rounded-xl border border-slate-200 bg-white text-center peer-checked:bg-[#005b96]/10 peer-checked:border-[#005b96] peer-checked:text-[#005b96] transition-all">
-                                <span class="text-xl block mb-1">⚙️</span>
+                                <span class="text-xl block mb-1"></span>
                                 <span class="text-[10px] font-black uppercase">Technisch</span>
                             </div>
                         </label>
@@ -250,7 +253,7 @@
         @endif
     </div>
 
-    <!-- 📱 BOTTOM NAV MOBILE -->
+    <!-- BOTTOM NAV MOBILE -->
     <div class="md:hidden fixed bottom-0 inset-x-0 bg-[#001e33] border-t border-white/5 pb-safe z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.3)]">
         <div class="flex justify-around items-center h-16">
             <a href="{{ route('materiaal.bestellen') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('materiaal.bestellen') ? 'text-cyan-400' : 'text-slate-400' }}">
@@ -268,7 +271,6 @@
         </div>
     </div>
 
-    <!-- LOGIQUE LOGICIELLE DE L'AFFICHAGE -->
     
    <script>
         function openChat() {
@@ -276,12 +278,12 @@
             if (windowDiv) {
                 windowDiv.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-10');
                 
-                // Auto-scroll vers le bas
+                // Auto-scroll naar beneden 
                 const chatContainer = document.getElementById('chatContainer');
                 if(chatContainer) {
                     setTimeout(() => {
                         chatContainer.scrollTop = chatContainer.scrollHeight;
-                    }, 50); // Léger délai pour l'animation CSS
+                    }, 50); 
                 }
             }
         }
@@ -295,9 +297,9 @@
             }
         }
 
-        // 🔴 EXÉCUTION IMMÉDIATE SANS ATTENDRE DOMContentLoaded
+    
         @if(session()->has('chat_open') || session()->has('success'))
-            // On lance la fonction directement après le chargement de la balise
+            
             setTimeout(() => {
                 openChat();
             }, 150);

@@ -25,6 +25,7 @@
 
 <body class="bg-slate-50 min-h-screen flex">
 
+    <!-- Zijbalk -->
     <aside class="w-72 bg-[#005b96] text-white flex flex-col shadow-2xl">
 
         <div class="p-8">
@@ -63,6 +64,7 @@
 
     </aside>
 
+    <!-- Main content -->
     <main class="flex-1 p-10">
 
         <header class="mb-10">
@@ -77,6 +79,7 @@
 
         </header>
 
+        <!-- Storingen tabel -->
         <div class="glass-card rounded-3xl p-8 shadow-sm">
 
             <table class="w-full text-left">
