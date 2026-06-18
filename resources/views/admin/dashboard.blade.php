@@ -67,7 +67,7 @@
             </div>
         </a>
 
-        <!-- Installaties kaart -->
+        <!-- Installaties kaarten -->
         <div class="glass-card rounded-3xl p-6 border-t-4 border-green-500 shadow-sm">
             <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">
                 Installaties
