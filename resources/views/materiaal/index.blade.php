@@ -98,21 +98,10 @@
         .sectie { display: none; }
         .sectie.actief { display: block; }
 
-        .zoekbalk { margin-bottom: 20px; }
-        .zoekbalk input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        .zoekbalk button {
-            padding: 8px 14px;
-            background: linear-gradient(to right, #0a5a8a, #00b4d8);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
         table { width: 100%; border-collapse: collapse; background-color: white; border-radius: 8px; overflow: hidden; }
         thead tr { background: linear-gradient(to right, #0a5a8a, #00b4d8); }
         th { background: transparent; color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
+        td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
         tr:hover { background-color: #f9f9f9; }
 
         .kritiek { color: red; font-weight: bold; }
@@ -155,19 +144,6 @@
             margin-top: 10px;
         }
 
-        .melding {
-            background-color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 5px solid #00b4d8;
-        }
-
-        .melding.gelezen { border-left: 5px solid #ccc; opacity: 0.6; }
-        .melding h3 { color: #2c3e50; margin-bottom: 5px; }
-        .melding p { color: #555; font-size: 14px; }
-        .melding small { color: #999; font-size: 12px; }
-
         .btn-melding {
             padding: 5px 12px;
             color: white;
@@ -190,7 +166,7 @@
             z-index: 999;
         }
 
-        .popup { background: white; margin: 10% auto; padding: 25px; width: 400px; border-radius: 8px; }
+        .popup { background: white; margin: 5% auto; padding: 25px; width: 450px; border-radius: 8px; }
         .popup h2 { margin-bottom: 15px; color: #2c3e50; }
         .popup p { margin: 8px 0; font-size: 15px; }
 
@@ -212,6 +188,18 @@
             cursor: pointer;
             border-radius: 4px;
             margin-left: 5px;
+        }
+
+        .btn-foto-wijzigen {
+            margin-top: 15px;
+            padding: 6px 14px;
+            background: #f0f7ff;
+            color: #0a5a8a;
+            border: 1px solid #0a5a8a;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 5px;
+            font-size: 13px;
         }
 
         .artikel-rij { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
@@ -250,6 +238,41 @@
         .badge-nieuw { background: #fff3cd; color: #856404; }
         .badge-goedgekeurd { background: #d4edda; color: #155724; }
         .badge-afgewezen { background: #f8d7da; color: #721c24; }
+
+        .foto-thumbnail {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .foto-placeholder {
+            width: 50px;
+            height: 50px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .btn-foto-upload {
+            padding: 4px 8px;
+            background: #f0f7ff;
+            color: #0a5a8a;
+            border: 1px solid #0a5a8a;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
     </style>
 </head>
 
@@ -313,6 +336,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Foto</th>
                         <th>Artikelnummer</th>
                         <th>Omschrijving</th>
                         <th>Locatie</th>
@@ -323,6 +347,19 @@
                 <tbody>
                     @foreach ($materialen as $item)
                     <tr>
+                        <td>
+                            @if($item->foto)
+                                <img src="{{ asset('storage/' . $item->foto) }}" class="foto-thumbnail" alt="foto"
+                                    onclick="toonGroteFoto('{{ asset('storage/' . $item->foto) }}')">
+                            @else
+                                <div class="foto-placeholder" onclick="document.getElementById('foto-upload-{{ $item->id }}').click()">📷</div>
+                            @endif
+                            <form method="POST" action="/materiaal/{{ $item->id }}/foto" enctype="multipart/form-data" style="display:none;" id="foto-form-{{ $item->id }}">
+                                @csrf
+                                <input type="file" id="foto-upload-{{ $item->id }}" name="foto" accept="image/*" onchange="document.getElementById('foto-form-{{ $item->id }}').submit()">
+                            </form>
+                        
+                        </td>
                         <td>{{ $item->artikelnummer }}</td>
                         <td>{{ $item->omschrijving }}</td>
                         <td>{{ $item->locatie }}</td>
@@ -334,9 +371,10 @@
                                 onclick="toonPopup(
                                     '{{ $item->id }}',
                                     '{{ $item->artikelnummer }}',
-                                    '{{ $item->omschrijving }}',
+                                    '{{ addslashes($item->omschrijving) }}',
                                     '{{ $item->locatie }}',
-                                    '{{ $item->beschikbaar }}'
+                                    '{{ $item->beschikbaar }}',
+                                    '{{ $item->foto ? asset('storage/' . $item->foto) : '' }}'
                                 )">
                                 Details
                             </button>
@@ -456,7 +494,7 @@
             <h1>Archief</h1>
             <br>
 
-@php $gearchiveerdeBestellingen = \App\Models\Bestelling::with(['onderdeel','user','materiaal'])->whereIn('status', ['klaargezet', 'Goedgekeurd', 'geretourneerd'])->latest()->get(); @endphp
+            @php $gearchiveerdeBestellingen = \App\Models\Bestelling::with(['onderdeel','user','materiaal'])->whereIn('status', ['klaargezet', 'Goedgekeurd', 'geretourneerd'])->latest()->get(); @endphp
             @if($gearchiveerdeBestellingen->isEmpty())
                 <p style="color: #999;">Geen gearchiveerde bestellingen.</p>
             @else
@@ -481,12 +519,12 @@
                     <td>{{ $bestelling->aantal }}</td>
                     <td>{{ $bestelling->created_at->format('d/m/Y') }}</td>
                     <td>
-    @if($bestelling->status === 'geretourneerd')
-        <span class="badge" style="background:#cce5ff; color:#004085;">Geretourneerd</span>
-    @else
-        <span class="badge badge-goedgekeurd">Klaargezet</span>
-    @endif
-</td>
+                        @if($bestelling->status === 'geretourneerd')
+                            <span class="badge" style="background:#cce5ff; color:#004085;">Geretourneerd</span>
+                        @else
+                            <span class="badge badge-goedgekeurd">Klaargezet</span>
+                        @endif
+                    </td>
                     <td>
                         <form method="POST" action="/bestellingen/{{ $bestelling->id }}/terugzetten" style="display:inline;">
                             @csrf
@@ -502,28 +540,33 @@
 
     </div>
 
-    <!-- Bestelling popup -->
-    <div class="popup-achtergrond" id="melding-popup-achtergrond">
-        <div class="popup">
-            <h2>Bestelling details</h2>
-            <p><strong>Titel:</strong> <span id="melding-popup-titel"></span></p>
-            <p><strong>Bericht:</strong> <span id="melding-popup-bericht"></span></p>
-            <p><strong>Datum:</strong> <span id="melding-popup-datum"></span></p>
-            <button class="btn-sluiten" onclick="document.getElementById('melding-popup-achtergrond').style.display='none'">Sluiten</button>
-        </div>
-    </div>
-
     <!-- Details Popup -->
     <div class="popup-achtergrond" id="popup-achtergrond">
         <div class="popup">
             <h2>Artikel details</h2>
             <p style="display:none;"><span id="popup-id"></span></p>
+            <div id="popup-foto-container" style="margin-bottom:10px;"></div>
             <p><strong>Artikelnummer:</strong> <span id="popup-artikelnummer"></span></p>
             <p><strong>Omschrijving:</strong> <span id="popup-omschrijving"></span></p>
             <p><strong>Locatie:</strong> <span id="popup-locatie"></span></p>
             <p><strong>Beschikbaar:</strong> <span id="popup-beschikbaar"></span></p>
-            <button class="btn-sluiten" onclick="sluitPopup()">Sluiten</button>
-            <button class="btn-wijzigen" onclick="wijzigen()">Wijzigen</button>
+            <div style="margin-top:15px; display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn-sluiten" onclick="sluitPopup()">Sluiten</button>
+                <button class="btn-wijzigen" onclick="wijzigen()">Wijzigen</button>
+                <button class="btn-foto-wijzigen" onclick="document.getElementById('popup-foto-input').click()"> Foto wijzigen</button>
+            </div>
+            <form id="popup-foto-form" method="POST" enctype="multipart/form-data" style="display:none;">
+                @csrf
+                <input type="file" id="popup-foto-input" name="foto" accept="image/*" onchange="document.getElementById('popup-foto-form').submit()">
+            </form>
+        </div>
+    </div>
+
+    <!-- Grote foto popup -->
+    <div class="popup-achtergrond" id="grote-foto-popup" onclick="document.getElementById('grote-foto-popup').style.display='none'" style="z-index:1000;">
+        <div style="margin: 5% auto; width: fit-content; max-width: 90%; text-align:center;">
+            <img id="grote-foto-img" src="" style="max-width:90vw; max-height:80vh; border-radius:10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <p style="color:white; margin-top:10px; font-size:13px;">Klik ergens om te sluiten</p>
         </div>
     </div>
 
@@ -565,7 +608,6 @@
                             rij.style.display = 'none';
                         }
                     });
-
                 });
         });
 
@@ -608,13 +650,6 @@
                     retourForm.style.display = 'block';
                 });
         });
-
-        function toonMeldingPopup(titel, bericht, datum) {
-            document.getElementById('melding-popup-titel').innerText = titel;
-            document.getElementById('melding-popup-bericht').innerText = bericht;
-            document.getElementById('melding-popup-datum').innerText = datum;
-            document.getElementById('melding-popup-achtergrond').style.display = 'block';
-        }
 
         function filterUitgifte() {
             var zoekterm = document.getElementById('zoek-uitgifte').value.toLowerCase();
@@ -662,13 +697,28 @@
         var sectie = urlParams.get('sectie') || localStorage.getItem('actieveSectie') || 'voorraad';
         toonSectie(sectie);
 
-        function toonPopup(id, artikelnummer, omschrijving, locatie, beschikbaar) {
+        function toonPopup(id, artikelnummer, omschrijving, locatie, beschikbaar, fotoUrl) {
             document.getElementById('popup-id').innerText = id;
             document.getElementById('popup-artikelnummer').innerText = artikelnummer;
             document.getElementById('popup-omschrijving').innerText = omschrijving;
             document.getElementById('popup-locatie').innerText = locatie;
             document.getElementById('popup-beschikbaar').innerText = beschikbaar;
+
+            document.getElementById('popup-foto-form').action = '/materiaal/' + id + '/foto';
+
+            var fotoContainer = document.getElementById('popup-foto-container');
+            if (fotoUrl) {
+                fotoContainer.innerHTML = '<img src="' + fotoUrl + '" style="width:100%; max-height:200px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="toonGroteFoto(\'' + fotoUrl + '\')">';
+            } else {
+                fotoContainer.innerHTML = '<p style="color:#999; font-size:13px;">Geen foto beschikbaar</p>';
+            }
+
             document.getElementById('popup-achtergrond').style.display = 'block';
+        }
+
+        function toonGroteFoto(url) {
+            document.getElementById('grote-foto-img').src = url;
+            document.getElementById('grote-foto-popup').style.display = 'block';
         }
 
         function sluitPopup() { document.getElementById('popup-achtergrond').style.display = 'none'; }
@@ -680,7 +730,8 @@
 
         document.addEventListener('click', function(e) {
             if (!e.target.closest('#zoek-uitgifte') && !e.target.closest('#zoek-suggesties')) {
-                document.getElementById('zoek-suggesties').style.display = 'none';
+                var s = document.getElementById('zoek-suggesties');
+                if(s) s.style.display = 'none';
             }
             if (!e.target.closest('#magazijn-zoek') && !e.target.closest('#magazijn-suggesties')) {
                 magazijnSuggesties.style.display = 'none';
