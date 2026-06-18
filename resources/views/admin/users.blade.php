@@ -58,11 +58,7 @@ setTimeout(() => {
 
 @endif
 
-    <header class="mb-10">
-        <h1 class="text-4xl font-black text-slate-900">
-            Gebruikers
-        </h1>
-    </header>
+   
         <header class="mb-10">
             <h1 class="text-4xl font-black text-slate-900">Gebruikersbeheer</h1>
             <p class="text-slate-500 font-medium mt-1">Beheer gebruikers, rollen en toegangsrechten.</p>
