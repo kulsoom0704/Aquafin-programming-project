@@ -35,13 +35,13 @@ Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatu
 Route::get('/admin/reports', [AdminController::class, 'reports']);
 Route::get('/admin/storingen', [AdminController::class, 'storingen']);
 
-// 🔴 LES ROUTES DU HELPDESK QUI MANQUAIENT :
 Route::get('/admin/helpdesk', [AdminController::class, 'helpdesk']);
 Route::get('/admin/helpdesk/gesloten', [AdminController::class, 'geslotenTickets']);
 Route::get('/admin/helpdesk/{id}', [AdminController::class, 'showHelpdesk']);
 Route::patch('/admin/helpdesk/{id}/sluiten', [AdminController::class, 'sluitGesprek']);
 Route::post('/admin/helpdesk/{id}/bericht', [AdminController::class, 'verstuurBericht']);
 
+Route::get('/admin/logout', [AuthController::class, 'logout']);
 /*
 |--------------------------------------------------------------------------
 | Installaties, Logboek & Meldingen (Technieker)
