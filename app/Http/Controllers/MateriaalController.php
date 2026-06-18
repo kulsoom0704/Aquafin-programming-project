@@ -209,6 +209,7 @@ class MateriaalController extends Controller
 
     public function fotoUpload(Request $request, $id)
     {
+        // Controleert of een geldige afbeelding werd geselecteerd.
         $request->validate([
             'foto' => 'required|image|max:2048',
         ], [
@@ -216,7 +217,7 @@ class MateriaalController extends Controller
             'foto.image'    => 'Het bestand moet een afbeelding zijn.',
             'foto.max'      => 'De foto mag maximaal 2MB zijn.',
         ]);
-
+    // Uploadt de foto en koppelt deze aan het geselecteerde materiaal.
         $materiaal = Materiaal::find($id);
         $fotopad = $request->file('foto')->store('fotos', 'public');
         $materiaal->foto = $fotopad;
@@ -227,6 +228,7 @@ class MateriaalController extends Controller
 
     public function fotoVerwijderen($id)
     {
+        // Verwijdert de gekoppelde foto van het geselecteerde materiaal.
         $materiaal = Materiaal::find($id);
         $materiaal->foto = null;
         $materiaal->save();
@@ -236,8 +238,10 @@ class MateriaalController extends Controller
 
     public function searchLogic(Request $request)
     {
+         // Haalt de ingevoerde zoekterm op en zet deze om naar kleine letters.
         $query = strtolower(trim($request->query('q', '')));
         
+        // Geeft alle materialen terug indien de zoekterm te kort is.
         if (strlen($query) < 2) {
             return response()->json([
                 'bedoelde_je' => null,
@@ -246,7 +250,7 @@ class MateriaalController extends Controller
         }
 
         $materialen = Materiaal::all();
-        
+        // Thesaurus met synoniemen, vertalingen en veelvoorkomende typfouten.
         $thesaurus = [
             'schroef' => ['vis', 'viss', 'screw', 'shroef', 'vijz', 'schroof'],
             'bout' => ['boulon', 'boulons', 'bolt', 'bolts', 'bouten', 'boeten', 'bautton', 'button'],
@@ -265,6 +269,7 @@ class MateriaalController extends Controller
         $doelwit = $query;
         $queryIsCorrected = false;
 
+         // Corrigeert automatisch foutieve zoektermen naar de officiële benaming.
         foreach ($thesaurus as $officieel => $fouten) {
             if (in_array($query, $fouten) || levenshtein($query, $officieel) <= 1) {
                 $doelwit = $officieel;
@@ -272,7 +277,8 @@ class MateriaalController extends Controller
                 break;
             }
         }
-
+    // Zoekt materialen op basis van omschrijving, artikelnummer
+    // en ondersteunt fouttolerant zoeken via Levenshtein.
         $resultaten = $materialen->filter(function($item) use ($doelwit) {
             $naam = strtolower($item->omschrijving);
             $ref = strtolower($item->artikelnummer);
@@ -288,7 +294,7 @@ class MateriaalController extends Controller
 
             return false;
         });
-
+    // Stuurt de zoekresultaten en eventuele suggestie terug als JSON.
         return response()->json([
             'bedoelde_je' => $queryIsCorrected ? $doelwit : null,
             'artikelen' => $resultaten->values()
