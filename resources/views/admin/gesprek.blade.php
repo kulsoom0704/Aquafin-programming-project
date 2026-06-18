@@ -2,101 +2,158 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Gesprek</title>
+    <title>Helpdesk Gesprek</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-slate-50 min-h-screen">
 
-    <!-- Helpdesk gesprek pagina -->
-<div class="max-w-4xl mx-auto p-10">
+<div class="max-w-5xl mx-auto p-10">
 
-    <h1 class="text-4xl font-black mb-8">
-        Helpdesk Gesprek
-    </h1>
+    <div class="flex justify-between items-center mb-8">
+
+        <h1 class="text-4xl font-black">
+            Helpdesk Gesprek
+        </h1>
+
+        <div class="flex gap-3">
+
+            <a href="/admin/helpdesk"
+               class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-xl font-medium">
+                ← Helpdesk
+            </a>
+
+            <a href="/admin/dashboard"
+               class="bg-[#005b96] hover:bg-blue-800 text-white px-4 py-2 rounded-xl font-medium">
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
 
     <!-- Gesprek details -->
     <div class="bg-white rounded-3xl shadow p-8">
 
-        <h2 class="text-2xl font-bold mb-4">
-            {{ $oproep->technieker->name ?? 'Onbekend' }}
-        </h2>
+        <div class="flex justify-between items-center mb-4">
 
-        <p class="mb-4">
+            <h2 class="text-2xl font-bold">
+                {{ $oproep->technieker->name ?? 'Onbekend' }}
+            </h2>
+
+            @if($oproep->status == 'open')
+
+                <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold">
+                    Open
+                </span>
+
+            @else
+
+                <span class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold">
+                    Gesloten
+                </span>
+
+            @endif
+
+        </div>
+
+        <p class="mb-2">
             <strong>Type:</strong>
             {{ $oproep->type }}
         </p>
 
         <p class="mb-6">
-            <strong>Bericht:</strong><br>
+            <strong>Oorspronkelijk bericht:</strong>
             {{ $oproep->bericht }}
         </p>
 
         <!-- Berichten overzicht -->
         <div class="border-t pt-6">
 
-            <label class="font-bold">
-                Antwoord Admin
-            </label>
-<div class="space-y-4 mb-6">
+            <div class="bg-slate-100 rounded-3xl p-6 h-[500px] overflow-y-auto mb-6">
 
-    @foreach($oproep->berichten as $bericht)
+                @foreach($oproep->berichten as $bericht)
 
-        @if($bericht->afzender_rol == 'Admin')
+                    @if($bericht->afzender_rol == 'Admin')
 
-            <div class="flex justify-end">
-                <div class="bg-blue-600 text-white p-4 rounded-2xl max-w-md">
-                    {{ $bericht->bericht }}
-                </div>
+                        <div class="flex justify-end mb-4">
+
+                            <div class="bg-blue-600 text-white px-5 py-3 rounded-3xl rounded-br-md max-w-sm shadow">
+
+                                <p>{{ $bericht->bericht }}</p>
+
+                                <small class="text-blue-100 text-xs">
+                                    {{ $bericht->created_at->format('H:i') }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    @else
+
+                        <div class="flex justify-start mb-4">
+
+                            <div class="bg-white px-5 py-3 rounded-3xl rounded-bl-md max-w-sm shadow">
+
+                                <p>{{ $bericht->bericht }}</p>
+
+                                <small class="text-slate-500 text-xs">
+                                    {{ $bericht->created_at->format('H:i') }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    @endif
+
+                @endforeach
+
             </div>
 
-        @else
+            @if($oproep->status == 'open')
 
-            <div class="flex justify-start">
-                <div class="bg-slate-200 p-4 rounded-2xl max-w-md">
-                    {{ $bericht->bericht }}
-                </div>
-            </div>
-
-        @endif
-
-    @endforeach
-
-</div>
-
-            <!-- Antwoord formumier -->
             <form method="POST" action="/admin/helpdesk/{{ $oproep->id }}/bericht">
 
-    @csrf
+                @csrf
 
-    <textarea
-        name="bericht"
-        rows="4"
-        class="w-full border rounded-xl p-4"
-        placeholder="Typ hier je antwoord..."
-        required></textarea>
+                <div class="flex gap-3">
 
-    <button
-        type="submit"
-        class="bg-blue-600 text-white px-6 py-3 rounded-xl mt-4">
-        Versturen
-    </button>
+                    <textarea
+                        name="bericht"
+                        rows="2"
+                        class="flex-1 border rounded-2xl p-4 resize-none"
+                        placeholder="Typ een bericht..."
+                        required></textarea>
 
-    </form>
-    
-    <!-- Gesprek afsluiten -->
-    <form action="/admin/helpdesk/{{ $oproep->id }}/sluiten" method="POST">
-    @csrf
-    @method('PATCH')
+                    <button
+                        type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-8 rounded-2xl font-bold">
+                        ➤
+                    </button>
 
-    <button
-        type="submit"
-        class="bg-red-600 text-white px-6 py-3 rounded-xl mt-4">
-        Gesprek afsluiten
-    </button>
-</form>
+                </div>
 
+            </form>
 
-            </div>
+            <form
+                action="/admin/helpdesk/{{ $oproep->id }}/sluiten"
+                method="POST"
+                class="mt-6 flex justify-end">
+
+                @csrf
+                @method('PATCH')
+
+                <button
+                    type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl">
+                    Gesprek afsluiten
+                </button>
+
+            </form>
+
+            @endif
 
         </div>
 
