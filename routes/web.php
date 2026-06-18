@@ -28,7 +28,10 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 |--------------------------------------------------------------------------
 */
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+
 Route::get('/admin/users', [AdminController::class, 'users']);
+Route::patch('/admin/users/{user}/role', [AdminController::class, 'updateRole']);
+
 Route::post('/admin/users', [AdminController::class, 'store']);
 Route::delete('/admin/users/{user}', [AdminController::class, 'destroy']);
 Route::patch('/admin/users/{user}/toggle', [AdminController::class, 'toggleStatus']);

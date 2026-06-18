@@ -161,5 +161,15 @@ public function geslotenTickets()
 
     return view('admin.gesloten-tickets', compact('oproepen'));
 }
+public function updateRole(Request $request, User $user)
+{
+    $request->validate([
+        'role' => 'required'
+    ]);
 
+    $user->role = $request->role;
+    $user->save();
+
+    return redirect()->back();
+}
 }

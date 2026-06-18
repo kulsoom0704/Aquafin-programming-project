@@ -95,7 +95,38 @@
                         <tr class="border-t border-slate-100 hover:bg-slate-50/50 transition">
                             <td class="py-5">{{ $user->name }}</td>
                             <td class="py-5">{{ $user->email }}</td>
-                            <td class="py-5">{{ $user->role }}</td>
+                            <td>
+
+<form method="POST" action="/admin/users/{{ $user->id }}/role">
+
+    @csrf
+    @method('PATCH')
+
+    <select
+        name="role"
+        onchange="this.form.submit()"
+        class="border rounded-lg px-3 py-1">
+
+        <option value="Admin"
+            {{ $user->role == 'Admin' ? 'selected' : '' }}>
+            Admin
+        </option>
+
+        <option value="Technieker"
+            {{ $user->role == 'Technieker' ? 'selected' : '' }}>
+            Technieker
+        </option>
+
+        <option value="Magazijnier"
+            {{ $user->role == 'Magazijnier' ? 'selected' : '' }}>
+            Magazijnier
+        </option>
+
+    </select>
+
+</form>
+
+</td>
                             <td class="py-5">
                                 <span class="px-3 py-1 rounded-full text-xs font-bold {{ $user->active ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' }}">
                                     {{ $user->active ? 'Actief' : 'Gedeactiveerd' }}
