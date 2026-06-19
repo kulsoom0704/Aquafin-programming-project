@@ -322,14 +322,14 @@ class MateriaalController extends Controller
     {
         $mijnDepot = session('depot', 'Antwerpen');
 
-        // Flux 1 : Les commandes à traiter
+        // Inkomende bestellingen die nog moeten worden verwerkt
         $bestellingen = Bestelling::with(['materiaal', 'user'])
             ->where('status', 'in afwachting')
             ->where('depot', $mijnDepot) 
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Flux 2 : Les commandes terminées (pour ton Archief)
+        // Afgewerkte bestellingen voor het archief
         $archiefBestellingen = Bestelling::with(['materiaal', 'user'])
             ->where('status', 'klaargezet')
             ->where('depot', $mijnDepot)

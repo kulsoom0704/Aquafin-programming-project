@@ -9,7 +9,7 @@ class Notitie extends Model
 {
     use HasFactory;
 
-    // 1. On donne l'autorisation stricte à Laravel de remplir ces colonnes
+    // 1. Geef Laravel toestemming om deze velden te vullen
     protected $fillable = [
         'installatie_id',
         'user_id',
@@ -17,13 +17,13 @@ class Notitie extends Model
         'afbeelding'
     ];
 
-    // 2. La relation avec la machine
+    // 2. Relatie naar de installatie
     public function installatie()
     {
         return $this->belongsTo(Installatie::class);
     }
 
-    // 3. 🚀 LA fameuse relation qui manquait sûrement pour l'affichage !
+    // 3. Relatie naar de technieker voor het tonen van auteurgegevens
     public function technieker()
     {
         return $this->belongsTo(User::class, 'user_id');

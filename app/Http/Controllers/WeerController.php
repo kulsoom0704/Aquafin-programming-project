@@ -61,7 +61,7 @@ $voorspellingen = [];
 $dagen = $data['daily']['time'];
 $neerslagWaarden = $data['daily']['precipitation_sum'];
 
-// Totale verwachte neerslag uit API
+// Bereken totale verwachte neerslag uit de API-reactie
 $totaalVerwachteNeerslag = array_sum($neerslagWaarden);
 
 if ($totaalVerwachteNeerslag >= 20) {
@@ -72,8 +72,8 @@ if ($totaalVerwachteNeerslag >= 20) {
     $overstromingsgevaar = 'Laag';
 }
 
-    // Kritieke materialen bepalen
- if ($overstromingsgevaar == 'Hoog') {
+// Bepaal kritieke materialen bij hoog overstromingsrisico
+if ($overstromingsgevaar == 'Hoog') {
 
     $kritiekeMaterialen = Onderdeel::whereIn('naam', [
         'Hydraulische Pomp XL',

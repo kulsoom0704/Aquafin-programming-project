@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
                     ->latest()
                     ->get();
 
-                // On récupère l'historique
+                // Haal recente gesloten chats op voor de weergave
                 $geslotenChats = Noodoproep::where('user_id', $userId)
                     ->where('status', 'gesloten')
                     ->latest()

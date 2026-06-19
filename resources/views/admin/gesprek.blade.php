@@ -228,11 +228,11 @@
 </div>
 
 <script>
-    // 1. Défiler vers le bas au chargement
+    // 1. Scroll naar onder bij laden
     let container = document.getElementById('chatContainer');
     if(container) container.scrollTop = container.scrollHeight;
 
-    // 2. Envoi silencieux (AJAX)
+    // 2. Stille verzending via AJAX
     document.addEventListener('submit', function(e) {
         if(e.target && e.target.id === 'chatReplyForm') {
             e.preventDefault(); 
@@ -247,7 +247,7 @@
         }
     });
 
-    // 3. Rafraîchissement invisible toutes les 3 secondes (Live Chat)
+    // 3. Onzichtbaar verversen om live chat bij te werken
     setInterval(() => {
         fetch(window.location.href)
         .then(response => response.text())

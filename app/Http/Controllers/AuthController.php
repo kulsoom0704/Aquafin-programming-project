@@ -15,7 +15,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // Validation basique de Laravel
+        // Basisvalidatie van logingegevens
         $request->validate([
             'email' => 'required|email',
             'wachtwoord' => 'required'
@@ -24,22 +24,22 @@ class AuthController extends Controller
         $email = $request->email;
         $wachtwoord = $request->wachtwoord;
 
-        // On garde ton mot de passe unique pour faciliter les tests
+        // Gebruik één testwachtwoord voor snelle ontwikkelaarslogin
         if ($wachtwoord === 'admin123') {
             
-            // 1. RECHERCHE DYNAMIQUE DANS LA BASE DE DONNÉES
+            // Zoek dynamisch de gebruiker op basis van e-mailadres
             $user = User::where('email', $email)->first();
 
             if ($user) {
-                // Utilisateur trouvé : on sauvegarde ses infos en session
+                // Gebruiker gevonden: gegevens in sessie zetten
                 Session::put([
                     'gebruiker_id' => $user->id,
                     'naam'         => $user->name,
                     'rol'          => $user->role,
-                    'depot'        => $user->depot ?? 'Antwerpen' // 'Antwerpen' par défaut si la colonne est vide
+                    'depot'        => $user->depot ?: 'Antwerpen'
                 ]);
 
-                // Redirection dynamique selon le rôle
+                // Redirect op basis van gebruikersrol
                 if ($user->role === 'Admin') {
                     return redirect('/admin/dashboard');
                 } elseif ($user->role === 'Magazijnier') {
@@ -49,8 +49,7 @@ class AuthController extends Controller
                 }
             } 
             
-            // 2. BACKUP DE SÉCURITÉ 
-            // Si la base de données n'a pas encore l'Admin ou le Magasinier, on garde ce parachute
+            // Fallback voor testaccounts als de database nog leeg is
             else {
                 if ($email === 'admin@aquafin.be') {
                     Session::put([
