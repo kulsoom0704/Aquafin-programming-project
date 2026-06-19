@@ -1,58 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Aquafin - Logistiek & Magazijnier Portaal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Dit project is ontwikkeld in het kader van de opleiding Graduaat Programmeren aan de Erasmushogeschool Brussel (EHB). Het betreft een op maat gemaakte webapplicatie voor het interne beheer van materiaal, voorraden en technische interventies binnen Aquafin.
 
-## About Laravel
+**Team:** Laure, Mohamed, Kulsoom, Sabrine en Salma
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 1. Voorbereiding & Voorstel (Start with Why)
+Binnen grote industriële omgevingen zoals Aquafin is het materiaalbeheer vaak versnipperd. Na het verzamelen van informatie en het checken van de haalbaarheid, is dit onderbouwd voorstel tot projectplan uitgewerkt. Het doel is de cognitieve belasting voor de eindgebruikers te verlagen via intuïtieve UI/UX-design principes (Design Thinking), het reduceren van foutmarges bij bestellingen, en het vergemakkelijken van communicatie tussen techniekers en het magazijn. De planning en de uitwerking van de analyse werden nauwkeurig voorbereid.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 2. Realisatie Softwareproject (Functionaliteiten & Roles)
+De applicatie maakt gebruik van Role-Based Access Control (RBAC) en volgt de vereisten van het initiële projectplan. De database en de code zijn iteratief opgebouwd via een GIT repository met strikte version control.
 
-## Learning Laravel
+* **Admin:** Het overkoepelende beheer van het systeem. Aanmaken en beheren van gebruikers (Techniekers & Magazijniers) en beheren van de verschillende depots.
+* **Magazijnier:** Beheer van de materiaal catalogus. Real-time overzicht van de voorraad per depot (strikt geïsoleerd per locatie). Goedkeuren, klaarzetten en beheren van bestellingen. Registratie van uitgiftes en retours. Helpdesk management via een ingebouwd chatsysteem.
+* **Technieker:** Visuele webshop voor het aanvragen van materiaal. Opvolgen van persoonlijke bestellingen en retours. Directe noodoproepen via chat met het magazijn.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 3. Quality Assurance & Architectuur
+Het project is geprogrammeerd volgens vaste standaarden en volgt het MVC (Model-View-Controller) ontwerppatroon. De deliverables zijn gerespecteerd.
+* **Backend:** Laravel 11 (PHP).
+* **Frontend:** Blade templates gestyled met Tailwind CSS.
+* **Database:** MySQL met Eloquent ORM. Volledig uitgewerkte relaties tussen de modellen.
+* **PDF Generatie:** Integratie van DomPDF voor het genereren van professionele documenten.
+* **Beveiliging:** Gebruik van Laravel's ingebouwde CSRF-tokens, veilige wachtwoord-hashing (Bcrypt) en SQL-injection preventie via Eloquent ORM.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 4. Documentatie & Installatie
+Onderstaande kwaliteitsvolle documentatie beschrijft de vereiste stappen voor het opzetten van de ontwikkelomgeving. Functies en methodes zijn in de code gedocumenteerd volgens de gangbare standaarden.
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clone de repository
+git clone [https://github.com/JouwGebruikersnaam/aquafin-programming-project.git](https://github.com/JouwGebruikersnaam/aquafin-programming-project.git)
 
-php artisan boost:install
+# 2. Ga naar de projectmap
+cd aquafin-programming-project
+
+# 3. Installeer dependencies (PHP & Node)
+composer install
+npm install && npm run build
+
+# 4. Installeer de vereiste PDF module
+composer require barryvdh/laravel-dompdf
+
+# 5. Omgevingsvariabelen instellen
+cp .env.example .env
+php artisan key:generate
+
+# 6. Database configureren (vul DB gegevens in) en migraties draaien
+php artisan migrate --seed
+
+# 7. Storage linken (Essentieel voor geüploade media)
+php artisan storage:link
+
+# 8. Start de lokale server
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## 5. Deontologie, Veiligheid en Privacy
+Bij de ontwikkeling is de regelgeving rondom privacy en deontologie strikt gerespecteerd:
+* **GDPR & Privacy:** Er worden enkel de absoluut noodzakelijke persoonsgegevens opgeslagen in de database.
+* **Datasegregatie:** Via het depot_id zien magazijniers enkel de voorraad van hun eigen locatie.
+* **Richtlijnen:** De architectuur respecteert de ethische en veiligheidsrichtlijnen die gelden voor professionele bedrijfssoftware.
 
-## Contributing
+## 6. Testing & Usability
+De software is voortdurend aangepast aan testresultaten en ontworpen voor optimale usability.
+* **Testscenario's:** Unit- en feature testen zijn geconfigureerd (zie `tests/Feature/` en `tests/Unit/`) om de doeltreffendheid van de HTTP responses en de logica van de applicatie te valideren.
+* Om de tests uit te voeren: `php artisan test`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 7. Teamwerk, Probleemoplossend Werken & Professional Skills
+Constructieve samenwerking, co-creatie en een professionele attitude stonden centraal in dit project, ook bij onvoorziene uitdagingen:
+* **Werkverdeling & Trello:** Taken zijn initieel logisch verdeeld. Gedurende het project is de werkverdeling echter dynamisch bijgestuurd. Vanwege technische uitdagingen met versiebeheer (Git) en uiteenlopende leercurves binnen het team, hebben bepaalde teamleden een aanzienlijk grotere rol opgenomen in de integratie, probleemoplossing en finalisatie van de codebase om de eindkwaliteit te waarborgen.
+* **Communicatie & Deadlines:** Afspraken en deadlines zijn opgevolgd via Trello. Communicatie rondom technische blokkades verliep transparant, waarna de werkdruk is herverdeeld om het einddoel te halen.
+* **Vaktermen:** Het team hanteerde consequent de correcte Engelse vaktermen in zowel de codebase als de communicatie.
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 8. Levenslang Leren & Digitale Innovatie
+Tijdens het volledige proces is een kritische mindset gehanteerd:
+* **Zelfsturend leren:** Externe bronnen (officiële Laravel documentatie, Tailwind UI documentatie) zijn actief geïntegreerd in het leerproces. Feedback is iteratief en constructief verwerkt in de applicatie.
+* **Digitale Innovatie:** Generatieve AI (Copilot, ChatGPT) is op een kritische, ondersteunende manier ingezet voor het optimaliseren van ontwerppatronen en het verhogen van de productiviteit, zonder de fundamenten van de programmeerlogica uit het oog te verliezen.
