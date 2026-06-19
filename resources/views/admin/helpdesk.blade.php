@@ -105,7 +105,7 @@
                     <tr class="border-b hover:bg-slate-50">
 
                         <td class="p-4 font-medium">
-                            {{ $oproep->technieker->name ?? 'Onbekend' }}
+                            {{ optional($oproep->technieker)->name ?? 'Onbekend' }}
                         </td>
 
                         <td class="p-4">
