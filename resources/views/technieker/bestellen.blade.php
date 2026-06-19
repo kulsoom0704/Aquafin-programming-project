@@ -101,7 +101,8 @@
                                                 </div>
                                             </div>
                                             <h3 class="text-sm font-bold text-white leading-tight mb-5 line-clamp-2 min-h-[2.5rem]">
-                                                {{ $item->omschrijving }}</h3>
+                                                {{ $item->omschrijving }}
+                                            </h3>
                                         </div>
                                         <div class="flex items-center gap-2 mt-auto">
                                             <input type="number" id="qty-rec-{{ $item->id }}" min="1"
@@ -154,33 +155,36 @@
             <div class="product-card bg-white p-5 rounded-[1.5rem] border border-slate-200 shadow-sm flex flex-col justify-between group hover:border-[#005b96]/40 hover:shadow-xl transition-all duration-300"
                 data-id="{{ $item->id }}" data-ref="{{ $item->artikelnummer }}"
                 data-item-ref="{{ strtoupper($item->artikelnummer) }}">
-                <div
-                    class="w-16 h-16 shrink-0 rounded-2xl relative overflow-hidden flex items-center justify-center bg-slate-50 border border-slate-100 group-hover:bg-[#017CBF]/5 transition-colors">
+
+                <div class="w-full h-40 shrink-0 rounded-2xl relative overflow-hidden flex items-center justify-center bg-slate-50 border border-slate-100 group-hover:bg-[#017CBF]/5 transition-colors mb-4">
                     @if(isset($item->foto) && $item->foto)
-                       <img src="{{ str_starts_with($item->foto, 'http') ? $item->foto : asset('storage/' . $item->foto) }}?v={{ time() }}" class="w-full h-full object-cover">
-                    
+                        <img src="{{ str_starts_with($item->foto, 'http') ? $item->foto : asset('storage/' . $item->foto) }}?v={{ time() }}"
+                            class="w-full h-full object-cover">
                     @else
                         @php
-
                             $prefix = strtoupper(substr($item->artikelnummer, 0, 3));
                             $defaultImg = match ($prefix) {
                                 'BEV' => asset('images/default_bev.jpg'),
                                 'PBM' => asset('images/default_pbm.png'),
                                 'TEC' => asset('images/default_tec.png'),
-                                default => asset('images/default_tec.png') 
+                                default => asset('images/default_tec.png')
                             };
-
                         @endphp
-                        <svg class="w-8 h-8 text-[#017CBF] opacity-70" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">{!! $iconPath !!}</svg>
+                        <img src="{{ $defaultImg }}" class="w-full h-full object-cover">
                     @endif
+
+                    <div class="absolute top-2 right-2 px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wide shadow-sm
+                        {{ $item->beschikbaar > 10 ? 'bg-emerald-500 text-white' : ($item->beschikbaar > 0 ? 'bg-amber-500 text-white' : 'bg-rose-500 text-white') }}">
+                        {{ $item->beschikbaar }} op stock
+                    </div>
                 </div>
 
                 <div class="flex-grow mb-5">
-                    <h3
-                        class="text-base font-black text-slate-800 leading-snug group-hover:text-[#005b96] transition-colors line-clamp-3">
-                        {{ $item->omschrijving }}</h3>
+                    <h3 class="text-base font-black text-slate-800 leading-snug group-hover:text-[#005b96] transition-colors line-clamp-3">
+                        {{ $item->omschrijving }}
+                    </h3>
                 </div>
+
                 <div class="flex items-center justify-between pt-4 border-t border-slate-100">
                     <button
                         class="btn-favorite p-2 rounded-full bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors"
@@ -358,23 +362,23 @@
             }
             cart.forEach(item => {
                 container.innerHTML += `
-                    <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col group">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="pr-2">
-                                <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">${item.ref}</div>
-                                <div class="font-bold text-slate-800 text-sm leading-tight">${item.naam}</div>
+                        <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col group">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="pr-2">
+                                    <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">${item.ref}</div>
+                                    <div class="font-bold text-slate-800 text-sm leading-tight">${item.naam}</div>
+                                </div>
+                                <button onclick="removeFromCart(${item.id})" class="text-slate-300 hover:text-rose-500 p-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
                             </div>
-                            <button onclick="removeFromCart(${item.id})" class="text-slate-300 hover:text-rose-500 p-1">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
+                            <div class="flex items-center justify-between bg-slate-50 p-1 rounded-lg">
+                                <button type="button" onclick="updateCartQty(${item.id}, -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-slate-600 font-bold">-</button>
+                                <span class="font-black text-sm text-[#005b96] w-10 text-center">${item.aantal}</span>
+                                <button type="button" onclick="updateCartQty(${item.id}, 1)" class="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-slate-600 font-bold">+</button>
+                            </div>
                         </div>
-                        <div class="flex items-center justify-between bg-slate-50 p-1 rounded-lg">
-                            <button type="button" onclick="updateCartQty(${item.id}, -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-slate-600 font-bold">-</button>
-                            <span class="font-black text-sm text-[#005b96] w-10 text-center">${item.aantal}</span>
-                            <button type="button" onclick="updateCartQty(${item.id}, 1)" class="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-slate-600 font-bold">+</button>
-                        </div>
-                    </div>
-                `;
+                    `;
             });
         }
 

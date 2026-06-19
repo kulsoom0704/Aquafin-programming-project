@@ -62,11 +62,6 @@
                 Bestellingen
             </button>
 
-            <button onclick="toonSectie('leveringen')" id="btn-leveringen" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all text-left">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                Uitgifte
-            </button>
-
             <button onclick="toonSectie('retours')" id="btn-retours" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all text-left">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                 Retours
@@ -311,48 +306,7 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-            <!-- SECTIE: UITGIFTE -->
-            <div class="sectie bg-white border border-slate-200 rounded-3xl p-8 shadow-sm" id="sectie-leveringen">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="w-12 h-12 bg-[#017CBF]/10 rounded-2xl flex items-center justify-center text-[#017CBF]">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-black text-[#131236] tracking-tight">Materiaal uitgifte</h1>
-                        <p class="text-sm text-slate-500 font-medium mt-1">Registreer direct materiaal dat wordt meegegeven.</p>
-                    </div>
-                </div>
-                
-                <form method="POST" action="/levering" class="space-y-6">
-                    @csrf
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2 pl-1">Naam technieker</label>
-                        <input type="text" name="technieker_naam" placeholder="Bv. Lukas Peeters" required
-                            class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-semibold placeholder-slate-400 focus:bg-white focus:border-[#017CBF] focus:ring-4 focus:ring-[#017CBF]/10 outline-none transition-all">
-                    </div>
-
-                    <div class="relative">
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2 pl-1">Zoek en voeg artikel toe</label>
-                        <div class="relative">
-                            <input type="text" id="zoek-uitgifte" placeholder="Typ artikelnummer of naam..." autocomplete="off" onkeyup="filterUitgifte()"
-                                class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-semibold placeholder-slate-400 focus:bg-white focus:border-[#017CBF] focus:ring-4 focus:ring-[#017CBF]/10 outline-none transition-all pl-12">
-                            <svg class="w-5 h-5 text-slate-400 absolute left-4 top-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
-                        <div class="absolute z-20 w-full mt-2 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden" id="zoek-suggesties"></div>
-                    </div>
-
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 min-h-[100px]">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Geselecteerde artikelen</label>
-                        <div id="artikelen-lijst" class="space-y-2"></div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-[#017CBF] hover:bg-[#005b96] text-white font-bold text-sm py-4 rounded-2xl shadow-lg shadow-[#017CBF]/20 active:scale-[0.98] transition-all flex justify-center items-center gap-2">
-                        Uitgifte registreren
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </button>
-                </form>
-            </div>
-
+           
             <!-- SECTIE: RETOURS -->
             <div class="sectie bg-white border border-slate-200 rounded-3xl p-8 shadow-sm" id="sectie-retours">
                 <div class="flex items-center gap-4 mb-8">
@@ -459,7 +413,7 @@
     </main>
 
     <!-- POPUP DETAILS (Voorraad) -->
-    <div class="popup-achtergrond flex items-center justify-center" id="popup-achtergrond">
+    <div class="popup-achtergrond" id="popup-achtergrond">
         <div class="bg-white p-8 rounded-3xl w-full max-w-md shadow-2xl relative animate-fade-in mx-4">
             <h2 class="text-2xl font-black text-[#131236] mb-6 border-b border-slate-100 pb-4">Artikel Details</h2>
             <p style="display:none;"><span id="popup-id"></span></p>
@@ -564,28 +518,7 @@
                 });
         });
 
-        function filterUitgifte() {
-            var zoekterm = document.getElementById('zoek-uitgifte').value.toLowerCase();
-            var suggesties = document.getElementById('zoek-suggesties');
-            if (zoekterm.length < 1) { suggesties.style.display = 'none'; return; }
-            var resultaten = alleMateriaal.filter(item => item.tekst.toLowerCase().includes(zoekterm));
-            suggesties.innerHTML = '';
-            if (resultaten.length === 0) { suggesties.style.display = 'none'; return; }
-            
-            resultaten.forEach(item => {
-                var div = document.createElement('div');
-                div.className = 'suggestie-item';
-                div.innerText = item.tekst;
-                div.onclick = function() {
-                    voegArtikelToeAanLijst(item.id, item.tekst, 'artikelen-lijst');
-                    document.getElementById('zoek-uitgifte').value = '';
-                    suggesties.style.display = 'none';
-                };
-                suggesties.appendChild(div);
-            });
-            suggesties.style.display = 'block';
-        }
-
+       
         function voegArtikelToeAanLijst(id, tekst, lijstId) {
             var lijst = document.getElementById(lijstId);
             var rij = document.createElement('div');
@@ -602,13 +535,13 @@
         }
 
         function toonPopup(id, artikelnummer, omschrijving, locatie, beschikbaar) {
-            document.getElementById('popup-id').innerText = id;
-            document.getElementById('popup-artikelnummer').innerText = artikelnummer;
-            document.getElementById('popup-omschrijving').innerText = omschrijving;
-            document.getElementById('popup-locatie').innerText = locatie;
-            document.getElementById('popup-beschikbaar').innerText = beschikbaar;
-            document.getElementById('popup-achtergrond').style.display = 'flex';
-        }
+    document.getElementById('popup-id').innerText = id;
+    document.getElementById('popup-artikelnummer').innerText = artikelnummer;
+    document.getElementById('popup-omschrijving').innerText = omschrijving;
+    document.getElementById('popup-locatie').innerText = locatie;
+    document.getElementById('popup-beschikbaar').innerText = beschikbaar;
+    document.getElementById('popup-achtergrond').style.display = 'flex';  
+}
 
         function sluitPopup() { document.getElementById('popup-achtergrond').style.display = 'none'; }
         function wijzigen() { window.location.href = '/materiaal/' + document.getElementById('popup-id').innerText + '/wijzigen'; }

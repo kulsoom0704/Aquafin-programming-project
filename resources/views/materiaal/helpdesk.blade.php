@@ -2,136 +2,119 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Magazijnier - Helpdesk</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquafin - Helpdesk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #dceefb 0%, #c8e6f5 50%, #d4eef7 100%); min-height: 100vh; display: flex; }
-        .sidebar { width: 220px; background: white; min-height: 100vh; display: flex; flex-direction: column; border-right: 1px solid #eee; position: fixed; top: 0; left: 0; }
-        .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 20px; border-bottom: 1px solid #eee; }
-        .sidebar-logo-icon { background: linear-gradient(to right, #0a5a8a, #00b4d8); padding: 8px; border-radius: 8px; font-size: 18px; color: white; }
-        .sidebar-logo-titel { font-weight: bold; color: #0a5a8a; font-size: 16px; }
-        .sidebar-logo-subtitel { font-size: 11px; color: #999; }
-        .sidebar-nav { flex: 1; padding: 15px 0; }
-        .sidebar-nav a, .sidebar-nav button { display: block; width: 100%; padding: 12px 20px; color: #555; text-decoration: none; font-size: 14px; border: none; background: none; text-align: left; cursor: pointer; border-left: 3px solid transparent; }
-        .sidebar-nav a:hover, .sidebar-nav button:hover { background: #f5f5f5; }
-        .sidebar-nav a.actief { color: #0a5a8a; background: #f0f7ff; border-left: 3px solid #0a5a8a; font-weight: bold; }
-        
-        .sidebar-gebruiker { padding: 15px 20px; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
-        .sidebar-avatar { background: linear-gradient(to right, #0a5a8a, #00b4d8); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; flex-shrink: 0; }
-
-        /* Pour le petit scroll propre si besoin */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap');
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
     </style>
 </head>
-<body>
+<body class="flex h-screen overflow-hidden text-slate-800">
 
-    <div class="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-icon">M</div>
+    <aside class="w-64 bg-[#131236] flex flex-col shadow-2xl relative z-20 shrink-0 h-full">
+        <div class="p-6 flex items-center gap-4 border-b border-white/10">
+            <div class="w-10 h-10 bg-[#017CBF] rounded-xl flex items-center justify-center shadow-lg shadow-[#017CBF]/20 shrink-0">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.25c-2.485 5.517-5.25 9.774-5.25 13.5a5.25 5.25 0 0010.5 0c0-3.726-2.765-7.983-5.25-13.5z"></path></svg>
+            </div>
             <div>
-                <div class="sidebar-logo-titel">AQUAFIN</div>
-                <div class="sidebar-logo-subtitel">MAGAZIJNIER PORTAAL</div>
+                <h1 class="text-white font-black tracking-widest leading-tight">AQUAFIN</h1>
+                <p class="text-[#017CBF] text-[10px] font-bold uppercase tracking-widest">Magazijnier</p>
             </div>
         </div>
 
-        <div class="sidebar-nav">
-            <a href="/materiaal?sectie=voorraad">Voorraad</a>
-            <a href="/materiaal?sectie=meldingen">Bestellingen</a>
-            <a href="/materiaal?sectie=retours">Retours</a>
-            <a href="/materiaal?sectie=archief">Archief</a>
-            
-            @php
-                $unread = \App\Models\ChatBericht::whereHas('noodoproep', function($q) {
-                    $q->where('type', 'Magazijnier')->where('status', 'open');
-                })->where('afzender_rol', 'Technieker')->where('gelezen', false)->count();
-            @endphp
-            <a href="/materiaal/helpdesk" class="actief" style="margin-top: 10px; border-top: 1px solid #eee;">
-                💬 Helpdesk Chat
-                @if($unread > 0)
-                    <span style="background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; margin-left: 5px; font-weight: bold; animation: pulse 2s infinite;">{{ $unread }}</span>
-                @endif
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="/materiaal?sectie=voorraad" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                Voorraad
             </a>
-        </div>
+            <a href="/materiaal?sectie=meldingen" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                Bestellingen
+            </a>
+            <a href="/materiaal?sectie=retours" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                Retours
+            </a>
+            
+            <div class="pt-6 mt-6 border-t border-white/10">
+                <div class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold bg-white/10 text-white border-l-4 border-[#017CBF]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    Helpdesk Chat
+                </div>
+            </div>
+        </nav>
 
-        <div class="sidebar-gebruiker">
-            <div class="sidebar-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'M', 0, 2)) }}</div>
-            <div>
-                <div style="font-weight: bold; font-size: 13px;">{{ Auth::user()->name ?? 'Magazijnier' }}</div>
-                <a href="/logout" style="color: #e74c3c; font-size: 12px; text-decoration: none;">Uitloggen</a>
+        <div class="p-4 bg-black/20 backdrop-blur-md border-t border-white/5 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#017CBF] to-cyan-400 flex items-center justify-center text-white font-black text-sm shadow-md">
+                {{ strtoupper(substr(Auth::user()->name ?? 'M', 0, 2)) }}
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <p class="text-white text-sm font-bold truncate">{{ Auth::user()->name ?? 'Magazijnier' }}</p>
+                <a href="/logout" class="text-rose-400 hover:text-rose-300 text-xs font-bold transition-colors">Uitloggen</a>
             </div>
         </div>
-    </div>
+    </aside>
 
-    <div class="hoofdinhoud" style="margin-left: 220px; background-color: #f8fafc; min-height: 100vh; padding: 40px; width: calc(100% - 220px);">
+    <main class="flex-1 overflow-y-auto p-6 md:p-10">
         <div class="max-w-6xl mx-auto">
-            
             <div class="mb-10">
-                <h2 class="text-3xl font-black text-[#001e33] tracking-tight">Helpdesk Overzicht</h2>
+                <h2 class="text-3xl font-black text-[#131236] tracking-tight">Helpdesk Overzicht</h2>
                 <p class="text-sm text-slate-500 font-medium mt-1">Beheer alle inkomende aanvragen van techniekers.</p>
             </div>
 
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-widest text-slate-400 font-black">
-                            <th class="p-5">Technieker</th>
-                            <th class="p-5">Ticket</th>
-                            <th class="p-5">Bericht</th>
-                            <th class="p-5">Status</th>
-                            <th class="p-5 text-right">Actie</th>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 uppercase tracking-widest font-black">
+                            <th class="p-6">Technieker</th>
+                            <th class="p-6">Ticket</th>
+                            <th class="p-6">Bericht</th>
+                            <th class="p-6">Status</th>
+                            <th class="p-6 text-right">Actie</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($oproepen as $oproep)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="p-5">
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="p-6">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-[#005b96] flex items-center justify-center font-black text-xs">
+                                    <div class="w-9 h-9 rounded-full bg-blue-100 text-[#017CBF] flex items-center justify-center font-black text-xs shadow-sm">
                                         {{ strtoupper(substr($oproep->technieker->name ?? 'T', 0, 1)) }}
                                     </div>
-                                    <span class="font-bold text-slate-700 text-sm">{{ $oproep->technieker->name ?? 'Onbekend' }}</span>
+                                    <span class="font-bold text-slate-800 text-sm">{{ $oproep->technieker->name ?? 'Onbekend' }}</span>
                                 </div>
                             </td>
-                            <td class="p-5">
-                                <span class="text-xs font-black text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">#{{ $oproep->id }}</span>
-                            </td>
-                            <td class="p-5">
-                                <p class="text-xs text-slate-500 font-medium line-clamp-1 max-w-xs">{{ Str::limit($oproep->bericht, 50) }}</p>
-                            </td>
-                            <td class="p-5">
+                            <td class="p-6 text-xs font-black text-slate-400 bg-slate-50/50">#{{ $oproep->id }}</td>
+                            <td class="p-6 text-sm text-slate-600 font-medium max-w-sm truncate">{{ Str::limit($oproep->bericht, 50) }}</td>
+                            <td class="p-6">
                                 @if($oproep->status == 'open')
-                                    <span class="bg-emerald-100 text-emerald-600 border border-emerald-200 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">Open</span>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Open
+                                    </span>
                                 @else
-                                    <span class="bg-slate-100 text-slate-500 border border-slate-200 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">Gesloten</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">Gesloten</span>
                                 @endif
                             </td>
-                            <td class="p-5 text-right">
-                                <a href="/materiaal/helpdesk/{{ $oproep->id }}" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:border-[#005b96] hover:text-[#005b96] text-slate-600 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm">
+                            <td class="p-6 text-right">
+                                <a href="/materiaal/helpdesk/{{ $oproep->id }}" class="inline-flex items-center gap-2 bg-[#131236] hover:bg-[#017CBF] text-white px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md active:scale-95">
                                     Openen
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
                                 </a>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="p-16 text-center">
-                                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <span class="text-4xl opacity-50">📭</span>
-                                </div>
+                            <td colspan="5" class="p-20 text-center">
+                                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">📭</div>
                                 <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest">Geen actieve chats</h3>
-                                <p class="text-xs text-slate-400 mt-1">Je mailbox is helemaal leeg.</p>
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-
         </div>
-    </div>
+    </main>
 
 </body>
 </html>
