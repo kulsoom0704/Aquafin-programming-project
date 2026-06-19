@@ -39,11 +39,6 @@
 
 <body class="bg-animated text-slate-800 antialiased h-[100dvh] flex overflow-hidden pb-16 md:pb-0">
 
-<<<<<<< HEAD
-    <!-- Zijbalk Desktop -->
-=======
-    <!-- Zijbalk -->
->>>>>>> cee224c57affc99e9965fc343baf1d7aad6bb69e
     <aside class="hidden md:flex flex-col w-72 bg-[#001e33] h-full z-40 relative shadow-[4px_0_30px_rgba(0,0,0,0.15)]">
         
         <div class="p-8 pb-8 flex items-center gap-4 border-b border-white/5">
@@ -86,11 +81,6 @@
         </div>
     </aside>
 
-<<<<<<< HEAD
-    <!-- Header Mobile -->
-=======
-    <!-- Mobiele -->
->>>>>>> cee224c57affc99e9965fc343baf1d7aad6bb69e
     <div class="md:hidden fixed top-0 inset-x-0 h-16 bg-[#001e33] border-b border-white/5 z-40 flex items-center justify-between px-4 shadow-md">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#005b96] to-cyan-400 flex items-center justify-center">
@@ -103,11 +93,6 @@
         </a>
     </div>
 
-<<<<<<< HEAD
-    <!-- Main Content -->
-=======
-    <!-- Main content -->
->>>>>>> cee224c57affc99e9965fc343baf1d7aad6bb69e
     <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-transparent relative z-10 custom-scrollbar pt-16 md:pt-0">
         <div class="px-4 sm:px-6 lg:px-10 py-8 max-w-[1600px] w-full mx-auto pb-28 md:pb-10">
             
@@ -128,13 +113,7 @@
         </div> 
     </main>
 
-<<<<<<< HEAD
-    <!-- ZWEVENDE CHAT KNOP MET NOTIFICATIE -->
     <div class="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50" id="floatingChatBtn">
-=======
-      <!-- ZWEVENDE CHAT KNOP MET NOTIFICATIE -->
-    <div class="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50">
->>>>>>> cee224c57affc99e9965fc343baf1d7aad6bb69e
         <button onclick="toggleSupportTicket()" class="w-14 h-14 bg-gradient-to-r from-[#005b96] to-cyan-500 rounded-2xl flex items-center justify-center text-white shadow-2xl hover:scale-105 active:scale-95 transition-all relative border border-cyan-400/20 group">
             <svg class="w-6 h-6 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
@@ -147,14 +126,8 @@
         </button>
     </div>
 
-<<<<<<< HEAD
-    <!-- COULISSANT DU CHAT LIVE AVEC ONGLETS -->
-=======
-    <!-- COULISSANT DU CHAT LIVE -->
->>>>>>> cee224c57affc99e9965fc343baf1d7aad6bb69e
     <div id="supportTicketWindow" class="fixed bottom-36 right-4 md:bottom-24 md:right-6 w-[calc(100vw-32px)] sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-200 z-50 translate-y-10 opacity-0 pointer-events-none transition-all duration-300 flex flex-col overflow-hidden h-[500px]">
         
-        <!-- En-tête du Chat -->
         <div class="p-4 bg-[#001e33] text-white flex justify-between items-center shrink-0">
             <div class="flex items-center gap-3">
                 <div class="relative">
@@ -173,7 +146,6 @@
             </button>
         </div>
 
-        <!-- LA BARRE DES ONGLETS -->
         <div class="flex overflow-x-auto bg-slate-100 border-b border-slate-200 hide-scrollbar shrink-0" id="chatTabsContainer">
             <button onclick="switchChatTab('new')" id="tab_new" class="chat-tab px-4 py-3 text-[10px] font-black uppercase tracking-wider whitespace-nowrap border-r border-slate-200 transition-colors bg-white text-[#005b96] border-b-2 border-b-[#005b96]">
                 + Nieuw
@@ -193,7 +165,6 @@
             @endif
         </div>
 
-        <!-- VUE 1 : NOUVELLE DEMANDE -->
         <div id="chat_view_new" class="chat-view flex-1 flex flex-col p-5 bg-slate-50 overflow-y-auto">
             <form action="{{ route('chat.start') }}" method="POST" class="flex flex-col">
                 @csrf
@@ -223,7 +194,6 @@
             </form>
         </div>
 
-        <!-- VUE 2 : HISTORIEK -->
         <div id="chat_view_history" class="chat-view flex-1 flex flex-col p-5 bg-slate-50 overflow-y-auto hidden">
             @if(isset($geslotenChats) && $geslotenChats->count() > 0)
                 <div class="space-y-3">
@@ -245,12 +215,10 @@
             @endif
         </div>
 
-        <!-- VUES 3+ : CHATS ACTIFS -->
         @if(isset($openChats))
             @foreach($openChats as $actieveChat)
             <div id="chat_view_{{ $actieveChat->id }}" class="chat-view flex-1 flex flex-col bg-slate-50 overflow-hidden hidden">
                 
-                <!-- HEADER AVEC LE BOUTON FERMER -->
                 <div class="bg-white border-b border-slate-100 px-4 py-2 flex justify-between items-center shrink-0 shadow-sm z-10">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                         Ticket #{{ $actieveChat->id }}
@@ -265,7 +233,6 @@
                     </form>
                 </div>
 
-                <!-- ZONE DES MESSAGES -->
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar flex flex-col active-chat-container" data-chat-id="{{ $actieveChat->id }}" id="chatContainer_{{ $actieveChat->id }}">
                     @foreach($actieveChat->berichten as $msg)
                         @if($msg->afzender_rol === 'Technieker')
@@ -294,7 +261,6 @@
                     @endforeach
                 </div>
 
-                <!-- ZONE POUR RÉPONDRE -->
                 <div class="p-3 bg-white border-t border-slate-100 shrink-0">
                     <form action="{{ route('chat.reply', $actieveChat->id) }}" method="POST" class="flex items-end gap-2 chat-reply-form">
                         @csrf
@@ -304,60 +270,11 @@
                         </button>
                     </form>
                 </div>
-<<<<<<< HEAD
             </div>
             @endforeach
-=======
-            @else
-                <div class="p-3 bg-slate-100 border-t border-slate-200 shrink-0 text-center">
-                    <span class="text-xs font-bold text-slate-500"> Deze conversatie is gesloten.</span>
-                </div>
-            @endif
-
-        @else
-
-            <!-- Nieuwe chat starten -->
-            <form action="{{ route('chat.start') }}" method="POST" class="flex-1 flex flex-col p-5 bg-slate-50 overflow-y-auto">
-                @csrf
-                <div class="bg-blue-50 border border-blue-100 text-[#005b96] p-3 rounded-xl mb-4 text-xs font-medium">
-                    Kies de juiste afdeling. Jouw bericht wordt direct naar de verantwoordelijke gestuurd.
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Kies de afdeling</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="doelgroep" value="Magazijnier" class="peer sr-only" required>
-                            <div class="p-3 rounded-xl border border-slate-200 bg-white text-center peer-checked:bg-cyan-50 peer-checked:border-cyan-400 peer-checked:text-cyan-700 transition-all">
-                                <span class="text-xl block mb-1"></span>
-                                <span class="text-[10px] font-black uppercase">Magazijn</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="doelgroep" value="Admin" class="peer sr-only">
-                            <div class="p-3 rounded-xl border border-slate-200 bg-white text-center peer-checked:bg-[#005b96]/10 peer-checked:border-[#005b96] peer-checked:text-[#005b96] transition-all">
-                                <span class="text-xl block mb-1"></span>
-                                <span class="text-[10px] font-black uppercase">Technisch</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="flex-1 flex flex-col">
-                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Jouw bericht</label>
-                    <textarea name="bericht" required class="flex-1 w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-[#005b96] transition-colors resize-none mb-4" placeholder="Beschrijf je probleem hier..."></textarea>
-                </div>
-
-                <button type="submit" class="w-full h-11 bg-[#005b96] hover:bg-[#004a7c] text-white rounded-xl font-black text-xs shadow-md active:scale-95 transition-all">
-                    Start Gesprek
-                </button>
-            </form>
-
->>>>>>> cee224c57affc99e9965fc343baf1d7aad6bb69e
         @endif
     </div>
 
-    <!-- BOTTOM NAV MOBILE -->
     <div class="md:hidden fixed bottom-0 inset-x-0 bg-[#001e33] border-t border-white/5 pb-safe z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.3)]">
         <div class="flex justify-around items-center h-16">
             <a href="{{ route('materiaal.bestellen') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('materiaal.bestellen') ? 'text-cyan-400' : 'text-slate-400' }}">
@@ -375,8 +292,6 @@
         </div>
     </div>
 
-<<<<<<< HEAD
-    <!-- SCRIPT AJAX + RECHARGEMENT LIVE + SON + LECTURE AUTOMATIQUE -->
     <script>
         function markAsRead(chatId) {
             if(chatId !== 'new' && chatId !== 'history') {
@@ -387,32 +302,27 @@
                         'Accept': 'application/json'
                     }
                 });
+
+                let activeTabBtn = document.getElementById('tab_' + chatId);
+                if(activeTabBtn) {
+                    let badge = activeTabBtn.querySelector('.bg-rose-500');
+                    if(badge) badge.remove();
+                }
+
+                let mainBtnBadge = document.querySelector('#floatingChatBtn .bg-rose-500');
+                if(mainBtnBadge) mainBtnBadge.remove();
             }
         }
 
-=======
-    
-   <script>
->>>>>>> cee224c57affc99e9965fc343baf1d7aad6bb69e
         function openChat() {
             const windowDiv = document.getElementById('supportTicketWindow');
             if (windowDiv) {
                 windowDiv.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-10');
-<<<<<<< HEAD
                 const activeChat = document.querySelector('.chat-view:not(.hidden) .active-chat-container');
                 if(activeChat) {
                     setTimeout(() => { activeChat.scrollTop = activeChat.scrollHeight; }, 50); 
                     let id = activeChat.getAttribute('data-chat-id');
                     markAsRead(id);
-=======
-                
-                // Auto-scroll naar beneden 
-                const chatContainer = document.getElementById('chatContainer');
-                if(chatContainer) {
-                    setTimeout(() => {
-                        chatContainer.scrollTop = chatContainer.scrollHeight;
-                    }, 50); 
->>>>>>> cee224c57affc99e9965fc343baf1d7aad6bb69e
                 }
             }
         }

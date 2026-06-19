@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\ChatBericht;
 use App\Models\Installatie;
 use Barryvdh\DomPDF\Facade\Pdf;
+
 class AdminController extends Controller
 {
     public function dashboard()
@@ -23,28 +24,30 @@ class AdminController extends Controller
 
         $userCount = User::count();
 
-        $helpdeskCount = Noodoproep::where('status', 'open')->count();
+        // Tel alleen open helpdesktickets voor de Admin-rol
+        $helpdeskCount = Noodoproep::where('status', 'open')
+            ->where('type', 'Admin')
+            ->count();
 
         $installatieCount = Installatie::count();
 
-        $geslotenTickets = Noodoproep::where('status', 'gesloten')->count();
+        // Tel alleen gesloten helpdesktickets voor de Admin-rol
+        $geslotenTickets = Noodoproep::where('status', 'gesloten')
+            ->where('type', 'Admin')
+            ->count();
 
-        return view(
-    'admin.dashboard',
-    compact(
-    'rainfall',
-    'userCount',
-    'helpdeskCount',
-    'installatieCount',
-    'geslotenTickets'
-)
-);
+        return view('admin.dashboard', compact(
+            'rainfall',
+            'userCount',
+            'helpdeskCount',
+            'installatieCount',
+            'geslotenTickets'
+        ));
     }
 
     public function users()
     {
         $users = User::orderBy('name')->get();
-
         return view('admin.users', compact('users'));
     }
 
@@ -75,7 +78,6 @@ class AdminController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-
         return redirect('/admin/users');
     }
 
@@ -83,28 +85,15 @@ class AdminController extends Controller
     {
         $user->active = !$user->active;
         $user->save();
-
         return redirect('/admin/users');
     }
 
     public function storingen()
     {
         $storingen = [
-            [
-                'locatie' => 'Brussel Noord',
-                'type' => 'Overstroming',
-                'status' => 'Kritiek'
-            ],
-            [
-                'locatie' => 'Antwerpen Centrum',
-                'type' => 'Waterlek',
-                'status' => 'Gemiddeld'
-            ],
-            [
-                'locatie' => 'Gent Zuid',
-                'type' => 'Rioolprobleem',
-                'status' => 'Laag'
-            ]
+            ['locatie' => 'Brussel Noord', 'type' => 'Overstroming', 'status' => 'Kritiek'],
+            ['locatie' => 'Antwerpen Centrum', 'type' => 'Waterlek', 'status' => 'Gemiddeld'],
+            ['locatie' => 'Gent Zuid', 'type' => 'Rioolprobleem', 'status' => 'Laag']
         ];
 
         return view('admin.storingen', compact('storingen'));
@@ -112,18 +101,19 @@ class AdminController extends Controller
 
     public function helpdesk()
     {
-      $oproepen = Noodoproep::with('technieker')
-    ->where('status', 'open')
-    ->latest()
-    ->get();
+        // Toon alleen open tickets die aan de Admin zijn toegewezen
+        $oproepen = Noodoproep::with('technieker')
+            ->where('status', 'open')
+            ->where('type', 'Admin')
+            ->latest()
+            ->get();
 
-    return view('admin.helpdesk', compact('oproepen'));
+        return view('admin.helpdesk', compact('oproepen'));
     }
 
-   public function showHelpdesk($id)
+    public function showHelpdesk($id)
     {
         $oproep = Noodoproep::with(['technieker', 'berichten'])->findOrFail($id);
-        
         
         ChatBericht::where('noodoproep_id', $id)
             ->where('afzender_rol', 'Technieker')
@@ -132,17 +122,16 @@ class AdminController extends Controller
         return view('admin.gesprek', compact('oproep'));
     }
 
-   
-public function sluitGesprek($id)
-{
-    $oproep = Noodoproep::findOrFail($id);
+    public function sluitGesprek($id)
+    {
+        $oproep = Noodoproep::findOrFail($id);
+        $oproep->status = 'gesloten';
+        $oproep->save();
 
-    $oproep->status = 'gesloten';
-    $oproep->save();
+        return redirect('/admin/helpdesk');
+    }
 
-    return redirect('/admin/helpdesk');
-}
-public function verstuurBericht(Request $request, $id)
+    public function verstuurBericht(Request $request, $id)
     {
         $request->validate(['bericht' => 'required']);
         
@@ -152,66 +141,48 @@ public function verstuurBericht(Request $request, $id)
             'bericht' => $request->bericht,
             'gelezen' => false
         ]);
-
         
         if ($request->ajax()) {
             return response()->json(['success' => true]);
         }
         return redirect()->back();
     }
-public function geslotenTickets()
-{
-    $oproepen = Noodoproep::with('technieker')
-        ->where('status', 'gesloten')
-        ->latest()
-        ->get();
 
-    return view('admin.gesloten-tickets', compact('oproepen'));
-}
-public function updateRole(Request $request, User $user)
-{
-    $request->validate([
-        'role' => 'required'
-    ]);
+    public function geslotenTickets()
+    {
+        // Toon alleen gesloten tickets in de Admin-historiek
+        $oproepen = Noodoproep::with('technieker')
+            ->where('status', 'gesloten')
+            ->where('type', 'Admin')
+            ->latest()
+            ->get();
 
-    $user->role = $request->role;
-    $user->save();
+        return view('admin.gesloten-tickets', compact('oproepen'));
+    }
 
-    return redirect()->back()->with(
-    'success',
-    $user->name . ' is nu ' . $request->role
-);
-}
-public function downloadPdf()
-{
-    $rapporten = [
-        [
-            'seizoen' => 'Winter',
-            'regenval' => '242 mm',
-            'risico' => 'Laag'
-        ],
-        [
-            'seizoen' => 'Lente',
-            'regenval' => '193 mm',
-            'risico' => 'Laag'
-        ],
-        [
-            'seizoen' => 'Zomer',
-            'regenval' => '238 mm',
-            'risico' => 'Gemiddeld'
-        ],
-        [
-            'seizoen' => 'Herfst',
-            'regenval' => '255 mm',
-            'risico' => 'Gemiddeld'
-        ]
-    ];
+    public function updateRole(Request $request, User $user)
+    {
+        $request->validate([
+            'role' => 'required'
+        ]);
 
-    $pdf = Pdf::loadView(
-        'admin.pdf-rapport',
-        compact('rapporten')
-    );
+        $user->role = $request->role;
+        $user->save();
 
-    return $pdf->download('aquafin-rapport.pdf');
-}
+        return redirect()->back()->with('success', $user->name . ' is nu ' . $request->role);
+    }
+
+    public function downloadPdf()
+    {
+        $rapporten = [
+            ['seizoen' => 'Winter', 'regenval' => '242 mm', 'risico' => 'Laag'],
+            ['seizoen' => 'Lente', 'regenval' => '193 mm', 'risico' => 'Laag'],
+            ['seizoen' => 'Zomer', 'regenval' => '238 mm', 'risico' => 'Gemiddeld'],
+            ['seizoen' => 'Herfst', 'regenval' => '255 mm', 'risico' => 'Gemiddeld']
+        ];
+
+        $pdf = Pdf::loadView('admin.pdf-rapport', compact('rapporten'));
+
+        return $pdf->download('aquafin-rapport.pdf');
+    }
 }

@@ -282,40 +282,41 @@ class MateriaalController extends Controller
     }
 
     public function bestellingOpslaan(Request $request)
-    {
-        $cart = json_decode($request->cart_data, true);
+{
+    $cart = json_decode($request->cart_data, true);
 
-        if (!$cart || count($cart) === 0) {
-            return redirect()->back()->with('error', 'Winkelwagen is leeg.');
-        }
-
-        $userId = session('gebruiker_id', 1);
-        $mijnDepot = session('depot', 'Antwerpen'); 
-
-        foreach ($cart as $item) {
-            $voorraad = Voorraad::where('materiaal_id', $item['id'])
-                                ->where('depot_naam', $mijnDepot)
-                                ->first();
-
-            if (!$voorraad || $voorraad->beschikbaar < $item['aantal']) {
-                return redirect()->back()->with('error', "Niet genoeg voorraad voor {$item['naam']} in depot {$mijnDepot}!");
-            }
-
-            Bestelling::create([
-                'user_id'      => $userId,
-                'onderdeel_id' => null,
-                'materiaal_id' => $item['id'],
-                'aantal'       => $item['aantal'],
-                'status'       => 'in afwachting',
-                'depot'        => $mijnDepot 
-            ]);
-
-            $voorraad->beschikbaar -= $item['aantal'];
-            $voorraad->save();
-        }
-
-        return redirect()->route('technieker.historiek')->with('success', 'Bestelling succesvol geplaatst!');
+    if (!$cart || count($cart) === 0) {
+        return redirect()->back()->with('error', 'Winkelwagen is leeg.');
     }
+
+    
+    $userId = session('gebruiker_id', 1);
+    $mijnDepot = session('depot', 'Antwerpen'); 
+
+    foreach ($cart as $item) {
+        $voorraad = Voorraad::where('materiaal_id', $item['id'])
+                            ->where('depot_naam', $mijnDepot)
+                            ->first();
+
+        if (!$voorraad || $voorraad->beschikbaar < $item['aantal']) {
+            return redirect()->back()->with('error', "Niet genoeg voorraad voor {$item['naam']} in depot {$mijnDepot}!");
+        }
+
+        Bestelling::create([
+            'user_id'      => $userId,
+            'onderdeel_id' => null,
+            'materiaal_id' => $item['id'],
+            'aantal'       => $item['aantal'],
+            'status'       => 'in afwachting',
+            'depot'        => $mijnDepot 
+        ]);
+
+        $voorraad->beschikbaar -= $item['aantal'];
+        $voorraad->save();
+    }
+
+    return redirect()->route('technieker.historiek')->with('success', 'Bestelling succesvol geplaatst!');
+}
 
     public function magazijnierIndex()
     {
@@ -346,25 +347,28 @@ class MateriaalController extends Controller
         return redirect('/materiaal?sectie=meldingen')->with('succes', 'Bestelling teruggezet naar bestellingen!');
     }
 
-    public function techniekerHistoriek()
-    {
-        $gebruiker_id = session('gebruiker_id', 1);
-        $bestellingen = Bestelling::with('materiaal')
-            ->where('user_id', $gebruiker_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-        return view('technieker.historiek', compact('bestellingen'));
-    }
+   public function techniekerHistoriek()
+{
+    // Haal de technieker-ID op uit de sessie voor zijn bestelgeschiedenis
+    $gebruiker_id = session('gebruiker_id', 1);
+    
+    $bestellingen = Bestelling::with('materiaal')
+        ->where('user_id', $gebruiker_id)
+        ->orderBy('created_at', 'desc')
+        ->get();
+        
+    return view('technieker.historiek', compact('bestellingen'));
+}
 
     public function helpdesk()
     {
-        // Le magasinier ne voit QUE les tickets qui lui sont destinés
+        // Toon alleen helpdeskverzoeken die voor de magazijnier zijn bedoeld
         $oproepen = \App\Models\Noodoproep::with('technieker')
             ->where('type', 'Magazijnier')
             ->orderByRaw("status = 'open' DESC")
             ->latest()
             ->get();
-        return view('materiaal.helpdesk', compact('oproepen')); // Tu pourras juste dupliquer admin/helpdesk.blade.php ici
+        return view('materiaal.helpdesk', compact('oproepen')); // Gebruik admin/helpdesk.blade.php als basis voor deze pagina
     }
 
    public function showHelpdesk($id)

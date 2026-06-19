@@ -18,6 +18,15 @@ class Materiaal extends Model
 
     public function voorraden()
     {
-        return $this->hasMany(Voorraad::class);
+        return $this->hasMany(Voorraad::class, 'materiaal_id');
+    }
+
+    
+    public function getBeschikbaarAttribute()
+    {
+        $depot = session('depot', 'Antwerpen');
+        $stock = $this->voorraden()->where('depot_naam', $depot)->first();
+        
+        return $stock ? $stock->beschikbaar : 0;
     }
 }

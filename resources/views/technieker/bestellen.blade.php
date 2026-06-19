@@ -34,15 +34,22 @@
 
 @if(isset($weer) && $weer['is_beschikbaar'])
     <div id="weatherSection" class="mb-8">
-        <div class="bg-gradient-to-br from-[#001e33] to-[#00365c] rounded-3xl p-5 md:p-6 relative overflow-hidden shadow-lg border border-white/5">
+        <div class="bg-gradient-to-br from-[#001e33] to-[#00365c] rounded-3xl p-5 md:p-6 relative shadow-lg border border-white/5 transition-all">
             <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-400/5 rounded-full blur-3xl pointer-events-none"></div>
             <div class="relative z-10">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
+                
+                <!-- Klikbare header om het weeradvies in of uit te klappen -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer group" onclick="toggleWeer()">
                     <div>
-                        <span class="px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-300 text-[9px] font-black tracking-widest uppercase border border-cyan-400/10 mb-1 inline-block">Weersadvies</span>
-                        <h2 class="text-xl font-black text-white tracking-tight">Geadviseerde uitrusting voor vandaag</h2>
+                        <span class="px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-300 text-[9px] font-black tracking-widest uppercase border border-cyan-400/10 mb-1 inline-block transition-colors group-hover:bg-cyan-500/20">Weersadvies</span>
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-xl font-black text-white tracking-tight">Geadviseerde uitrusting voor vandaag</h2>
+                            <div class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-white group-hover:bg-cyan-500 group-hover:text-[#001e33] transition-colors shadow-sm">
+                                <svg id="weerChevron" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5 w-full md:w-auto">
+                    <div class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5 w-full md:w-auto" onclick="event.stopPropagation()">
                         <span class="text-xl font-black text-white leading-none">{{ $weer['temp'] }}°C</span>
                         <div class="h-4 w-px bg-white/10"></div>
                         <span class="text-xs font-bold {{ $weer['gevaar'] == 'Kritiek' ? 'text-rose-400' : ($weer['gevaar'] == 'Gemiddeld' ? 'text-amber-400' : 'text-emerald-400') }}">
@@ -50,27 +57,34 @@
                         </span>
                     </div>
                 </div>
-                @if($aanbevolenMaterialen->count() > 0)
-                    <div class="flex overflow-x-auto gap-4 pb-2 hide-scrollbar snap-x">
-                        @foreach($aanbevolenMaterialen as $item)
-                            <div class="shrink-0 w-[280px] snap-center bg-white/5 border border-white/5 rounded-2xl p-5 flex flex-col justify-between hover:bg-white/10 transition-all">
-                                <div>
-                                    <div class="flex justify-between items-center mb-3">
-                                        <span class="text-[10px] font-black text-cyan-300 tracking-wider bg-slate-900/50 px-2.5 py-1 rounded-lg">{{ $item->artikelnummer }}</span>
-                                        <div class="w-2 h-2 rounded-full {{ $item->beschikbaar > 0 ? 'bg-emerald-400' : 'bg-rose-400' }}"></div>
+
+                <!-- Weeradviesmateriaal uit de API -->
+                <div id="weerContent" class="transition-all duration-500 overflow-hidden" style="max-height: 1000px; opacity: 1; margin-top: 1.25rem;">
+                    @if($aanbevolenMaterialen->count() > 0)
+                        <!-- Verticale scroll voor de advieskaarten -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-[350px] overflow-y-auto custom-scrollbar pr-2 pb-2">
+                            @foreach($aanbevolenMaterialen as $item)
+                                <div class="bg-white/5 border border-white/5 rounded-2xl p-5 flex flex-col justify-between hover:bg-white/10 transition-all cursor-default" onclick="event.stopPropagation()">
+                                    <div>
+                                        <div class="flex justify-between items-center mb-3">
+                                            <span class="text-[10px] font-black text-cyan-300 tracking-wider bg-slate-900/50 px-2.5 py-1 rounded-lg">{{ $item->artikelnummer }}</span>
+                                            <div class="w-2 h-2 rounded-full {{ $item->beschikbaar > 0 ? 'bg-emerald-400' : 'bg-rose-400' }}"></div>
+                                        </div>
+                                        <h3 class="text-sm font-bold text-white leading-tight mb-5 line-clamp-2 min-h-[2.5rem]">{{ $item->omschrijving }}</h3>
                                     </div>
-                                    <h3 class="text-base font-bold text-white leading-tight mb-5 line-clamp-2 min-h-[2.5rem]">{{ $item->omschrijving }}</h3>
+                                    <div class="flex items-center gap-2 mt-auto">
+                                        <input type="number" id="qty-rec-{{ $item->id }}" min="1" max="{{ $item->beschikbaar > 0 ? $item->beschikbaar : 1 }}" value="1" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-12 h-10 bg-slate-900/60 border border-white/10 text-white rounded-xl text-center font-bold text-xs focus:outline-none">
+                                        <button onclick="addToCart({{ $item->id }}, '{{ addslashes($item->omschrijving) }}', '{{ $item->artikelnummer }}', {{ $item->beschikbaar }}, 'rec'); event.stopPropagation();" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="flex-grow h-10 bg-cyan-400 text-[#001e33] font-black rounded-xl text-xs active:scale-95 transition-transform flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                                            Toevoegen
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-3 mt-auto">
-                                    <input type="number" id="qty-rec-{{ $item->id }}" min="1" max="{{ $item->beschikbaar > 0 ? $item->beschikbaar : 1 }}" value="1" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="w-14 h-11 bg-slate-900/60 border border-white/10 text-white rounded-xl text-center font-bold text-sm focus:outline-none">
-                                    <button onclick="addToCart({{ $item->id }}, '{{ addslashes($item->omschrijving) }}', '{{ $item->artikelnummer }}', {{ $item->beschikbaar }}, 'rec')" {{ $item->beschikbaar == 0 ? 'disabled' : '' }} class="flex-grow h-11 bg-cyan-400 text-[#001e33] font-black rounded-xl text-sm active:scale-95 transition-transform flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                                        Toevoegen
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-slate-400 text-sm font-medium">Geen specifieke uitrusting vereist voor vandaag.</p>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
@@ -165,6 +179,24 @@
 
 @section('scripts')
 <script>
+    // Klapt het weeradvies uit of in in de UI
+    function toggleWeer() {
+        const content = document.getElementById('weerContent');
+        const chevron = document.getElementById('weerChevron');
+        
+        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+            content.style.maxHeight = '1000px';
+            content.style.opacity = '1';
+            content.style.marginTop = '1.25rem';
+            chevron.style.transform = 'rotate(0deg)';
+        } else {
+            content.style.maxHeight = '0px';
+            content.style.opacity = '0';
+            content.style.marginTop = '0px';
+            chevron.style.transform = 'rotate(180deg)';
+        }
+    }
+
     let cart = JSON.parse(localStorage.getItem('aquafin_cart')) || [];
     let favorites = JSON.parse(localStorage.getItem('aquafin_favorites')) || [];
     let currentCategory = 'ALL';
