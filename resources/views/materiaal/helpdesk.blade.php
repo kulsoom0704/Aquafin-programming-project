@@ -5,7 +5,7 @@
     <title>Magazijnier - Helpdesk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Tes styles de navigation d'origine (intouchés) */
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #dceefb 0%, #c8e6f5 50%, #d4eef7 100%); min-height: 100vh; display: flex; }
         .sidebar { width: 220px; background: white; min-height: 100vh; display: flex; flex-direction: column; border-right: 1px solid #eee; position: fixed; top: 0; left: 0; }

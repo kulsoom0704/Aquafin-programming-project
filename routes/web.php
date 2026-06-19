@@ -115,3 +115,5 @@ Route::post('/chat/reply/{id}', [ChatController::class, 'reply'])->name('chat.re
 
 Route::post('/chat/admin/reply/{id}', [ChatController::class, 'replyAdmin'])->name('chat.reply.admin');
 Route::patch('/chat/sluiten/{id}', [ChatController::class, 'closeChat'])->name('chat.close');
+
+Route::post('/materiaal/{id}/foto', [\App\Http\Controllers\MateriaalController::class, 'fotoUpload']);

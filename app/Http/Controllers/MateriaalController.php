@@ -320,15 +320,23 @@ class MateriaalController extends Controller
 
     public function magazijnierIndex()
     {
-        $mijnDepot = session('depot', 'Antwerpen'); 
+        $mijnDepot = session('depot', 'Antwerpen');
 
+        // Flux 1 : Les commandes à traiter
         $bestellingen = Bestelling::with(['materiaal', 'user'])
             ->where('status', 'in afwachting')
             ->where('depot', $mijnDepot) 
             ->orderBy('created_at', 'asc')
             ->get();
 
-        return view('materiaal.index', compact('bestellingen'));
+        // Flux 2 : Les commandes terminées (pour ton Archief)
+        $archiefBestellingen = Bestelling::with(['materiaal', 'user'])
+            ->where('status', 'klaargezet')
+            ->where('depot', $mijnDepot)
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return view('materiaal.index', compact('bestellingen', 'archiefBestellingen'));
     }
 
     public function klaarzetten($id)
@@ -407,4 +415,6 @@ class MateriaalController extends Controller
         $oproep->save();
         return redirect('/materiaal/helpdesk');
     }
+
+   
 }
