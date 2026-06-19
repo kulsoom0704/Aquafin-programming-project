@@ -76,7 +76,7 @@
                 <div>
                     <div class="flex justify-between items-end mb-2 pl-1 pr-1">
                         <label for="wachtwoord" class="block text-xs font-bold text-slate-700 uppercase tracking-wide">Wachtwoord</label>
-                        <a href="#" class="text-[11px] font-bold text-[#017CBF] hover:text-[#131236] transition-colors">Vergeten?</a>
+                        
                     </div>
                     <input type="password" id="wachtwoord" name="wachtwoord" required
                         class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-semibold placeholder-slate-400 focus:bg-white focus:border-[#017CBF] focus:ring-4 focus:ring-[#017CBF]/10 outline-none transition-all"
